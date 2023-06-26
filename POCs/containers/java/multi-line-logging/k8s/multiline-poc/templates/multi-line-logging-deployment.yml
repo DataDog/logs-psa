@@ -29,25 +29,22 @@ spec:
         tags.datadoghq.com/env: "test"
         tags.datadoghq.com/service: "multiline-poc"
         tags.datadoghq.com/version: "1.0.0"
-      # @ckelner: this would be the preferred method IMO, but customer is using
-      # command line args via helm to push these changes, but as it applies to
-      # all services
-      # annotations:
-      #   ad.datadoghq.com/multiline-poc.logs: |
-      #     [
-      #       {
-      #         "source": "java",
-      #         "service": "multiline-poc",
-      #         "log_processing_rules":
-      #           [
-      #             {
-      #               "type": "multi_line",
-      #               "name": "log_start_with_date",
-      #               "pattern" : "(..@timestamp|\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2})"
-      #             }
-      #           ]
-      #       }
-      #     ]
+      annotations:
+        ad.datadoghq.com/multiline-poc.logs: |
+          [
+            {
+              "source": "java",
+              "service": "multiline-poc",
+              "log_processing_rules":
+                [
+                  {
+                    "type": "multi_line",
+                    "name": "log_start_with_date",
+                    "pattern" : "(..@timestamp|\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2})"
+                  }
+                ]
+            }
+          ]
     spec:
       restartPolicy: Always
       containers:
