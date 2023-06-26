@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <appender name="Console" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder class="net.logstash.logback.encoder.LogstashEncoder">
+            <!-- Customer sample: 2023-06-19 06:49:03 -->
+            <timestampPattern>yyyy-MM-dd HH:mm:ss</timestampPattern>
+        </encoder>
+    </appender>
+
+    <root level="info">
+        <appender-ref ref="Console" />
+    </root>
+
+</configuration>
