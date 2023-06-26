@@ -4,9 +4,16 @@ Proof of concept to show Datadog's multi-line logging capability, reproducting
 a customer environment. A simple java application that throws an exception run
 from k8s, with containerized Datadog agent configured via helm.
 
-## Prerequestites
+## Specfic Requirements
+
+To mimic customer environment, we must use:
+
+- Logback
+- K8s
+- Helm
 
 ### To build and run locally
+## Prerequestites
 
 - Java 11
 - Maven
