@@ -12,6 +12,14 @@ To mimic customer environment, we must use:
 - K8s
 - Helm
 
+## Assumptions
+
+1. At the time of writing we didn't have details on the exact Logback configuration being used
+by the customer, but we assumed they were following Datadog's recommendation and using
+`net.logstash.logback.encoder.LogstashEncoder`
+(<https://docs.datadoghq.com/logs/log_collection/java/?tab=logback#configure-your-logger>).
+    a. TODO: Find out exact configuration and implement here
+
 ## Datadog docs
 
 - <https://docs.datadoghq.com/agent/logs/advanced_log_collection/?tab=configurationfile#multi-line-aggregation>
@@ -49,5 +57,6 @@ Run `mvn clean install`
         --set datadog.logs.enabled=true \
         --set datadog.logs.containerCollectAll=true \
         --set datadog.logs.autoMultiLineDetection=true \
-        --set agents.containers.agent.envDict.DD_LOGS_CONFIG_AUTO_MULTI_LINE_EXTRA_PATTERNS='\d{4}-\d{2}-\d{2}\s\d{2}:\d{2}:\d{2}' datadog/datadog
+        --set agents.containers.agent.envDict.DD_LOGS_CONFIG_AUTO_MULTI_LINE_EXTRA_PATTERNS='\d{4}-\d{2}-\d{2}\s\d{2}:\d{2}:\d{2}' \
+        datadog/datadog
 - TBD
