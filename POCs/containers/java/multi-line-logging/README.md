@@ -42,9 +42,7 @@ charts, as described here: <https://docs.datadoghq.com/containers/kubernetes/log
 - Maven
 - Helm
 - k8s cluster
-  - _the author is using podman + minikube w/ the CRI-O runtime_
-    - podman
-    - minikube
+  - _the author is using minikube_
 
 ## Building
 
