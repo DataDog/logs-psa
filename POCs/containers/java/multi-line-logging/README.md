@@ -57,10 +57,6 @@ charts, as described here: <https://docs.datadoghq.com/containers/kubernetes/log
 
 ## Running locally
 
-- `podman machine init --cpus 2 --memory 2048 --disk-size 20`
-- `podman machine start`
-- `podman system connection default podman-machine-default-root`
-- `minikube start --driver=podman --container-runtime=cri-o`
 - `helm repo add datadog https://helm.datadoghq.com`
 - `helm repo update`
 - Customer's preferred method of deploy/configure (rather than yaml):
