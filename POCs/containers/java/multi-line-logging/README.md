@@ -68,6 +68,5 @@ charts, as described here: <https://docs.datadoghq.com/containers/kubernetes/log
         --set datadog.logs.enabled=true \
         --set datadog.logs.containerCollectAll=true \
         --set datadog.logs.autoMultiLineDetection=true \
-        --set agents.containers.agent.envDict.DD_LOGS_CONFIG_AUTO_MULTI_LINE_EXTRA_PATTERNS='(..@timestamp|\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2})' \
         datadog/datadog
 - `
