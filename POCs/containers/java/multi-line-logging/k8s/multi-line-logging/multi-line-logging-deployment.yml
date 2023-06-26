@@ -1,0 +1,112 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: multiline-poc
+  labels:
+    app: multiline-poc
+    service: multiline-poc
+    tags.datadoghq.com/env: "test"
+    tags.datadoghq.com/service: "multiline-poc"
+    tags.datadoghq.com/version: "1.0.0"
+spec:
+  replicas: 1
+  revisionHistoryLimit: 2
+  minReadySeconds: 5
+  selector:
+    matchLabels:
+      app: multiline-poc
+  strategy:
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 2
+    type: RollingUpdate
+  template:
+    metadata:
+      name: multiline-poc
+      labels:
+        app: multiline-poc
+        service: multiline-poc
+        tags.datadoghq.com/env: "test"
+        tags.datadoghq.com/service: "multiline-poc"
+        tags.datadoghq.com/version: "1.0.0"
+      # @ckelner: this would be the preferred method IMO, but customer is using
+      # command line args via helm to push these changes, but as it applies to
+      # all services
+      # annotations:
+      #   ad.datadoghq.com/multiline-poc.logs: |
+      #     [
+      #       {
+      #         "source": "java",
+      #         "service": "multiline-poc",
+      #         "log_processing_rules":
+      #           [
+      #             {
+      #               "type": "multi_line",
+      #               "name": "log_start_with_date",
+      #               "pattern" : "(..@timestamp|\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2})"
+      #             }
+      #           ]
+      #       }
+      #     ]
+    spec:
+      restartPolicy: Always
+      containers:
+      - name: multiline-poc
+        # local file
+        image: "multiline-poc"
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 8080
+          protocol: TCP
+        env:
+        - name: POD_IP
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: status.podIP
+        - name: DD_AGENT_HOST
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: status.hostIP
+        - name: JAVA_OPTIONS
+          value: >
+            -Xmx512m -XX:+ExitOnOutOfMemoryError
+            -javaagent:./dd-java-agent.jar
+        - name: DD_ENV
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.labels['tags.datadoghq.com/env']
+        - name: DD_SERVICE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.labels['tags.datadoghq.com/service']
+        - name: DD_VERSION
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.labels['tags.datadoghq.com/version']
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "0.25"
+          limits:
+            memory: "512Mi"
+            cpu: "0.5"
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 8080
+            scheme: HTTP
+          initialDelaySeconds: 30
+          failureThreshold: 3
+          successThreshold: 1
+          timeoutSeconds: 25
+        readinessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /
+            port: 8080
+            scheme: HTTP
+          initialDelaySeconds: 30
+          successThreshold: 1
+          timeoutSeconds: 25

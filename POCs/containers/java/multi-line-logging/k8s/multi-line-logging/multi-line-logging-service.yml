@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: multiline-poc
+  namespace: default
+  labels:
+    app: multiline-poc
+    service: multiline-poc
+spec:
+  ports:
+  - name: http
+    port: 8080
+    protocol: TCP
+    targetPort: 8080
+  selector:
+    app: multiline-poc
+  type: NodePort
