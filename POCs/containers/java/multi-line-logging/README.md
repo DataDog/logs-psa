@@ -12,7 +12,12 @@ To mimic customer environment, we must use:
 - K8s
 - Helm
 
-### To build and run locally
+## Datadog docs
+
+- <https://docs.datadoghq.com/agent/logs/advanced_log_collection/?tab=configurationfile#multi-line-aggregation>
+- <https://docs.datadoghq.com/logs/log_collection/java/?tab=logback>
+- <https://www.datadoghq.com/blog/multiline-logging-guide/>
+
 ## Prerequestites
 
 - Java 11
@@ -29,4 +34,7 @@ Run `mvn clean install`
 
 ## Running locally
 
-Run `java -jar target/multiline-poc.jar`
+- `podman machine init --cpus 2 --memory 2048 --disk-size 20`
+- `podman machine start`
+- `podman system connection default podman-machine-default-root`
+- `minikube start --driver=podman --container-runtime=cri-o`
