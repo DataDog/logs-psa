@@ -44,12 +44,16 @@ charts, as described here: <https://docs.datadoghq.com/containers/kubernetes/log
 - k8s cluster
   - _the author is using minikube_
 
-## Building
+## Setup test environment
 
-- `cd multiline-poc`
-- Run `mvn clean install`
-- `cd ..`
-- `docker buildx build . -t multiline-poc:latest`
+- `minikube start --driver=docker --memory 2048 --cpus 2 --nodes 2`
+- `minikube addons enable metrics-server`
+
+## Build & Push
+
+- Run `mvn clean install -f ./multiline-poc/pom.xml`
+- `docker build . -t multiline-poc:latest`
+- `minikube image load multiline-poc:latest`
 
 ## Running locally
 
