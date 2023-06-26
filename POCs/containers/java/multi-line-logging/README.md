@@ -40,15 +40,14 @@ Run `mvn clean install`
 - `minikube start --driver=podman --container-runtime=cri-o`
 - `helm repo add datadog https://helm.datadoghq.com`
 - `helm repo update`
-- ```bash
-
-helm upgrade \
--n default \
--i datadog-agent \
---set datadog.apiKey=<REPLACE_WITH_YOUR_ENV_VAR_OR_STRING> \
---set datadog.kubelet.tlsVerify=false \
---set datadog.logs.enabled=true \
---set datadog.logs.containerCollectAll=true \
---set datadog.logs.autoMultiLineDetection=true \
---set agents.containers.agent.envDict.DD_LOGS_CONFIG_AUTO_MULTI_LINE_EXTRA_PATTERNS='\d{4}-\d{2}-\d{2}\s\d{2}:\d{2}:\d{2}' datadog/datadog
-```
+-
+        helm upgrade \
+        -n default \
+        -i datadog-agent \
+        --set datadog.apiKey=<REPLACE_WITH_YOUR_ENV_VAR_OR_STRING> \
+        --set datadog.kubelet.tlsVerify=false \
+        --set datadog.logs.enabled=true \
+        --set datadog.logs.containerCollectAll=true \
+        --set datadog.logs.autoMultiLineDetection=true \
+        --set agents.containers.agent.envDict.DD_LOGS_CONFIG_AUTO_MULTI_LINE_EXTRA_PATTERNS='\d{4}-\d{2}-\d{2}\s\d{2}:\d{2}:\d{2}' datadog/datadog
+- TBD
