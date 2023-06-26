@@ -38,7 +38,10 @@ by the customer, but we assumed they were following Datadog's recommendation and
 
 ## Building
 
-Run `mvn clean install`
+- `cd multiline-poc`
+- Run `mvn clean install`
+- `cd ..`
+- `docker buildx build . -t multiline-poc:latest`
 
 ## Running locally
 
