@@ -49,9 +49,9 @@ spec:
       restartPolicy: Always
       containers:
       - name: multiline-poc
-        # local file
-        image: "multiline-poc"
-        imagePullPolicy: IfNotPresent
+        # local - this is what minikube serves after running `minikube image load multiline-poc:latest`
+        image: "docker.io/library/multiline-poc"
+        imagePullPolicy: Never
         ports:
         - containerPort: 8080
           protocol: TCP
