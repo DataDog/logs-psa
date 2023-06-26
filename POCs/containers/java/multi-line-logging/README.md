@@ -4,6 +4,27 @@ Proof of concept to show Datadog's multi-line logging capability, reproducting
 a customer environment. A simple java application that throws an exception run
 from k8s, with containerized Datadog agent configured via helm.
 
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+**Table of Contents**
+
+- [Directory Structure](#directory-structure)
+  - [multiline-poc](#multiline-poc)
+  - [multiline-poc-json](#multiline-poc-json)
+- [Specfic Requirements](#specfic-requirements)
+- [Notes](#notes)
+  - [Logback Config](#logback-config)
+  - [Helm Values vs Pod Annotations](#helm-values-vs-pod-annotations)
+- [Datadog docs for reference](#datadog-docs-for-reference)
+- [Prerequestites](#prerequestites)
+- [Setup test environment](#setup-test-environment)
+- [Build & Push](#build--push)
+- [Running locally](#running-locally)
+- [Triggering logs](#triggering-logs)
+- [Cleanup](#cleanup)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 ## Directory Structure
 
 There are two java projects here-in, each with their own helm charts, one using json logs and the
