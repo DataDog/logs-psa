@@ -25,24 +25,6 @@ from k8s, with containerized Datadog agent configured via helm.
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
-## Directory Structure
-
-There are two java projects here-in, each with their own helm charts, one using json logs and the
-other does not. All other commands in this readme aside from directory names, work exactly the
-same across both.
-
-This readme focuses on the non-json approach as it was the customer's choice, however Datadog
-recommends logging in JSON when possible.
-
-### multiline-poc
-
-Uses a basic and assumed Logback configuration that does NOT log to JSON.
-
-### multiline-poc-json
-
-Uses the `LogstashEncoder` so that a customer can see what it would look like should
-they choose to use it in their project.
-
 ## Specfic Requirements
 
 To mimic customer environment, we must use:
@@ -65,8 +47,7 @@ After some investigation using the `LogstashEncoder` we noted that they were mos
 not using it, as the attributes and formatting of the logs were quite dissimilar from
 what they provided us.
 
-Internal examples from this POC application: <https://a.cl.ly/lluX2gbW> & <https://a.cl.ly/JruegyBN>.
-Further on with <https://docs.datadoghq.com/logs/error_tracking/>: <https://a.cl.ly/jkuRDON6>
+This POC logs in both formats.
 
 ### Helm Values vs Pod Annotations
 
@@ -90,7 +71,7 @@ charts, as described here: <https://docs.datadoghq.com/containers/kubernetes/log
 
 ## Prerequestites
 
-- Java 11
+- openjdk 20.0.1 or equivilant
 - Maven
 - Helm
 - k8s cluster
