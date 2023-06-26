@@ -17,6 +17,11 @@ To mimic customer environment, we must use:
 
 - Java 11
 - Maven
+- Helm
+- k8s cluster
+  - _the author is using podman + minikube w/ the CRI-O runtime_
+    - podman
+    - minikube
 
 ## Building
 
