@@ -4,6 +4,24 @@ Proof of concept to show Datadog's multi-line logging capability, reproducting
 a customer environment. A simple java application that throws an exception run
 from k8s, with containerized Datadog agent configured via helm.
 
+## Directory Structure
+
+There are two java projects here-in, each with their own helm charts, one using json logs and the
+other does not. All other commands in this readme aside from directory names, work exactly the
+same across both.
+
+This readme focuses on the non-json approach as it was the customer's choice, however Datadog
+recommends logging in JSON when possible.
+
+### multiline-poc
+
+Uses a basic and assumed Logback configuration that does NOT log to JSON.
+
+### multiline-poc-json
+
+Uses the `LogstashEncoder` so that a customer can see what it would look like should
+they choose to use it in their project.
+
 ## Specfic Requirements
 
 To mimic customer environment, we must use:
@@ -43,7 +61,7 @@ charts, as described here: <https://docs.datadoghq.com/containers/kubernetes/log
     <https://docs.datadoghq.com/agent/logs/advanced_log_collection/?tab=configurationfile>)
     b. TODO: Find out if the customer would be ok with this approach
 
-## Datadog docs
+## Datadog docs for reference
 
 - <https://docs.datadoghq.com/agent/logs/advanced_log_collection/?tab=configurationfile#multi-line-aggregation>
 - <https://docs.datadoghq.com/logs/log_collection/java/?tab=logback>
