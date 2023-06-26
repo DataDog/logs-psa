@@ -51,7 +51,7 @@ by the customer, but we assumed they were following Datadog's recommendation and
 - `minikube start --driver=podman --container-runtime=cri-o`
 - `helm repo add datadog https://helm.datadoghq.com`
 - `helm repo update`
--
+- Customer's preferred method of deploy/configure (rather than yaml):
         helm upgrade \
         -n default \
         -i datadog-agent \
