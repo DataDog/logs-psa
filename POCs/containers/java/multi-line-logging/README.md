@@ -69,4 +69,17 @@ charts, as described here: <https://docs.datadoghq.com/containers/kubernetes/log
         --set datadog.logs.containerCollectAll=true \
         --set datadog.logs.autoMultiLineDetection=true \
         datadog/datadog
-- `
+- Deploy our java app
+        helm upgrade multiline-poc ./k8s/multiline-poc/ --install \
+        -f ./k8s/multiline-poc/values.yaml
+- `minikube tunnel`
+- Open <http://127.0.0.1:8080/>
+
+## Triggering logs
+
+- Open <http://127.0.0.1:8080/exception>
+
+## Cleanup
+
+- `minikube stop`
+- `minikube delete`
