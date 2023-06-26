@@ -1,6 +1,8 @@
 # Containized Java Multi-line logging POC
 
-Java application that throws an exception.
+Proof of concept to show Datadog's multi-line logging capability, reproducting
+a customer environment. A simple java application that throws an exception run
+from k8s, with containerized Datadog agent configured via helm.
 
 ## Prerequestites
 
