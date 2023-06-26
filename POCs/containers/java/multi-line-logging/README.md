@@ -116,3 +116,8 @@ charts, as described here: <https://docs.datadoghq.com/containers/kubernetes/log
 
 - `minikube stop`
 - `minikube delete`
+
+## Example output
+
+Internal JSON log examples from this POC application: <https://a.cl.ly/lluX2gbW> & <https://a.cl.ly/JruegyBN>.
+Further more with <https://docs.datadoghq.com/logs/error_tracking/>: <https://a.cl.ly/jkuRDON6>
