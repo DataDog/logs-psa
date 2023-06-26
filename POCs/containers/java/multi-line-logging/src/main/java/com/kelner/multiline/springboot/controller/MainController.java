@@ -15,4 +15,11 @@ public class MainController {
         return ResponseEntity.ok("Hello World");
     }
 
+    @GetMapping("/exception")
+    public ResponseEntity<String> throwException() {
+
+        int x = 1 / 0;
+        return ResponseEntity.ok("1 / 0=" + x);
+    }
+
 }
