@@ -62,4 +62,4 @@ by the customer, but we assumed they were following Datadog's recommendation and
         --set datadog.logs.autoMultiLineDetection=true \
         --set agents.containers.agent.envDict.DD_LOGS_CONFIG_AUTO_MULTI_LINE_EXTRA_PATTERNS='(..@timestamp|\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2})' \
         datadog/datadog
-- TBD
+- `

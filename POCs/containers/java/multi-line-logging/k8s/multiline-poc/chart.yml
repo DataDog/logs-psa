@@ -1,0 +1,5 @@
+apiVersion: v2
+description: Chart for installing multiline-poc
+name: multiline-poc
+version: 0.0.1
+namespace: default
