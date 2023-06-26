@@ -1,18 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
-    <include resource="org/springframework/boot/logging/logback/defaults.xml" />
-    <include resource="org/springframework/boot/logging/logback/console-appender.xml" />
-    <root level="INFO">
-        <appender-ref ref="CONSOLE" />
-    </root>
-    <logger name="org.springframework.web" level="DEBUG" />
-</configuration>
-
-<?xml version="1.0" encoding="UTF-8"?>
-<configuration>
     <appender name="Console" class="ch.qos.logback.core.ConsoleAppender">
         <encoder class="net.logstash.logback.encoder.LogstashEncoder">
-            <timestampPattern>yyyy-MM-dd'T'HH:mm:ss</timestampPattern>
+            <!-- Customer sample: 2023-06-19 06:49:03 -->
+            <timestampPattern>yyyy-MM-dd HH:mm:ss</timestampPattern>
         </encoder>
     </appender>
 
@@ -21,5 +12,3 @@
     </root>
 
 </configuration>
-
-2023-06-19 06:49:03
