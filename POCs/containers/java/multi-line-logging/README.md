@@ -20,6 +20,16 @@ by the customer, but we assumed they were following Datadog's recommendation and
 (<https://docs.datadoghq.com/logs/log_collection/java/?tab=logback#configure-your-logger>).
     a. TODO: Find out exact configuration and implement here
 
+2. Rather than setting `--set agents.containers.agent.envDict.DD_LOGS_CONFIG_AUTO_MULTI_LINE_EXTRA_PATTERNS` via
+helm, and setting patterns across all containers, assume that customer would be ok using pod annotations in their
+charts, as described here: <https://docs.datadoghq.com/containers/kubernetes/log/?tab=kubernetes#configuration>
+    a. TODO: Find out if the customer would be ok with this approach; easier to maintain and
+    far more human friendly and readable
+    b. `--set agents.containers.agent.envDict.DD_LOGS_CONFIG_AUTO_MULTI_LINE_EXTRA_PATTERNS='(..@timestamp|\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2})'` will work here, but again it will apply to all containers, and we want to set the `source` to
+    `java` anyway in the pod annotation, to ensure it is going through the correct pipeline (as described here:
+    <https://docs.datadoghq.com/logs/log_collection/java/?tab=logback#configure-the-datadog-agent> or here:
+    <https://docs.datadoghq.com/agent/logs/advanced_log_collection/?tab=configurationfile>)
+
 ## Datadog docs
 
 - <https://docs.datadoghq.com/agent/logs/advanced_log_collection/?tab=configurationfile#multi-line-aggregation>
