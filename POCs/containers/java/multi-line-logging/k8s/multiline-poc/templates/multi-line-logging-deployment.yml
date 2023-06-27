@@ -48,7 +48,7 @@ spec:
       containers:
       - name: multiline-poc
         # local - this is what minikube serves after running `minikube image load multiline-poc:latest`
-        image: "docker.io/library/multiline-poc"
+        image: "docker.io/library/multiline-poc:{{ $.Values.image.tag }}"
         imagePullPolicy: Never
         ports:
         - containerPort: 8080

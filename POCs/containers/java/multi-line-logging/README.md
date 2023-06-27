@@ -84,9 +84,10 @@ charts, as described here: <https://docs.datadoghq.com/containers/kubernetes/log
 
 ## Build & Push
 
-- Run `mvn clean install -f ./multiline-poc/pom.xml`
-- `docker build . -t multiline-poc:latest`
-- `minikube image load multiline-poc:latest`
+- `mvn clean install -f ./multiline-poc/pom.xml`
+- `fakever=$(date +%s)`
+- `docker build . -t multiline-poc:$fakever`
+- `minikube image load multiline-poc:$fakever`
 
 ## Running locally
 
@@ -104,7 +105,8 @@ charts, as described here: <https://docs.datadoghq.com/containers/kubernetes/log
         datadog/datadog
 - Deploy our java app
         helm upgrade multiline-poc ./k8s/multiline-poc/ --install \
-        -f ./k8s/multiline-poc/values.yaml
+        -f ./k8s/multiline-poc/values.yaml \
+        --set-string image.tag="$fakever"
 - `minikube tunnel`
 - Open <http://127.0.0.1:8080/>
 

@@ -1,0 +1,4 @@
+image:
+  tag:
+    # this will be set via `--set-string image.tag=$var from the deploy script
+    iwillbereplaced  # Give a real value here when deploying.
