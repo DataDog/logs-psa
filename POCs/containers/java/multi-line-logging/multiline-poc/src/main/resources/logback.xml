@@ -1,14 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
-    <appender name="Console" class="ch.qos.logback.core.ConsoleAppender">
-        <encoder class="net.logstash.logback.encoder.LogstashEncoder">
-            <!-- Customer sample: 2023-06-19 06:49:03 -->
-            <timestampPattern>yyyy-MM-dd HH:mm:ss</timestampPattern>
-        </encoder>
+    <!-- no json - no encoder -->
+    <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
+        <target>System.out</target>
+        <!-- No need to define an encoder, the default should look like this -->
+        <!-- Customer sample: 2023-06-19 06:49:03 ERROR o.s.b.SpringApplication:821 ... -->
     </appender>
 
-    <root level="info">
-        <appender-ref ref="Console" />
+    <!-- this shows off how to log in JSON; datadog recommendation -->
+    <appender name="console-stderr-json" class="ch.qos.logback.core.ConsoleAppender">
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>ERROR</level>
+        </filter>
+        <encoder class="net.logstash.logback.encoder.LogstashEncoder">
+            <timestampPattern>yyyy-MM-dd HH:mm:ss</timestampPattern>
+        </encoder>
+        <target>System.err</target>
+    </appender>
+
+    <root level="INFO">
+        <!-- JSON logging -->
+        <appender-ref ref="console-json" />
     </root>
+
+    <!-- Double log errors as JSON; inherits `console` from the root logger -->
+    <logger name="org.springframework" level="INFO">
+        <appender-ref ref="console-stderr-json" />
+    </logger>
 
 </configuration>
