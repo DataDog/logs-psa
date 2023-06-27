@@ -72,6 +72,7 @@ For the pattern used, see: [`POCs/containers/java/multi-line-logging/multiline-p
 ## Datadog docs for reference
 
 - <https://docs.datadoghq.com/logs/log_collection/java/?tab=logback>
+- <https://docs.datadoghq.com/containers/kubernetes/log/?tab=kubernetes#configuration>
 - <https://docs.datadoghq.com/agent/logs/advanced_log_collection/?tab=configurationfile#multi-line-aggregation>
 - <https://www.datadoghq.com/blog/multiline-logging-guide/>
 
