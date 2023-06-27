@@ -30,41 +30,39 @@ from k8s, with containerized Datadog agent configured via helm.
 
 ## Specfic Requirements
 
-To mimic customer environment, we must use:
+To reproduce the given environment:
 
-- Logback
-- NOT using the `LogstashEncoder` recommended by Datadog
-- K8s
-- Helm
+- Use Logback
+- Do NOT use `LogstashEncoder` (recommended by Datadog)
+  - _CAVEAT: we have both: we are double logging in plaintext and JSON which can be observed by tailing the container_
+- Use K8s
+- Use Helm
 
-## Notes
+## NOTEWORTHY
 
 ### Logback Config
 
-At the time of writing we didn't have details on the exact Logback configuration being used
-by the customer, but we assumed they were following Datadog's recommendation and using
-`net.logstash.logback.encoder.LogstashEncoder`
-(<https://docs.datadoghq.com/logs/log_collection/java/?tab=logback#configure-your-logger>).
+At the time of writing we didn't have all the details on the exact Logback configuration
+being used in the evironment, but after some investigation using the `LogstashEncoder` we
+noted that the environment was most likely not using it, as the attributes and formatting of
+the log were quite dissimilar from what was provided to us.
 
-After some investigation using the `LogstashEncoder` we noted that they were most likely
-not using it, as the attributes and formatting of the logs were quite dissimilar from
-what they provided us.
-
-This POC logs in both formats.
+This POC logs in both formats, see [Example output](#example-output) for comparison and
+[`POCs/containers/java/multi-line-logging/multiline-poc/src/main/resources/logback.xml`](POCs/containers/java/multi-line-logging/multiline-poc/src/main/resources/logback.xml) for details.
 
 ### Helm Values vs Pod Annotations
 
-Both are possible, and there are other methods as well, however helm charts and pod annotations are
+Both are possible, and there are other methods as well, however charts and pod annotations are
 easier to maintain and far more human friendly and readable.
 
 Rather than setting `--set agents.containers.agent.envDict.DD_LOGS_CONFIG_AUTO_MULTI_LINE_EXTRA_PATTERNS` via
-helm, and setting patterns across all containers, assume that customer would be ok using pod annotations in their
+helm, and setting patterns across all containers, we assumed that customers would be ok using pod annotations in their
 charts, as described here: <https://docs.datadoghq.com/containers/kubernetes/log/?tab=kubernetes#configuration>
-    a. `--set agents.containers.agent.envDict.DD_LOGS_CONFIG_AUTO_MULTI_LINE_EXTRA_PATTERNS='(..@timestamp|\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2})'` will work here, but it will apply to all containers, and we want to set the `source` to
-    `java` anyway in the pod annotation, to ensure it is going through the correct pipeline (as described here:
-    <https://docs.datadoghq.com/logs/log_collection/java/?tab=logback#configure-the-datadog-agent> or here:
-    <https://docs.datadoghq.com/agent/logs/advanced_log_collection/?tab=configurationfile>)
-    b. TODO: Find out if the customer would be ok with this approach
+    a. `--set agents.containers.agent.envDict.DD_LOGS_CONFIG_AUTO_MULTI_LINE_EXTRA_PATTERNS='(..@timestamp|\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2})'` will still work here, but it will apply to all containers, and we want to set additional annotations
+    to ensure the log has appropriate tags and is going through the correct pipeline
+        1. As described here:
+            - <https://docs.datadoghq.com/logs/log_collection/java/?tab=logback#configure-the-datadog-agent>
+            - <https://docs.datadoghq.com/agent/logs/advanced_log_collection/?tab=configurationfile>)
 
 ## Datadog docs for reference
 
