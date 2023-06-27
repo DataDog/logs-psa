@@ -22,4 +22,4 @@ minikube image load multiline-poc:$fakever
 helm upgrade multiline-poc ./k8s/multiline-poc/ --install \
     -f ./k8s/multiline-poc/values.yaml \
     --set-string image.tag="${fakever}" \
-    #--set agents.containers.agent.envDict.DD_LOGS_CONFIG_AUTO_MULTI_LINE_EXTRA_PATTERNS='(..@timestamp|\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2})
+    #--set agents.containers.agent.envDict.DD_LOGS_CONFIG_AUTO_MULTI_LINE_EXTRA_PATTERNS='(..@timestamp|\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2})'
