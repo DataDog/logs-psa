@@ -58,11 +58,15 @@ Find them here <https://docs.datadoghq.com/agent/logs/advanced_log_collection/?t
 
 #### AUTO_MULTI_LINE_EXTRA_PATTERNS
 
-`DD_LOGS_CONFIG_AUTO_MULTI_LINE_EXTRA_PATTERNS` will work.
+`DD_LOGS_CONFIG_AUTO_MULTI_LINE_EXTRA_PATTERNS` does not appear to work without some additional tweaking.
 
-You can test this by commenting out the pattern used, see: [`k8s/multiline-poc/templates/multi-line-logging-deployment.yml#L36-L50`](./k8s/multiline-poc/templates/multi-line-logging-deployment.yml#L36-L50) and using the helm `--set <value>` command instead.
+You can test this by commenting out the pattern used, see: [`k8s/multiline-poc/templates/multi-line-logging-deployment.yml#L36-L53`](./k8s/multiline-poc/templates/multi-line-logging-deployment.yml#L36-L53) and using the helm `--set <value>` command instead.
 
 `--set agents.containers.agent.envDict.DD_LOGS_CONFIG_AUTO_MULTI_LINE_EXTRA_PATTERNS='\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}'`
+
+If you use [`build-deploy.sh`](./build-deploy.sh) you'll need to un-comment the `--set ...` line there as well.
+
+Check out [Run it yourself locally](#run-it-yourself-locally) to get started.
 
 ## Datadog docs for reference
 
