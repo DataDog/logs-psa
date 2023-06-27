@@ -49,7 +49,7 @@ noted that the environment was most likely not using it, as the attributes and f
 the log were quite dissimilar from what was provided to us.
 
 This POC logs in both formats, see [Example output](#example-output) for comparison and
-[`POCs/containers/java/multi-line-logging/multiline-poc/src/main/resources/logback.xml`](POCs/containers/java/multi-line-logging/multiline-poc/src/main/resources/logback.xml) for details.
+[`multiline-poc/src/main/resources/logback.xml`](./multiline-poc/src/main/resources/logback.xml) for details.
 
 ### Helm Values vs Pod Annotations
 
@@ -68,7 +68,7 @@ As described here:
 1. <https://docs.datadoghq.com/logs/log_collection/java/?tab=logback#configure-the-datadog-agent>
 2. <https://docs.datadoghq.com/agent/logs/advanced_log_collection/?tab=configurationfile>
 
-For the pattern used, see: [`POCs/containers/java/multi-line-logging/multiline-poc/src/main/resources/logback.xml`](POCs/containers/java/multi-line-logging/multiline-poc/src/main/resources/logback.xml)
+For the pattern used, see: [`multiline-poc/src/main/resources/logback.xml`](./multiline-poc/src/main/resources/logback.xml)
 
 ## Datadog docs for reference
 
