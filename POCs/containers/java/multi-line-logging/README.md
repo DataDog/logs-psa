@@ -51,26 +51,24 @@ the log were quite dissimilar from what was provided to us.
 This POC logs in both formats, see [Example output](#example-output) for comparison and
 [`multiline-poc/src/main/resources/logback.xml`](./multiline-poc/src/main/resources/logback.xml) for details.
 
-### Helm Values vs Pod Annotations
+### K8s Pod Annotations (or config maps, or datadog helm chart values) for multi-line aggregation
 
-Both are possible, and there are other methods as well, however charts and pod annotations are
-easier to maintain and far more human friendly and readable.
+There are several methods to configure the agent for multi-line aggregation.
+Find them here <https://docs.datadoghq.com/agent/logs/advanced_log_collection/?tab=kubernetes#multi-line-aggregation>.
 
-Rather than setting `--set agents.containers.agent.envDict.DD_LOGS_CONFIG_AUTO_MULTI_LINE_EXTRA_PATTERNS` via
-helm, and setting patterns across all containers, we assumed that customers would be ok using pod annotations in their
-charts, as described here: <https://docs.datadoghq.com/containers/kubernetes/log/?tab=kubernetes#configuration>
+#### AUTO_MULTI_LINE_EXTRA_PATTERNS
 
-`--set agents.containers.agent.envDict.DD_LOGS_CONFIG_AUTO_MULTI_LINE_EXTRA_PATTERNS='(..@timestamp|\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2})'` will still work here, but it will apply to all containers, and we want to set additional annotations
-to ensure the log has appropriate tags and is going through the correct pipeline.
+`DD_LOGS_CONFIG_AUTO_MULTI_LINE_EXTRA_PATTERNS` will work.
 
 You can test this by commenting out the pattern used, see: [`k8s/multiline-poc/templates/multi-line-logging-deployment.yml#L36-L50`](./k8s/multiline-poc/templates/multi-line-logging-deployment.yml#L36-L50) and using the helm `--set <value>` command instead.
+
+`--set agents.containers.agent.envDict.DD_LOGS_CONFIG_AUTO_MULTI_LINE_EXTRA_PATTERNS='\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}'`
 
 ## Datadog docs for reference
 
 - <https://docs.datadoghq.com/logs/log_collection/java/?tab=logback>
 - <https://docs.datadoghq.com/containers/kubernetes/log/?tab=kubernetes#configuration>
-- <https://docs.datadoghq.com/agent/logs/advanced_log_collection/?tab=configurationfile#multi-line-aggregation>
-- <https://www.datadoghq.com/blog/multiline-logging-guide/>
+- <https://docs.datadoghq.com/agent/logs/advanced_log_collection/?tab=kubernetes#multi-line-aggregation>
 
 ### Screen-recording
 
