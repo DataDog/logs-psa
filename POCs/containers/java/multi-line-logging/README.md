@@ -1,8 +1,8 @@
 # Containized Java Multi-line logging POC
 
-Proof of concept to show Datadog's multi-line logging capability, reproducting
-a customer environment. A simple java application that throws an exception run
-from k8s, with containerized Datadog agent configured via helm.
+Proof of concept to show Datadog's multi-line logging aggregation capability,
+reproducing a customer environment. A simple java application that throws an
+exception run from k8s, with containerized Datadog agent configured via helm.
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
