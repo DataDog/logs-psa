@@ -110,7 +110,15 @@ charts, as described here: <https://docs.datadoghq.com/containers/kubernetes/log
 
 ## Triggering logs
 
-- Open <http://127.0.0.1:8080/exception>
+Open <http://127.0.0.1:8080/exception> -- exceptions will log both normally and as JSON for comparison
+
+## View your logs in Datadog
+
+<https://app.datadoghq.com/logs?query=service%3Amultiline-poc>
+
+## See your logs before they get shipped
+
+`k logs --tail=100 -f deployment/multiline-poc`
 
 ## Cleanup
 

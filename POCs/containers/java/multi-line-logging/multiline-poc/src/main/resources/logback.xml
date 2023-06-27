@@ -5,22 +5,17 @@
         <encoder class="net.logstash.logback.encoder.LogstashEncoder">
             <timestampPattern>yyyy-MM-dd HH:mm:ss</timestampPattern>
         </encoder>
+
+        <filter class="ch.qos.logback.core.filter.EvaluatorFilter">
+            <evaluator>
+                <expression>java.lang.RuntimeException.class.isInstance(throwable)</expression>
+            </evaluator>
+            <onMismatch>DENY</onMismatch>
+            <OnMatch>ACCEPT</OnMatch>
+        </filter>
     </appender>
 
-    <filter class="ch.qos.logback.core.filter.EvaluatorFilter">
-        <evaluator> <!-- defaults to type ch.qos.logback.classic.boolex.JaninoEventEvaluator -->
-            <expression>logger.equals("com.kelner.multiline.springboot.JsonController")</expression>
-        </evaluator>
-        <OnMismatch>NEUTRAL</OnMismatch>
-        <OnMatch>DENY</OnMatch>
-    </filter>
-
-    <!-- Double log errors as JSON; inherits `console` from the root logger -->
-    <logger name="json-controller" level="ERROR" additivity="false">
-        <appender-ref ref="logstash-json" />
-    </logger>
-
-    <appender name="spring" class="ch.qos.logback.core.ConsoleAppender">
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
         <!-- no json -->
         <!-- Customer sample: 2023-06-19 06:49:03 ERROR o.s.b.SpringApplication:821 ... -->
         <encoder>
@@ -29,7 +24,8 @@
     </appender>
 
     <root level="INFO">
-        <appender-ref ref="spring" />
+        <appender-ref ref="CONSOLE" />
+        <appender-ref ref="logstash-json" />
     </root>
 
 </configuration>
