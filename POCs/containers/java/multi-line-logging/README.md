@@ -58,9 +58,10 @@ easier to maintain and far more human friendly and readable.
 Rather than setting `--set agents.containers.agent.envDict.DD_LOGS_CONFIG_AUTO_MULTI_LINE_EXTRA_PATTERNS` via
 helm, and setting patterns across all containers, we assumed that customers would be ok using pod annotations in their
 charts, as described here: <https://docs.datadoghq.com/containers/kubernetes/log/?tab=kubernetes#configuration>
-    a. `--set agents.containers.agent.envDict.DD_LOGS_CONFIG_AUTO_MULTI_LINE_EXTRA_PATTERNS='(..@timestamp|\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2})'` will still work here, but it will apply to all containers, and we want to set additional annotations
-    to ensure the log has appropriate tags and is going through the correct pipeline
-        1. As described here:
+
+1. `--set agents.containers.agent.envDict.DD_LOGS_CONFIG_AUTO_MULTI_LINE_EXTRA_PATTERNS='(..@timestamp|\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2})'` will still work here, but it will apply to all containers, and we want to set additional annotations
+to ensure the log has appropriate tags and is going through the correct pipeline
+    a. As described here:
             - <https://docs.datadoghq.com/logs/log_collection/java/?tab=logback#configure-the-datadog-agent>
             - <https://docs.datadoghq.com/agent/logs/advanced_log_collection/?tab=configurationfile>)
 
