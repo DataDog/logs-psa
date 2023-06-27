@@ -8,9 +8,6 @@ from k8s, with containerized Datadog agent configured via helm.
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 **Table of Contents**
 
-- [Directory Structure](#directory-structure)
-  - [multiline-poc](#multiline-poc)
-  - [multiline-poc-json](#multiline-poc-json)
 - [Specfic Requirements](#specfic-requirements)
 - [Notes](#notes)
   - [Logback Config](#logback-config)
@@ -22,6 +19,7 @@ from k8s, with containerized Datadog agent configured via helm.
 - [Running locally](#running-locally)
 - [Triggering logs](#triggering-logs)
 - [Cleanup](#cleanup)
+- [Example output](#example-output)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
