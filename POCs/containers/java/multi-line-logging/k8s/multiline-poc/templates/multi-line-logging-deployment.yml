@@ -16,10 +16,7 @@ spec:
     matchLabels:
       app: multiline-poc
   strategy:
-    rollingUpdate:
-      maxUnavailable: 1
-      maxSurge: 2
-    type: RollingUpdate
+    type: Recreate
   template:
     metadata:
       name: multiline-poc
