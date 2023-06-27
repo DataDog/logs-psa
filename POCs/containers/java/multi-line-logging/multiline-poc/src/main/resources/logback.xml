@@ -1,31 +1,35 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
-    <!-- no json - no encoder -->
-    <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
-        <target>System.out</target>
-        <!-- No need to define an encoder, the default should look like this -->
-        <!-- Customer sample: 2023-06-19 06:49:03 ERROR o.s.b.SpringApplication:821 ... -->
-    </appender>
-
     <!-- this shows off how to log in JSON; datadog recommendation -->
-    <appender name="console-stderr-json" class="ch.qos.logback.core.ConsoleAppender">
-        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
-            <level>ERROR</level>
-        </filter>
+    <appender name="logstash-json" class="ch.qos.logback.core.ConsoleAppender">
         <encoder class="net.logstash.logback.encoder.LogstashEncoder">
             <timestampPattern>yyyy-MM-dd HH:mm:ss</timestampPattern>
         </encoder>
-        <target>System.err</target>
+    </appender>
+
+    <filter class="ch.qos.logback.core.filter.EvaluatorFilter">
+        <evaluator> <!-- defaults to type ch.qos.logback.classic.boolex.JaninoEventEvaluator -->
+            <expression>logger.equals("com.kelner.multiline.springboot.JsonController")</expression>
+        </evaluator>
+        <OnMismatch>NEUTRAL</OnMismatch>
+        <OnMatch>DENY</OnMatch>
+    </filter>
+
+    <!-- Double log errors as JSON; inherits `console` from the root logger -->
+    <logger name="json-controller" level="ERROR" additivity="false">
+        <appender-ref ref="logstash-json" />
+    </logger>
+
+    <appender name="spring" class="ch.qos.logback.core.ConsoleAppender">
+        <!-- no json -->
+        <!-- Customer sample: 2023-06-19 06:49:03 ERROR o.s.b.SpringApplication:821 ... -->
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} %-5level %logger{36}:%line - %msg%n</pattern>
+        </encoder>
     </appender>
 
     <root level="INFO">
-        <!-- JSON logging -->
-        <appender-ref ref="console-json" />
+        <appender-ref ref="spring" />
     </root>
-
-    <!-- Double log errors as JSON; inherits `console` from the root logger -->
-    <logger name="org.springframework" level="INFO">
-        <appender-ref ref="console-stderr-json" />
-    </logger>
 
 </configuration>
