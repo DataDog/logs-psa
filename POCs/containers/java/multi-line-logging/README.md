@@ -68,7 +68,7 @@ As described here:
 1. <https://docs.datadoghq.com/logs/log_collection/java/?tab=logback#configure-the-datadog-agent>
 2. <https://docs.datadoghq.com/agent/logs/advanced_log_collection/?tab=configurationfile>
 
-For the pattern used, see: [`multiline-poc/src/main/resources/logback.xml`](./multiline-poc/src/main/resources/logback.xml)
+For the pattern used, see: [`k8s/multiline-poc/templates/multi-line-logging-deployment.yml`](./k8s/multiline-poc/templates/multi-line-logging-deployment.yml)
 
 ## Datadog docs for reference
 
