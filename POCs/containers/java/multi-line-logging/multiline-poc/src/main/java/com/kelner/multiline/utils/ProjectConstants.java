@@ -1,4 +1,4 @@
-package com.kelner.multiline.springboot.utils;
+package com.kelner.multiline.utils;
 
 import java.util.Locale;
 

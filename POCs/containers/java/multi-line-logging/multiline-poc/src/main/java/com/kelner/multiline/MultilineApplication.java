@@ -1,4 +1,4 @@
-package com.kelner.multiline.springboot;
+package com.kelner.multiline;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

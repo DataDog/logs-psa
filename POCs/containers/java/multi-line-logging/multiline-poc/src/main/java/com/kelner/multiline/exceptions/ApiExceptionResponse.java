@@ -1,4 +1,4 @@
-package com.kelner.multiline.springboot.exceptions;
+package com.kelner.multiline.exceptions;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

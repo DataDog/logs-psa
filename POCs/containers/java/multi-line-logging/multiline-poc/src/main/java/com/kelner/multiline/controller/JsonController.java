@@ -1,4 +1,4 @@
-package com.kelner.multiline.springboot.controller;
+package com.kelner.multiline.controller;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -7,15 +7,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
 
 @RestController
-public class MainController {
+public class JsonController {
 
-    @GetMapping("/")
-    public ResponseEntity<String> index() {
-
-        return ResponseEntity.ok("Hello World");
-    }
-
-    @GetMapping("/exception")
+    @GetMapping("/json")
     public ResponseEntity<String> throwException() {
 
         int x = 1 / 0;
