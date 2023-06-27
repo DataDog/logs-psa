@@ -63,7 +63,7 @@ charts, as described here: <https://docs.datadoghq.com/containers/kubernetes/log
 to ensure the log has appropriate tags and is going through the correct pipeline
     1. As described here:
         1. <https://docs.datadoghq.com/logs/log_collection/java/?tab=logback#configure-the-datadog-agent>
-        2. <https://docs.datadoghq.com/agent/logs/advanced_log_collection/?tab=configurationfile>)
+        2. <https://docs.datadoghq.com/agent/logs/advanced_log_collection/?tab=configurationfile>
 
 ## Datadog docs for reference
 
@@ -86,6 +86,10 @@ to ensure the log has appropriate tags and is going through the correct pipeline
 
 ## Build & Push
 
+Fast hacky script (does all of the below): `bash ./build-deploy.sh`
+
+Step by step:
+
 - `mvn clean install -f ./multiline-poc/pom.xml`
 - `fakever=$(date +%s)`
 - `docker build . -t multiline-poc:$fakever`
@@ -96,6 +100,7 @@ to ensure the log has appropriate tags and is going through the correct pipeline
 - `helm repo add datadog https://helm.datadoghq.com`
 - `helm repo update`
 - Customer's preferred method of deploy/configure (rather than yaml):
+
         helm upgrade \
         -n default \
         -i datadog-agent \
@@ -105,31 +110,36 @@ to ensure the log has appropriate tags and is going through the correct pipeline
         --set datadog.logs.containerCollectAll=true \
         --set datadog.logs.autoMultiLineDetection=true \
         datadog/datadog
-- Deploy our java app
+  - where `<REPLACE_WITH_YOUR_ENV_VAR_OR_STRING>` is your DD API key
+- Deploy java app
+
         helm upgrade multiline-poc ./k8s/multiline-poc/ --install \
         -f ./k8s/multiline-poc/values.yaml \
         --set-string image.tag="$fakever"
-- `minikube tunnel`
-- Open <http://127.0.0.1:8080/>
 
 ## Triggering logs
 
-Open <http://127.0.0.1:8080/exception> -- exceptions will log both normally and as JSON for comparison
+- In a new terminal window: `minikube tunnel`
+- In a browser open <http://127.0.0.1:8080/exception>
+
+Exceptions will log both normally (plaintext) and as JSON for comparison
 
 ## View your logs in Datadog
 
 <https://app.datadoghq.com/logs?query=service%3Amultiline-poc>
 
-## See your logs before they get shipped
+## See your logs before they get shipped to Datadog
 
 `k logs --tail=100 -f deployment/multiline-poc`
 
-## Cleanup
+## Cleanup local environment
 
 - `minikube stop`
 - `minikube delete`
 
-### Screen-recording: triggering logs and comparing JSON / Non-JSON logs
+### Screen-recording
+
+Triggering logs and comparing JSON / Non-JSON logs:
 
 <https://a.cl.ly/4guXJRpn>
 
