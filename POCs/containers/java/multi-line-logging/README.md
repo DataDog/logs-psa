@@ -59,16 +59,19 @@ Rather than setting `--set agents.containers.agent.envDict.DD_LOGS_CONFIG_AUTO_M
 helm, and setting patterns across all containers, we assumed that customers would be ok using pod annotations in their
 charts, as described here: <https://docs.datadoghq.com/containers/kubernetes/log/?tab=kubernetes#configuration>
 
-1. `--set agents.containers.agent.envDict.DD_LOGS_CONFIG_AUTO_MULTI_LINE_EXTRA_PATTERNS='(..@timestamp|\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2})'` will still work here, but it will apply to all containers, and we want to set additional annotations
+`--set agents.containers.agent.envDict.DD_LOGS_CONFIG_AUTO_MULTI_LINE_EXTRA_PATTERNS='(..@timestamp|\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2})'` will still work here, but it will apply to all containers, and we want to set additional annotations
 to ensure the log has appropriate tags and is going through the correct pipeline
-    1. As described here:
-        1. <https://docs.datadoghq.com/logs/log_collection/java/?tab=logback#configure-the-datadog-agent>
-        2. <https://docs.datadoghq.com/agent/logs/advanced_log_collection/?tab=configurationfile>
+
+As described here:
+    1. <https://docs.datadoghq.com/logs/log_collection/java/?tab=logback#configure-the-datadog-agent>
+    2. <https://docs.datadoghq.com/agent/logs/advanced_log_collection/?tab=configurationfile>
+
+For the pattern used, see: [`POCs/containers/java/multi-line-logging/multiline-poc/src/main/resources/logback.xml`](POCs/containers/java/multi-line-logging/multiline-poc/src/main/resources/logback.xml)
 
 ## Datadog docs for reference
 
-- <https://docs.datadoghq.com/agent/logs/advanced_log_collection/?tab=configurationfile#multi-line-aggregation>
 - <https://docs.datadoghq.com/logs/log_collection/java/?tab=logback>
+- <https://docs.datadoghq.com/agent/logs/advanced_log_collection/?tab=configurationfile#multi-line-aggregation>
 - <https://www.datadoghq.com/blog/multiline-logging-guide/>
 
 ## Prerequestites
