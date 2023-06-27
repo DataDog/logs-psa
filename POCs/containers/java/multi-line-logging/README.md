@@ -9,7 +9,7 @@ from k8s, with containerized Datadog agent configured via helm.
 **Table of Contents**
 
 - [Specfic Requirements](#specfic-requirements)
-- [Notes](#notes)
+- [NOTEWORTHY](#noteworthy)
   - [Logback Config](#logback-config)
   - [Helm Values vs Pod Annotations](#helm-values-vs-pod-annotations)
 - [Datadog docs for reference](#datadog-docs-for-reference)
