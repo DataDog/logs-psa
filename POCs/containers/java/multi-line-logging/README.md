@@ -64,8 +64,9 @@ charts, as described here: <https://docs.datadoghq.com/containers/kubernetes/log
 to ensure the log has appropriate tags and is going through the correct pipeline
 
 As described here:
-    1. <https://docs.datadoghq.com/logs/log_collection/java/?tab=logback#configure-the-datadog-agent>
-    2. <https://docs.datadoghq.com/agent/logs/advanced_log_collection/?tab=configurationfile>
+
+1. <https://docs.datadoghq.com/logs/log_collection/java/?tab=logback#configure-the-datadog-agent>
+2. <https://docs.datadoghq.com/agent/logs/advanced_log_collection/?tab=configurationfile>
 
 For the pattern used, see: [`POCs/containers/java/multi-line-logging/multiline-poc/src/main/resources/logback.xml`](POCs/containers/java/multi-line-logging/multiline-poc/src/main/resources/logback.xml)
 
