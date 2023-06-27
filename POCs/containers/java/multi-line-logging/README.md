@@ -153,6 +153,7 @@ Triggering logs and comparing JSON / Non-JSON logs:
 Screenshot (same as inline below): <https://a.cl.ly/nOuLnQxQ>
 
 Example in Datadog:
+
 ![Not JSON](screens/not-json.png)
 
 Raw (from container):
@@ -219,6 +220,8 @@ java.lang.ArithmeticException: / by zero
 ### JSON
 
 Screenshot (same as inline below): <https://a.cl.ly/6quJPwlX>
+
+Example in Datadog:
 
 ![JSON](screens/json.png)
 
