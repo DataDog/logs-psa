@@ -28,6 +28,11 @@ spec:
         tags.datadoghq.com/version: "1.0.0"
       annotations:
         rollme: {{ randAlphaNum 5 | quote }}
+        # Customer sample: 2023-06-19 06:49:03 ERROR o.s.b.SpringApplication:821 ...
+        # Original Pattern: `\\d{4}-\\d{2}-\\d{2}\s\\d{2}:\\d{2}:\\d{2}`
+        #
+        # https://docs.datadoghq.com/logs/log_configuration/pipelines/?tab=date#date-attribute
+        # `@timestamp` is not necessary, but showing how it can be used
         ad.datadoghq.com/multiline-poc.logs: |
           [
             {
