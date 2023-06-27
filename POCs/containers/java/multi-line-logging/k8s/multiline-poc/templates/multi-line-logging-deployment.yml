@@ -27,6 +27,7 @@ spec:
         tags.datadoghq.com/service: "multiline-poc"
         tags.datadoghq.com/version: "1.0.0"
       annotations:
+        rollme: {{ randAlphaNum 5 | quote }}
         ad.datadoghq.com/multiline-poc.logs: |
           [
             {
