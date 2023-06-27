@@ -13,18 +13,19 @@ from k8s, with containerized Datadog agent configured via helm.
   - [Logback Config](#logback-config)
   - [Helm Values vs Pod Annotations](#helm-values-vs-pod-annotations)
 - [Datadog docs for reference](#datadog-docs-for-reference)
-- [Prerequestites](#prerequestites)
-- [Setup test environment](#setup-test-environment)
-- [Build & Push](#build--push)
-- [Running locally](#running-locally)
-- [Triggering logs](#triggering-logs)
-- [View your logs in Datadog](#view-your-logs-in-datadog)
-- [See your logs before they get shipped to Datadog](#see-your-logs-before-they-get-shipped-to-datadog)
-- [Cleanup local environment](#cleanup-local-environment)
   - [Screen-recording](#screen-recording)
 - [Example output](#example-output)
   - [Not JSON](#not-json)
   - [JSON](#json)
+- [Run it yourself locally](#run-it-yourself-locally)
+  - [Prerequestites](#prerequestites)
+  - [Setup local environment](#setup-local-environment)
+  - [Build & Push](#build--push)
+  - [Running locally](#running-locally)
+  - [Triggering logs](#triggering-logs)
+  - [View your logs in Datadog](#view-your-logs-in-datadog)
+  - [See your logs before they get shipped to Datadog](#see-your-logs-before-they-get-shipped-to-datadog)
+  - [Cleanup local environment](#cleanup-local-environment)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -74,72 +75,6 @@ For the pattern used, see: [`POCs/containers/java/multi-line-logging/multiline-p
 - <https://docs.datadoghq.com/agent/logs/advanced_log_collection/?tab=configurationfile#multi-line-aggregation>
 - <https://www.datadoghq.com/blog/multiline-logging-guide/>
 
-## Prerequestites
-
-- openjdk 20.0.1 or equivilant
-- Maven
-- Helm
-- k8s cluster
-  - _the author is using minikube_
-
-## Setup test environment
-
-- `minikube start --driver=docker --memory 2048 --cpus 2 --nodes 2`
-- `minikube addons enable metrics-server`
-
-## Build & Push
-
-Fast hacky script (does all of the below): `bash ./build-deploy.sh`
-
-Step by step:
-
-- `mvn clean install -f ./multiline-poc/pom.xml`
-- `fakever=$(date +%s)`
-- `docker build . -t multiline-poc:$fakever`
-- `minikube image load multiline-poc:$fakever`
-
-## Running locally
-
-- `helm repo add datadog https://helm.datadoghq.com`
-- `helm repo update`
-- Customer's preferred method of deploy/configure (rather than yaml):
-
-        helm upgrade \
-        -n default \
-        -i datadog-agent \
-        --set datadog.apiKey=<REPLACE_WITH_YOUR_ENV_VAR_OR_STRING> \
-        --set datadog.kubelet.tlsVerify=false \
-        --set datadog.logs.enabled=true \
-        --set datadog.logs.containerCollectAll=true \
-        --set datadog.logs.autoMultiLineDetection=true \
-        datadog/datadog
-  - where `<REPLACE_WITH_YOUR_ENV_VAR_OR_STRING>` is your DD API key
-- Deploy java app
-
-        helm upgrade multiline-poc ./k8s/multiline-poc/ --install \
-        -f ./k8s/multiline-poc/values.yaml \
-        --set-string image.tag="$fakever"
-
-## Triggering logs
-
-- In a new terminal window: `minikube tunnel`
-- In a browser open <http://127.0.0.1:8080/exception>
-
-Exceptions will log both normally (plaintext) and as JSON for comparison
-
-## View your logs in Datadog
-
-<https://app.datadoghq.com/logs?query=service%3Amultiline-poc>
-
-## See your logs before they get shipped to Datadog
-
-`k logs --tail=100 -f deployment/multiline-poc`
-
-## Cleanup local environment
-
-- `minikube stop`
-- `minikube delete`
-
 ### Screen-recording
 
 Triggering logs and comparing JSON / Non-JSON logs:
@@ -150,7 +85,7 @@ Triggering logs and comparing JSON / Non-JSON logs:
 
 ### Not JSON
 
-Screenshot (same as inline below): <https://a.cl.ly/nOuLnQxQ>
+Screenshot (same as inline below): <https://a.cl.ly/2Nupj9Yp>
 
 Example in Datadog:
 
@@ -219,7 +154,7 @@ java.lang.ArithmeticException: / by zero
 
 ### JSON
 
-Screenshot (same as inline below): <https://a.cl.ly/6quJPwlX>
+Screenshot (same as inline below): <https://a.cl.ly/4guXJWQN>
 
 Example in Datadog:
 
@@ -237,3 +172,71 @@ Example in Datadog:
   "stack_trace": "java.lang.ArithmeticException: / by zero\n\tat com.kelner.multiline.controller.MainController.throwException(MainController.java:21)\n\tat java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)\n\tat java.base/java.lang.reflect.Method.invoke(Method.java:580)\n\tat org.springframework.web.method.support.InvocableHandlerMethod.doInvoke(InvocableHandlerMethod.java:207)\n\tat org.springframework.web.method.support.InvocableHandlerMethod.invokeForRequest(InvocableHandlerMethod.java:152)\n\tat org.springframework.web.servlet.mvc.method.annotation.ServletInvocableHandlerMethod.invokeAndHandle(ServletInvocableHandlerMethod.java:118)\n\tat org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.invokeHandlerMethod(RequestMappingHandlerAdapter.java:884)\n\tat org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.handleInternal(RequestMappingHandlerAdapter.java:797)\n\tat org.springframework.web.servlet.mvc.method.AbstractHandlerMethodAdapter.handle(AbstractHandlerMethodAdapter.java:87)\n\tat org.springframework.web.servlet.DispatcherServlet.doDispatch(DispatcherServlet.java:1081)\n\tat org.springframework.web.servlet.DispatcherServlet.doService(DispatcherServlet.java:974)\n\tat org.springframework.web.servlet.FrameworkServlet.processRequest(FrameworkServlet.java:1011)\n\tat org.springframework.web.servlet.FrameworkServlet.doGet(FrameworkServlet.java:903)\n\tat jakarta.servlet.http.HttpServlet.service(HttpServlet.java:564)\n\tat org.springframework.web.servlet.FrameworkServlet.service(FrameworkServlet.java:885)\n\tat jakarta.servlet.http.HttpServlet.service(HttpServlet.java:658)\n\tat org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:205)\n\tat org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:149)\n\tat org.apache.tomcat.websocket.server.WsFilter.doFilter(WsFilter.java:51)\n\tat org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:174)\n\tat org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:149)\n\tat org.springframework.web.filter.RequestContextFilter.doFilterInternal(RequestContextFilter.java:100)\n\tat org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)\n\tat org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:174)\n\tat org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:149)\n\tat org.springframework.web.filter.FormContentFilter.doFilterInternal(FormContentFilter.java:93)\n\tat org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)\n\tat org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:174)\n\tat org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:149)\n\tat org.springframework.web.filter.ServerHttpObservationFilter.doFilterInternal(ServerHttpObservationFilter.java:109)\n\tat org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)\n\tat org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:174)\n\tat org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:149)\n\tat org.springframework.web.filter.CharacterEncodingFilter.doFilterInternal(CharacterEncodingFilter.java:201)\n\tat org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)\n\tat org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:174)\n\tat org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:149)\n\tat org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:166)\n\tat org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:90)\n\tat org.apache.catalina.authenticator.AuthenticatorBase.invoke(AuthenticatorBase.java:482)\n\tat org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:115)\n\tat org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:93)\n\tat org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:74)\n\tat org.apache.catalina.valves.RemoteIpValve.invoke(RemoteIpValve.java:738)\n\tat org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:341)\n\tat org.apache.coyote.http11.Http11Processor.service(Http11Processor.java:391)\n\tat org.apache.coyote.AbstractProcessorLight.process(AbstractProcessorLight.java:63)\n\tat org.apache.coyote.AbstractProtocol$ConnectionHandler.process(AbstractProtocol.java:894)\n\tat org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:1741)\n\tat org.apache.tomcat.util.net.SocketProcessorBase.run(SocketProcessorBase.java:52)\n\tat org.apache.tomcat.util.threads.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1191)\n\tat org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:659)\n\tat org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:61)\n\tat java.base/java.lang.Thread.run(Thread.java:1570)\n"
 }
 ```
+
+## Run it yourself locally
+
+### Prerequestites
+
+- openjdk 20.0.1 or equivilant
+- Maven
+- Helm
+- k8s cluster
+  - _the author is using minikube_
+
+### Setup local environment
+
+- `minikube start --driver=docker --memory 2048 --cpus 2 --nodes 2`
+- `minikube addons enable metrics-server`
+
+### Build & Push
+
+Fast hacky script (does all of the below): `bash ./build-deploy.sh`
+
+Step by step:
+
+- `mvn clean install -f ./multiline-poc/pom.xml`
+- `fakever=$(date +%s)`
+- `docker build . -t multiline-poc:$fakever`
+- `minikube image load multiline-poc:$fakever`
+
+### Running locally
+
+- `helm repo add datadog https://helm.datadoghq.com`
+- `helm repo update`
+- Customer's preferred method of deploy/configure (rather than yaml):
+
+        helm upgrade \
+        -n default \
+        -i datadog-agent \
+        --set datadog.apiKey=<REPLACE_WITH_YOUR_ENV_VAR_OR_STRING> \
+        --set datadog.kubelet.tlsVerify=false \
+        --set datadog.logs.enabled=true \
+        --set datadog.logs.containerCollectAll=true \
+        --set datadog.logs.autoMultiLineDetection=true \
+        datadog/datadog
+  - where `<REPLACE_WITH_YOUR_ENV_VAR_OR_STRING>` is your DD API key
+- Deploy java app
+
+        helm upgrade multiline-poc ./k8s/multiline-poc/ --install \
+        -f ./k8s/multiline-poc/values.yaml \
+        --set-string image.tag="$fakever"
+
+### Triggering logs
+
+- In a new terminal window: `minikube tunnel`
+- In a browser open <http://127.0.0.1:8080/exception>
+
+Exceptions will log both normally (plaintext) and as JSON for comparison
+
+### View your logs in Datadog
+
+<https://app.datadoghq.com/logs?query=service%3Amultiline-poc>
+
+### See your logs before they get shipped to Datadog
+
+`k logs --tail=100 -f deployment/multiline-poc`
+
+### Cleanup local environment
+
+- `minikube stop`
+- `minikube delete`
