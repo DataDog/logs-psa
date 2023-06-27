@@ -33,21 +33,24 @@ spec:
         #
         # https://docs.datadoghq.com/logs/log_configuration/pipelines/?tab=date#date-attribute
         # `@timestamp` is not necessary, but showing how it can be used
-        ad.datadoghq.com/multiline-poc.logs: |
-          [
-            {
-              "source": "java",
-              "service": "multiline-poc",
-              "log_processing_rules":
-                [
-                  {
-                    "type": "multi_line",
-                    "name": "log_start_with_date",
-                    "pattern" : "(..@timestamp|\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2})"
-                  }
-                ]
-            }
-          ]
+        #
+        # COMMENT OUT IF YOU WANT TO TEST: --set agents.containers.agent.envDict.DD_LOGS_CONFIG_AUTO_MULTI_LINE_EXTRA_PATTERNS='(..@timestamp|\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2})
+        #
+        # ad.datadoghq.com/multiline-poc.logs: |
+        #   [
+        #     {
+        #       "source": "java",
+        #       "service": "multiline-poc",
+        #       "log_processing_rules":
+        #         [
+        #           {
+        #             "type": "multi_line",
+        #             "name": "log_start_with_date",
+        #             "pattern" : "(..@timestamp|\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2})"
+        #           }
+        #         ]
+        #     }
+        #   ]
     spec:
       restartPolicy: Always
       containers:
