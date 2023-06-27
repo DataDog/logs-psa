@@ -18,6 +18,8 @@ from k8s, with containerized Datadog agent configured via helm.
 - [Build & Push](#build--push)
 - [Running locally](#running-locally)
 - [Triggering logs](#triggering-logs)
+- [View your logs in Datadog](#view-your-logs-in-datadog)
+- [See your logs before they get shipped](#see-your-logs-before-they-get-shipped)
 - [Cleanup](#cleanup)
 - [Example output](#example-output)
 
