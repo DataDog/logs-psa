@@ -1,1 +1,0 @@
-Rule1 %{date("MMM dd HH:mm:ss"):timestamp} %{word:host} %{notSpace:app}:\s+%{data::json}
