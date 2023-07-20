@@ -60,4 +60,36 @@ I have not tested setting it up and then chaging the filter after, but I believe
 
 <https://app.datadoghq.com/logs/pipelines/historical-views>
 
-You MAY have to use `*` and no be specific due to the way the fake Archive is setup within Datadog. I tried using `service:chargeback` which is not part of the platform archive filter and it didn't work.
+NOT WORKING ATM -- see notes below
+
+## Raw notes / troubleshooting
+
+### July 19 2023 EOD PT
+
+Raw notes from Slack msg I sent to Ari and Wei Chiang:
+
+> Chris Kelner :heads-down:  6:25 PM
+> got it configured with AWS, but same issue, none of the OP logs will rehydrate.
+> Logs are there: <https://a.cl.ly/2Nup7yQr>
+> Archives are setup: <https://a.cl.ly/Jrue86re>
+> No logs other than the ones that match the filter on the DD Archive in the platform (not from OP)
+> <https://a.cl.ly/7KuWkLKl>
+> <https://a.cl.ly/KouE1rPW>
+> But we expect to see these: <https://a.cl.ly/eDuE7Bq8>
+> I did find this interesting...
+
+```
+gunzip ~/Downloads/archive_52e97e12-89ea-4b9b-9f20-d9b8b193f1aa.json.gz
+gunzip: /Users/chris.kelner/Downloads/archive_52e97e12-89ea-4b9b-9f20-d9b8b193f1aa.json.gz: not in gzip format
+```
+
+> And if I rename and drop the .gz I can open it as .json... so something fishy there?! Maybe a clue?
+> And what is inside is what we expect:
+
+```
+{"_id":"AYlwxygu2byqvCYQqjgACcYd","attributes":{"ddsource":"rsyslog","ddtags":"filename:syslog,opw_aggregator:kelnerhax,sender:observability_pipelines_worker","hostname":"kelnerhax.c.datadog-sandbox.internal","source_type":"datadog_agent"},"date":"2023-07-20T00:50:37.760Z","message":"Jul 20 00:35:06 kelnerhax sds-logs.py: {\"source\": \"python\", \"tags\": \"env:prod, version:5.1, kelner:hax\", \"hostname\": \"i-02a4fd78aa35b\", \"message\": \"transferring money to bank account: GB65EXBT46039777534172\", \"service\": \"charge-back\"}","service":""}
+{"_id":"AYlwxygu2byqvCYQqjgACcYe","attributes":{"ddsource":"rsyslog","ddtags":"filename:syslog,opw_aggregator:kelnerhax,sender:observability_pipelines_worker","hostname":"kelnerhax.c.datadog-sandbox.internal","source_type":"datadog_agent"},"date":"2023-07-20T00:50:37.760Z","message":"Jul 20 00:35:06 kelnerhax sds-logs.py: {\"source\": \"python\", \"tags\": \"env:prod, version:5.1, kelner:hax\", \"hostname\": \"i-02a4fd78aa35b\", \"message\": \"querying credit score for SSN: 075-40-1078\", \"service\": \"charge-back\"}","service":""}
+{"_id":"AYlwxygu2byqvCYQqjgACcYf","attributes":{"ddsource":"rsyslog","ddtags":"filename:syslog,opw_aggregator:kelnerhax,sender:observability_pipelines_worker","hostname":"kelnerhax.c.datadog-sandbox.internal","source_type":"datadog_agent"},"date":"2023-07-20T00:50:37.760Z","message":"Jul 20 00:35:06 kelnerhax sds-logs.py: {\"source\": \"python\", \"tags\": \"env:prod, version:5.1, kelner:hax\", \"hostname\": \"i-02a4fd78aa35b\", \"message\": \"transferring money to bank account: GB05CQBW88345662986437\", \"service\": \"charge-back\"}","service":""}
+```
+
+> @Ari Adair (Vyvanse-Based Lifeform era) thoughts when you have a chance? Maybe there is some config I am missing in vector that is screwing up the gzip?
