@@ -1,4 +1,0 @@
-logs:
-  - type: file
-    path: "/var/log/syslog"
-    source: "rsyslog"
