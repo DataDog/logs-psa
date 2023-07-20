@@ -1,9 +1,7 @@
 # logs-psa
 
-examples, docs, POCs, demos, etc
+Examples, docs, POCs, demos, etc for Logs Product Solution Architecture
 
-## Works here-in
-
-### POCs
+## Proof of concepts
 
 - [Multi-line logging with java in containers with helm](./POCs/containers/java/multi-line-logging)
