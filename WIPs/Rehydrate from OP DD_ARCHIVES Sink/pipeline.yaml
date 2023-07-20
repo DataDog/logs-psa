@@ -73,6 +73,7 @@ sinks:
     bucket: kelnerhax-dd
     aws_s3:
       storage_class: "STANDARD"
+      region: "us-east-2"
       auth:
         secret_access_key: "${KEL_PERSONAL_AWS_SECRET_KEY}"
         access_key_id: "${KEL_PERSONAL_AWS_ACCESS_KEY}"
