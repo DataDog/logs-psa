@@ -1,15 +1,12 @@
 # SDS Logs + OP
 
-**WORK IN PROGRESS**
+Test for Singapore Airlines use case (SIA): <https://docs.google.com/presentation/d/1-Pycu8ZIAnddZ3WJ87Ol48juzDL_LuPTuZN5wSUy-jo/edit#slide=id.g1e4fba1a4d5_1_8>
 
-**FOR INTERNAL REFERENCE ONLY**
-
-Assumes debian
+**WORK IN PROGRESS** -- **INTERNAL REFERENCE ONLY**
 
 ## Agent and python script for logs
 
-**FOR TESTING PURPOSES ONLY**
-
+- Assumes debian VM of some kind
 - install the agent: <https://app.datadoghq.com/account/settings/agent/latest?platform=debian>
 - edit `/etc/datadog-agent/datadog.yaml`
   - set `logs_enabled: true`
@@ -40,27 +37,21 @@ Assumes debian
 
 Follow datadog docs for whichever flavor you are using: <<https://docs.datadoghq.com/logs/log_configuration/archives/?tab=awss3&site=us#configure-an-archive> (Note>: I started with GCP, but it didn't work)<https://docs.datadoghq.com/logs/log_configuration/archives/?tab=googlecloudstorage>)
 
-Be sure to actually filter on some very low volume logs that exist, otherwise the archive will never become active and rehyrdration WILL NOT WORK. You must also add the path of `/` unless you specified something different in your OP sink, if you specify nothing OP seems to use `/` by default, the two MUST match whatever you choose to do. See these screenshots:
-
-- <https://a.cl.ly/L1uv9pQd>
-- <https://a.cl.ly/wbuLQWPR>
-
-I have not tested setting it up and then chaging the filter after, but I believe it will get stuck in this same state after editing as it return to the _italizized_ text and hover text on edit.
+You can use a non-sensical query that returns zero logs (e.g. `source:idontexist`). You must add the path `/` unless you specified something different in your OP sink, if you specify nothing OP uses `/` by default, the two MUST match whatever you choose to do.
 
 ## Observability Pipelines
 
 - Follow <https://docs.datadoghq.com/observability_pipelines/setup/datadog/?tab=aptbasedlinux>
-  - A few additional commands that might be useful:
-    - `sudo touch /etc/default/observability-pipelines-worker`
-    - `sudo chmod 766 /etc/default/observability-pipelines-worker`
-    - copy contents (and modify as needed)
+  - `vector` mentioned for Agent yaml config, but latest is `observability_pipelines_worker`
+  - Use `pipeline.yaml` for your config
 - Follow <https://docs.datadoghq.com/observability_pipelines/setup/datadog/?tab=aptbasedlinux#connect-the-datadog-agent-to-the-observability-pipelines-worker>
+  - Is isn't explicitly called out, but you need to restart the agent
 
 ## Rehydrate
 
 <https://app.datadoghq.com/logs/pipelines/historical-views>
 
-NOT WORKING ATM -- see notes below
+NOT WORKING ATM - see notes below
 
 ## Raw notes / troubleshooting
 
@@ -92,4 +83,4 @@ gunzip: /Users/chris.kelner/Downloads/archive_52e97e12-89ea-4b9b-9f20-d9b8b193f1
 {"_id":"AYlwxygu2byqvCYQqjgACcYf","attributes":{"ddsource":"rsyslog","ddtags":"filename:syslog,opw_aggregator:kelnerhax,sender:observability_pipelines_worker","hostname":"kelnerhax.c.datadog-sandbox.internal","source_type":"datadog_agent"},"date":"2023-07-20T00:50:37.760Z","message":"Jul 20 00:35:06 kelnerhax sds-logs.py: {\"source\": \"python\", \"tags\": \"env:prod, version:5.1, kelner:hax\", \"hostname\": \"i-02a4fd78aa35b\", \"message\": \"transferring money to bank account: GB05CQBW88345662986437\", \"service\": \"charge-back\"}","service":""}
 ```
 
-> @Ari Adair (Vyvanse-Based Lifeform era) thoughts when you have a chance? Maybe there is some config I am missing in vector that is screwing up the gzip?
+> @Ari thoughts when you have a chance? Maybe there is some config I am missing in vector that is screwing up the gzip?
