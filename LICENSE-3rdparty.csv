@@ -1,0 +1,7 @@
+Component,Origin,License,Copyright
+Springboot,Apache-2.0,Copyright Missing
+Mapstruct,Apache-2.0,MAPSTRUCT SUBCOMPONENTS WITH DIFFERENT COPYRIGHT OWNERS
+Lombok,MIT,Copyright (C) 2009-2021 The Project Lombok Authors
+Apache Commons,Apache-2.0,Copyright Missing
+Logback,GNU Lesser General Public License version 2.1,Copyright (C) 1999-2015, QOS.ch
+Janino,Not clear,Copyright (c) 2001-2016, Arno Unkrig + Copyright (c) 2015-2016  TIBCO Software Inc.
