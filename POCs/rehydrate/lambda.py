@@ -1,5 +1,7 @@
 import json, urllib.parse, boto3, io, gzip, datetime
 
+s3 = boto3.client("s3")
+
 
 def gzip_str(string_):
     out = io.BytesIO()
@@ -7,9 +9,6 @@ def gzip_str(string_):
         fo.write(string_.encode())
     bytes_obj = out.getvalue()
     return bytes_obj
-
-
-s3 = boto3.client("s3")
 
 
 def lambda_handler(event, context):
