@@ -1,5 +1,16 @@
 # Rehydrate Proof of Concept
 
+## TODO (Kelner)
+
+- [ ] Write up clearer overview of how this works
+    - missing bits about sending logs to Datadog with `original_timestamp` field to have DD write them to an archive to then rehydrate them with original timestamps
+    - No discussion about extracting logs and formatting them
+    - No clear notes on pipeline processing
+- [ ] Write up Lambda configuration and setup - zero docs on how to do it from original source
+- [ ] Write up requirements for logs being sent for rehydration
+- [ ] Write up cost considerations of doing it (double charged)
+- [ ] Consider removing the lambda requirement, and lean on customers to find their own way to push logs to an S3 archive
+
 ## Disclaimer
 
 These projects are not a part of Datadog's subscription services and are provided for example purposes only. They are NOT guaranteed to be bug free and are not production quality. If you choose to use to adapt them for use in a production environment, you do so at your own risk.
@@ -89,7 +100,7 @@ While it is possible to use the same bucket, **it is better practice to use dist
 
 ## Configuration > AWS > Lambda Function / S3 Trigger
 
-tbd
+TBD (_Note from Kelner: isn't there in any original docs_)
 
 ## Datadog
 
