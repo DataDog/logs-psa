@@ -45,12 +45,12 @@ These projects are not a part of Datadog's subscription services and are provide
     - [Flowchat](#flowchat)
   - [Configuration > AWS > S3 Buckets](#configuration--aws--s3-buckets)
   - [Configuration > AWS > Lambda Function / S3 Trigger](#configuration--aws--lambda-function--s3-trigger)
-  - [Datadog](#datadog)
-    - [Log Archives](#log-archives)
-      - [Config Overview in UI](#config-overview-in-ui)
-      - [Archive Config](#archive-config)
-      - [Rehydrate Config](#rehydrate-config)
-    - [Pipelines](#pipelines)
+- [Datadog Setup](#datadog-setup)
+  - [Log Archives](#log-archives)
+    - [Config Overview in UI](#config-overview-in-ui)
+    - [Archive Config](#archive-config)
+    - [Rehydrate Config](#rehydrate-config)
+  - [Pipelines](#pipelines)
 - [Misc. findings](#misc-findings)
   - [Log Archives naming](#log-archives-naming)
 - [Extra Tooling](#extra-tooling)
@@ -237,9 +237,9 @@ Create an S3 trigger for your bucket with the `All object create events` for you
 ![add-trigger](images/lambda-trigger.png)
 ![event-types](images/event-types.png)
 
-## Datadog
+# Datadog Setup
 
-### Log Archives
+## Log Archives
 
 <https://docs.datadoghq.com/logs/log_configuration/archives/?tab=awss3>
 
@@ -248,19 +248,19 @@ Create an S3 trigger for your bucket with the `All object create events` for you
 | filter | `*`                        |   `-*`                        |
 | bucket | d1c7d0a8 (`source_bucket`) |   7c5fa03b (`target_bucket`)  |
 
-#### Config Overview in UI
+### Config Overview in UI
 
 ![flowchart](images/dd-logs-config-archives-0.png)
 
-#### Archive Config
+### Archive Config
 
 ![dd-logs-config-archives-1-archival](images/dd-logs-config-archives-1-archival.png)
 
-#### Rehydrate Config
+### Rehydrate Config
 
 ![dd-logs-config-archives-2-rehydration](images/dd-logs-config-archives-2-rehydration.png)
 
-### Pipelines
+## Pipelines
 
 If you have many pipelines set for ingestion in Datadog, **a good practice would be to somehow distinguish Live Logs from Historical Logs**.
 
