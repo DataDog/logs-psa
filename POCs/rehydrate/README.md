@@ -120,17 +120,12 @@ While it is possible to use the same bucket, **it is better practice to use dist
 
 ## Configuration > AWS > Lambda Function / S3 Trigger
 
-TBD (_Note from Kelner: isn't there in any original docs_)
+Create an S3 trigger for your bucket with the `All object create events` for your "Event Types".
+
+![add-trigger](images/lambda-trigger.png)
+![event-types](images/event-types.png)
 
 ## Datadog
-
-### Pipelines
-
-If you have many pipelines set for ingestion in Datadog, **a good practice would be to somehow distinguish Live Logs from Historical Logs**.
-
-This is **especially important if you are using the date_mapper filter**.
-
-This is because the lambda that will post-process logs will require specific attributes to exist in the JSON events to determine wether or not a specific log event should be processed.
 
 ### Log Archives
 
