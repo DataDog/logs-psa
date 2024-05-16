@@ -94,11 +94,9 @@ Should you require a log retention increase (say 6 months / 180 days for instanc
 - Custom Lambda writes processed & sorted log events to hourly archives in `target_bucket`
 - User uses Datadog Archives to rehydrate log archives from `target_bucket` now with accurate timestamp
 
-![flowchart](images/flowchart.png)
+### Flowchat
 
-# Lambda Python Code: lambda.py
-
-Note: A few things here are hard-coded (target bucket names, original_timestamp matched attribute) so minor changes are required to make it work in the target AWS account.
+![flowchart](images/lambda-flow.png)
 
 ## Configuration > AWS > S3 Buckets
 
