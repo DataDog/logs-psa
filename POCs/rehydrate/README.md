@@ -72,6 +72,37 @@ Under the scenes, rehydrating effectively creates a new index which obeys the cu
 Should you require a log retention increase (say 6 months / 180 days for instance), this should occur before rehydration as the resulting index can only retain rehydrated logs for as long as the contractual retention period at the time of rehydration.
 
 # Lambda Python Code
+## Two Methods
+
+Below are two methods in which you can restore logs to the Datadog platform. A brief description of the requirements, commonalities, and details of each is in the following two headings. Below this section you'll find top level headings for each.
+
+### Pre-requisites for each
+
+- You must write a script to pull your historical logs from some third-party location, such as Splunk, Elastic, Sumo, or blob storage such as S3.
+- You must format those logs in JSON
+- You must copy the original timestamp (usually `date` or `timestamp`) field to a new field on the log: `original_timestamp`
+- You must replace the `date`/`timestamp` field with the current timestamp
+- Then either write your logs to a DD compliant S3/GCP/Azure archive, or submit them to the Datadog API to be written to a bucket on your behalf via DD Archives
+  - For writing logs to a DD compliant archive see the section [DD Compliant Logs Archive](#dd-compliant-archive) under the `Manual Script` section.
+
+_There is more setup for the Lambda Function solution, it is detailed in the sections below_
+
+### Manual Script
+
+### Lambda Function
+
+[Lambda Method details](#lambda-method)
+
+In short your script submits logs to the DD API, is then written to an S3 bucket via DD Archives, then you rehydrate these logs into the DD platform under their original timestamp for querying.
+
+**NOTE**: This method does have flaws. While it makes it easier to get logs into a Datadog compliant blob store, it also incurs the following negative attributes:
+
+1. Double charged for logs in Datadog: Once for API Submission, Once for rehydration using original timestamp.
+2. You have logs in Datadog which may be confusing to users searching and troubleshooting. This method does not provide any tagging strategy or other mechanisms to help you differentiate between the two.
+  a. However, you can use a strategy of exclusion filters to prevent them from being indexed but will still go to the archive. Discussed in more detail in [Lambda Method details](#lambda-method) below.
+3. Focuses only on an AWS solution.
+4. Requires additional infrastructure setup.
+
 
 ## lambda.py: Noteworthy
 
@@ -170,110 +201,6 @@ Datadog is actually able to rehydrate archives using a static / generic archive 
 
 - The S3 path to the archive does reflect the log's timestamp ( _/dt=YYYYMMDD/hour=HH/archive.json.gz_ )
 - The `date` attribute does match the S3 path
-
-# Manual script to rehydrate: dd-rehydrate-past.py
-
-## Brief
-
-This is an early version of the lambda script that did not yet include the AWS Lambda event scaffolding (i.e. upon object creation in S3, AWS invokes Lambda with the newly-created S3 Object Path as the Lambda input).
-
-It recursively parses an entire bucket looking for matching archives to process with some super basic support for date filters.
-
-This allowed securing the mechanism and validating the viability of the whole processing while testing locally (all that’s needed is S3 Read/Write access IAM authorisation really).
-
-It is still useful now for the same reason, just validating the process without having to go through the whole S3 <> Lambda setup.
-
-## Logic flow
-
-- Parse `source_bucket` for log events archives matching `.*/archive_.*.json.gz`
-  - Optionally, restrict to `YYYYMMDD` / `HH`
-- Parse log archives looking for `JSON` log events
-- Process log events by updating `date` with `original_timestamp`
-- Write processed & sorted log events to hourly archives in `target_bucket`
-
-## Basic Usage
-
-`python3 dd-rehydrate-past.py source_bucket target_bucket`
-
-## Available Options
-
-| option          | description           | required |
-|-----------------|-----------------------|----------|
-| `source_bucket` | _bucket to read from_ | **Y**    |
-| `target_bucket` | _bucket to write to_  | **Y**    |
-| `YYYYMMDD`      | _filter by day_       |   N      |
-| `HH`            | _filter by hour_      |   N      |
-
-## Advanced Usage
-
-### Filtered by day
-
-`python3 dd-rehydrate-past.py source_bucket target_bucket YYYYMMDD`
-
-### Filtered by day & hour
-
-`python3 dd-rehydrate-past.py source_bucket target_bucket YYYYMMDD HH`
-
-### Filtered using RegEx
-
-`python3 dd-rehydrate-past.py source_bucket target_bucket YYYY.*`
-
-### Debug Output
-
-`DEBUG=true python3 dd-rehydrate-past.py source_bucket target_bucket`
-
-- All **DEBUG** information is gets written **to stderr**
-- **stdout** only **returns JSON**
-
-## Examples
-
-### Example 1
-
-```bash
-DEBUG=true python3 dd-rehydrate-past.py d1c7d0a8 7c5fa03b 20200714 09
- TOTAL OBJECTS : 2
- READ s3://d1c7d0a8/dt=20200714/hour=09/archive_090520.5947.y7A1F0KAQa-xDePWJH757A.json.gz
- TEXT LINES COUNT : 1
- READ s3://d1c7d0a8/dt=20200714/hour=09/archive_090523.7324.IO5bcdvcRIKMHZEV7q0yDw.json.gz
- TEXT LINES COUNT : 1
- PROCESSED LINES COUNT : 2
- CREATING s3://7c5fa03b/dt=20200115/hour=09/archive.json.gz
- {"_id": "AXNMkkGJ2h5H-KmRnQAA", "date": "2020-01-15T09:05:19.000Z", "service": "checkout", "host": "sesame-angles", "message": "Consonant Anteater Zoning", "status": "info", "source": "nginx", "attributes": {"env": "dev", "duration": "1.9793", "hostname": "sesame-angles", "provider": "azure", "service": "checkout", "id": "9a392359", "region": "eu-east-1", "operation": "update"}}
- {"_id": "AXNMkkiLncRhsC1IjQAA", "date": "2020-01-15T09:05:21.000Z", "service": "checkout", "host": "devotion-scope", "message": "Gout Blatantly Unify", "status": "info", "source": "postgresql", "attributes": {"env": "int", "duration": 1170800.0, "hostname": "devotion-scope", "provider": "gcp", "service": "checkout", "id": "493a8c71", "region": "eu-east-1", "operation": "read"}}
-```
-
-### Example 2
-
-```bash
-DEBUG=true python3 dd-rehydrate-past.py d1c7d0a8 7c5fa03b 20200714 10
-
- TOTAL OBJECTS : 0
- PROCESSED LINES COUNT : 0
-```
-
-## Sample Processed Log Event
-
-```json
- {
-   "*id": "AXNMi2FNaGp-*-GTSYAA",
-   "date": "2020-01-15T08:57:48.000Z",
-   "service": "payment",
-   "host": "landfall-dehydrate",
-   "message": "Nectar Snare Psychic",
-   "status": "info",
-   "source": "redis",
-   "attributes": {
-     "env": "dev",
-     "duration": "2.13628",
-     "hostname": "landfall-dehydrate",
-     "provider": "ovh",
-     "service": "payment",
-     "id": "e2bb09df",
-     "region": "eu-west-1",
-     "operation": "write"
-   }
- }
-```
 
 ## Extra Tooling
 
