@@ -193,7 +193,7 @@ DEBUG=true python3 dd-rehydrate-past.py d1c7d0a8 7c5fa03b 20200714 09
 
 ## Next Steps
 
-See XXX
+See [Datadog Setup](#datadog-setup) then see [DD Rehydration](#dd-rehydration).
 
 # Lambda Function
 
@@ -273,13 +273,22 @@ Create an S3 trigger for your bucket with the `All object create events` for you
 
 ## Next steps
 
-See [Datadog Setup](#datadog-setup)
+See [Datadog Setup](#datadog-setup) then see [DD Rehydration](#dd-rehydration).
 
 # Datadog Setup
 
 ## Log Archives
 
 <https://docs.datadoghq.com/logs/log_configuration/archives/?tab=awss3>
+
+If using the manual method, you only need one archive (`rehydration` below) that Datadog Archives Rehydration will pull from. It uses a filter that will never match any logs (`-*`).
+
+| config | rehydration                   |
+|--------|-------------------------------|
+| filter | `-*`                          |
+| bucket | 7c5fa03b (`target_bucket`)    |
+
+If using the Lambda method, you need two DD archives, one that the Datadog API writes logs to and the Lambda function reads from (`archival` below), and second that you use for DD rehydration (`rehydration` below) which uses a filter that will never match any logs (`-*`).
 
 | config | archival                   | rehydration                   |
 |--------|----------------------------|-------------------------------|
@@ -305,6 +314,12 @@ If you have many pipelines set for ingestion in Datadog, **a good practice would
 This is **especially important if you are using the date_mapper filter**.
 
 This is because the lambda that will post-process logs will require specific attributes to exist in the JSON events to determine whether or not a specific log event should be processed.
+
+# DD Rehydration
+
+Finally you can rehydrate your logs using your DD Archive `target_bucket` (7c5fa03b - the one with the `-*` filter). Simply point your rehydration at your bucket and select your date range. Note that rehydrations can only be so large, so you will have to batch your rehydrations to completely cover larger volumes and wider date ranges.
+
+![dd-rehydration](images/rehydrate-dd.png)
 
 # Misc. findings
 
