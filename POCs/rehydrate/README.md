@@ -65,7 +65,7 @@ Under the scenes, rehydrating effectively creates a new index which obeys the cu
 
 Should you require a log retention increase (say 6 months / 180 days for instance), this should occur before rehydration as the resulting index can only retain rehydrated logs for as long as the contractual retention period at the time of rehydration.
 
-## Process Overview
+# Lambda Python Code
 
 - Datadog creates log archives and writes them to `source_bucket`
 - Custom Lambda gets triggered (invoked) for each Log Archive written by Datadog in `source_bucket`
