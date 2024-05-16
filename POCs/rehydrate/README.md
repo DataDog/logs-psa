@@ -268,9 +268,9 @@ This is **especially important if you are using the date_mapper filter**.
 
 This is because the lambda that will post-process logs will require specific attributes to exist in the JSON events to determine whether or not a specific log event should be processed.
 
-## Misc. findings
+# Misc. findings
 
-### Log Archives naming
+## Log Archives naming
 
 Datadog is actually able to rehydrate archives using a static / generic archive name such as `archive.json.gz`, providing:
 
