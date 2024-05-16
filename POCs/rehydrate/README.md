@@ -144,9 +144,17 @@ Create an S3 trigger for your bucket with the `All object create events` for you
 
 ![dd-logs-config-archives-1-archival](images/dd-logs-config-archives-1-archival.png)
 
-### Rehydrate Config
+#### Rehydrate Config
 
 ![dd-logs-config-archives-2-rehydration](images/dd-logs-config-archives-2-rehydration.png)
+
+### Pipelines
+
+If you have many pipelines set for ingestion in Datadog, **a good practice would be to somehow distinguish Live Logs from Historical Logs**.
+
+This is **especially important if you are using the date_mapper filter**.
+
+This is because the lambda that will post-process logs will require specific attributes to exist in the JSON events to determine whether or not a specific log event should be processed.
 
 ## Misc. findings
 
