@@ -96,7 +96,7 @@ _There is more setup for the Lambda Function solution, it is detailed in the sec
 
 [Lambda Function details](#lambda-function)
 
-In short your script submits logs to the DD API, is then written to an S3 bucket via DD Archives, then you rehydrate these logs into the DD platform under their original timestamp for querying.
+In short a script that you've (the customer) has written submits logs to the DD API with todays date as the official timestamp while also including a `original_timestamp` field, that is then written to an S3 bucket via DD Archives (DD SaaS platform functionality), then you rehydrate these logs into the DD platform under their original timestamp for querying.
 
 **NOTE**: This method does have flaws. While it makes it easier to get logs into a Datadog compliant blob store, it also incurs some negatives, see the details section for more info.
 
