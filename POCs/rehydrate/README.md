@@ -87,15 +87,15 @@ Below are two methods in which you can restore logs to the Datadog platform. A b
 
 _There is more setup for the Lambda Function solution, it is detailed in the sections below_
 
-### Manual Script
+### Manual Method
 
-### Lambda Function
+### Lambda Method
 
-[Lambda Method details](#lambda-method)
+[Lambda Function details](#lambda-function)
 
 In short your script submits logs to the DD API, is then written to an S3 bucket via DD Archives, then you rehydrate these logs into the DD platform under their original timestamp for querying.
 
-**NOTE**: This method does have flaws. While it makes it easier to get logs into a Datadog compliant blob store, it also incurs the following negative attributes:
+**NOTE**: This method does have flaws. While it makes it easier to get logs into a Datadog compliant blob store, it also incurs some negatives, see the details section for more info.
 
 1. Double charged for logs in Datadog: Once for API Submission, Once for rehydration using original timestamp.
 2. You have logs in Datadog which may be confusing to users searching and troubleshooting. This method does not provide any tagging strategy or other mechanisms to help you differentiate between the two.
