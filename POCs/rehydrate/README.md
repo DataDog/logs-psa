@@ -277,9 +277,9 @@ Datadog is actually able to rehydrate archives using a static / generic archive 
 - The S3 path to the archive does reflect the log's timestamp ( _/dt=YYYYMMDD/hour=HH/archive.json.gz_ )
 - The `date` attribute does match the S3 path
 
-## Extra Tooling
+# Extra Tooling
 
-### Dummy Log Event Generator
+## Dummy Log Event Generator
 
 Ship dummy log event using DD API - can be used to test your archive setup, the manual script, or the lambda function method.
 
