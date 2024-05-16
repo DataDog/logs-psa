@@ -79,24 +79,13 @@ Should you require a log retention increase (say 6 months / 180 days for instanc
 
 Below are two methods in which you can restore logs to the Datadog platform. A brief description of the requirements, commonalities, and details of each is in the following two headings. Below this section you'll find top level headings for each.
 
-### Pre-requisites for each
-
-- You must write a script to pull your historical logs from some third-party location, such as Splunk, Elastic, Sumo, or blob storage such as S3.
-- You must format those logs in JSON
-- You must copy the original timestamp (usually `date` or `timestamp`) field to a new field on the log: `original_timestamp`
-- You must replace the `date`/`timestamp` field with the current timestamp
-- Then either write your logs to a DD compliant S3/GCP/Azure archive, or submit them to the Datadog API to be written to a bucket on your behalf via DD Archives
-  - For writing logs to a DD compliant archive see the section [DD Compliant Logs Archive](#dd-compliant-archive) under the `Manual Script` section.
-
-_There is more setup for the Lambda Function solution, it is detailed in the sections below_
-
 ### Manual Method
 
 ### Lambda Method
 
 [Lambda Function details](#lambda-function)
 
-In short a script that you've (the customer) has written submits logs to the DD API with todays date as the official timestamp while also including a `original_timestamp` field, that is then written to an S3 bucket via DD Archives (DD SaaS platform functionality), then you rehydrate these logs into the DD platform under their original timestamp for querying.
+In short a script that you've written submits logs to the DD API with todays date as the official timestamp while also including a `original_timestamp` field from your historical logs, that is then written to an S3 bucket via DD Archives (DD SaaS platform functionality), then you rehydrate these logs into the DD platform under their original timestamp for querying.
 
 **NOTE**: This method does have flaws. While it makes it easier to get logs into a Datadog compliant blob store, it also incurs some negatives, see the details section for more info.
 
@@ -182,6 +171,14 @@ DEBUG=true python3 dd-rehydrate-past.py d1c7d0a8 7c5fa03b 20200714 09
 ## lambda.py: Noteworthy
 
 `target_bucket` and `original_timestamp` here are hard-coded in the script, please update these with a bucket you've created to have logs written to, and if using another attribute than `original_timestamp` on the incoming log, please update the variable with the correct value.
+
+## Prerequisites
+
+- You must write a script to pull your historical logs from some third-party location, such as Splunk, Elastic, Sumo, or blob storage such as S3.
+- You must format those logs in JSON
+- You must copy the original timestamp (usually `date` or `timestamp`) field to a new field on the log: `original_timestamp`
+- You must replace the `date`/`timestamp` field with the current timestamp
+- Then submit those logs to the Datadog API
 
 ## Highlevel Lambda Setup & Flow Overview
 
