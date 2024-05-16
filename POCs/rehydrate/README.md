@@ -1,13 +1,5 @@
 # Rehydrate Old Logs [Proof of Concept]
 
-## TODO (Kelner)
-
-- [ ] Write up requirements for logs being sent for rehydration
-- [ ] Write up cost considerations of doing it (double charged)
-- [ ] Consider removing the lambda requirement, and lean on customers to find their own way to push logs to an S3 archive
-- [ ] Watch <https://drive.google.com/file/d/1kExUCiYFRmSmuXydCWs7Qi29i-xHHy8c/view> to see if there's details to be gleaned.
-- [ ] Go through steps of setup, capture the steps, make sure it works and there are no gaps
-
 ## Disclaimer
 
 These projects are not a part of Datadog's subscription services and are provided for example purposes only. They are NOT guaranteed to be bug free and are not production quality. If you choose to use to adapt them for use in a production environment, you do so at your own risk.
