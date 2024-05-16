@@ -92,7 +92,7 @@ Should you require a log retention increase (say 6 months / 180 days for instanc
 - Custom Lambda parses log archives looking for `JSON` log events
 - Custom Lambda processes log events by updating `date` with `original_timestamp`
 - Custom Lambda writes processed & sorted log events to hourly archives in `target_bucket`
-- Datadog Rehydrates log archives from `target_bucket`
+- User uses Datadog Archives to rehydrate log archives from `target_bucket` now with accurate timestamp
 
 ![flowchart](images/flowchart.png)
 
