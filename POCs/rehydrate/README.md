@@ -129,10 +129,12 @@ Create an S3 trigger for your bucket with the `All object create events` for you
 
 ### Log Archives
 
-| config | archival | rehydration |
-|--------|----------|-------------|
-| filter |    *     |    -*       |
-| bucket | d1c7d0a8 |   7c5fa03b  |
+<https://docs.datadoghq.com/logs/log_configuration/archives/?tab=awss3>
+
+| config | archival                   | rehydration                   |
+|--------|----------------------------|-------------------------------|
+| filter | `*`                        |   `-*`                        |
+| bucket | d1c7d0a8 (`source_bucket`) |   7c5fa03b (`target_bucket`)  |
 
 #### Config Overview in UI
 
