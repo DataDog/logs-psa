@@ -51,7 +51,7 @@ These projects are not a part of Datadog's subscription services and are provide
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
-# POC Overview
+# Overview
 
 ## Is this an official Datadog Solution?
 
