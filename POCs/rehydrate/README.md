@@ -2,15 +2,10 @@
 
 ## TODO (Kelner)
 
-- [ ] Write up clearer overview of how this works
-    - missing bits about sending logs to Datadog with `original_timestamp` field to have DD write them to an archive to then rehydrate them with original timestamps
-    - No discussion about extracting logs and formatting them
-    - No clear notes on pipeline processing
-- [ ] Write up Lambda configuration and setup - zero docs on how to do it from original source
 - [ ] Write up requirements for logs being sent for rehydration
 - [ ] Write up cost considerations of doing it (double charged)
 - [ ] Consider removing the lambda requirement, and lean on customers to find their own way to push logs to an S3 archive
-- [ ] Watch https://drive.google.com/file/d/1kExUCiYFRmSmuXydCWs7Qi29i-xHHy8c/view to see if there's details to be gleaned.
+- [ ] Watch <https://drive.google.com/file/d/1kExUCiYFRmSmuXydCWs7Qi29i-xHHy8c/view> to see if there's details to be gleaned.
 - [ ] Go through steps of setup, capture the steps, make sure it works and there are no gaps
 
 ## Disclaimer
