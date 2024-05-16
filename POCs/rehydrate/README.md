@@ -177,7 +177,7 @@ DEBUG=true python3 dd-rehydrate-past.py d1c7d0a8 7c5fa03b 20200714 09
 2. You have logs in Datadog which may be confusing to users searching and troubleshooting. This method does not provide any tagging strategy or other mechanisms to help you differentiate between the two.
   2a. However, you can use a strategy of exclusion filters to prevent them from being indexed but will still go to the archive. Discussed in more detail in [Lambda Method details](#lambda-method) below.
 3. Focuses only on an AWS solution.
-4. Requires additional infrastructure setup.
+4. Requires additional infrastructure setup for temporary ingest of a finite amount of historical logs.
 
 ## lambda.py: Noteworthy
 
