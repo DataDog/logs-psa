@@ -55,7 +55,7 @@ These projects are not a part of Datadog's subscription services and are provide
 
 ## Is this an official Datadog Solution?
 
-No. It is admittedly a “hack“ of our own solution which leverages the flexibility provided by AWS S3 & Lambda. The principle behind it is to “trick Datadog into thinking it is ReHydrating archives it previously created”.
+No. It is admittedly a “hack“ of our own solution. The principle behind it is to trick Datadog into thinking it is rehydrating archives it previously created, while actually rehydrating logs which
 
 The idea is to kickstart a prospect or customer into building their own solution to import historical logs from their former system into Datadog, hence the Proof-Of-Concept / non-official-solution disclaimers.
 
