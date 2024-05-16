@@ -67,8 +67,27 @@ Should you require a log retention increase (say 6 months / 180 days for instanc
 
 # Lambda Python Code
 
-- Datadog creates log archives and writes them to `source_bucket`
-- Custom Lambda gets triggered (invoked) for each Log Archive written by Datadog in `source_bucket`
+## lambda.py: Noteworthy
+
+`target_bucket` and `original_timestamp` here are hard-coded in the script, please update these with a bucket you've created to have logs written to, and if using another attribute than `original_timestamp` on the incoming log, please update the variable with the correct value.
+
+## Highlevel Lambda Setup & Flow Overview
+
+### Setup
+
+- User creates two buckets in their AWS account `source_bucket` and `target_bucket`
+  - Bucket names can be whatever you like, see the `Configuration > AWS > S3 Buckets` section for details
+- User creates Datadog log archives for `source_bucket` and `target_bucket`
+  - See the `Log Archives` section below for details
+- User writes a script to pull/scrape their historical logs from a given source, formats them as structured JSON (if not already JSON), copies the timestamp on the log into the field `original_timestamp`, then overwrites the standard `timestamp`/`date` field with the current timestamp, then submits the logs to the Datadog API
+  - User should not run this script UNTIL the lambda and Datadog archives are setup first
+- User installs `lambda.py` in their AWS account and sets up an S3 trigger for writes to `source_bucket`
+
+### Continual running process until all historical logs have been ingested
+
+- User runs their script to scrape/pull logs and submit to Datadog API
+- Dataodg Archives writes logs submitted to Datadog API to `source_bucket`
+- Custom Lambda gets triggered (invoked) for each log written by Datadog in `source_bucket`
 - Custom Lambda parses `source_bucket` for log events archives matching `.*/archive_.*.json.gz`
 - Custom Lambda parses log archives looking for `JSON` log events
 - Custom Lambda processes log events by updating `date` with `original_timestamp`
