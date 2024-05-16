@@ -75,11 +75,13 @@ Under the scenes, rehydrating effectively creates a new index which obeys the cu
 
 Should you require a log retention increase (say 6 months / 180 days for instance), this should occur before rehydration as the resulting index can only retain rehydrated logs for as long as the contractual retention period at the time of rehydration.
 
-## Two Methods
+## Options
 
 Below are two methods in which you can restore logs to the Datadog platform. A brief description of the requirements, commonalities, and details of each is in the following two headings. Below this section you'll find top level headings for each.
 
 ### Manual Method
+
+After you've written a script to pull your logs from your third-party source and send them to an S3 bucket in JSON format you can run [this script](#manual-script) to ingest those logs into a DD Compliant Archive. Then by using Datadog Archives + Datadog Archives Rehydration to bring the logs back into the platform, you can then query these logs with their original timestamp.
 
 ### Lambda Method
 
@@ -91,23 +93,49 @@ In short a script that you've written submits logs to the DD API with todays dat
 
 # Manual script
 
+## Negative Attributes of this method
+
+1. Script is currently dependent on AWS and S3, but could be updated for other Cloud Providers without too much trouble.
+2. May require multiple runs
+
+## Prerequisites
+
+- You must write a script to pull your historical logs from some third-party location, such as Splunk, Elastic, Sumo, or blob storage such as S3
+- You must format those logs in JSON
+- You must modify those logs to copy the original timestamp (usually `date` or `timestamp`) field to a new field on the log: `original_timestamp`
+- You must upload those logs to an S3 bucket in a gzip format
+  - You could alter the script to read from local disk if so desired
+
+## Setup
+
+- User creates a bucket in their AWS account to push third-party logs into (`source_bucket`)
+- User creates a bucket (`taget_bucket`) in their AWS account for the `dd-rehydrate-past.py` script to write to
+- User creates Datadog log archives for `target_bucket`
+- User writes a script to pull/scrape their historical logs from a given source, formats them as structured JSON (if not already JSON), copies the timestamp on the log into the field `original_timestamp`
+
 ## dd-rehydrate-past.py
 
-## Brief
+### Brief
 
-This is an early version of the lambda script for manual testing. It recursively parses an entire S3 bucket looking for matching archives to process with some super basic support for date filters. Then it submits those to a target bucket that can be used for rehydration purposes in Datadog.
+This script recursively parses an entire S3 bucket looking for matching archives to process with some super basic support for date filters. Then it submits those to a target bucket that can be used for rehydration purposes in Datadog.
 
 It is still useful now for a method which skips writting to the Datadog API and thus being charged twice for the same logs (once for the original DD submission that gets forwarded to the blob store, and again for rehydrating the log).
 
-## DD Compliant Logs Archive
+### Logic flow
 
-## Logic flow
-
-- Parse `source_bucket` for log events archives matching `.*/archive_.*.json.gz`
+- Parse `source_bucket` for log events archives in GZip format
   - Optionally, restrict to `YYYYMMDD` / `HH`
 - Parse log archives looking for `JSON` log events
 - Process log events by updating `date` with `original_timestamp`
-- Write processed & sorted log events to hourly archives in `target_bucket`
+- Write processed & sorted log events to hourly DD Compliant archives in `target_bucket`
+
+### DD Compliant Logs Archive Format
+
+See `dt=20230719_hour=22_archive_225212.0418.3cq4YGouR1CeXmZR0FZqIQ.json.gz` and `dt=20230719_hour=22_archive_225212.0418.3cq4YGouR1CeXmZR0FZqIQ.json` for examples.
+
+Where the directory structure in the bucket was: `<bucketname>/dt=20230719/hour=22` and the filename was `archive_225212.0418.3cq4YGouR1CeXmZR0FZqIQ.json.gz`, see the examle below:
+
+![bucket_path_format_objects](images/bucket_path_format.png)
 
 ## Basic Usage
 
@@ -143,7 +171,7 @@ It is still useful now for a method which skips writting to the Datadog API and 
 - All **DEBUG** information is gets written **to stderr**
 - **stdout** only **returns JSON**
 
-## Example
+## Example Usage
 
 ```bash
 DEBUG=true python3 dd-rehydrate-past.py d1c7d0a8 7c5fa03b 20200714 09
@@ -158,12 +186,16 @@ DEBUG=true python3 dd-rehydrate-past.py d1c7d0a8 7c5fa03b 20200714 09
  {"_id": "AXNMkkiLncRhsC1IjQAA", "date": "2020-01-15T09:05:21.000Z", "service": "checkout", "host": "devotion-scope", "message": "Gout Blatantly Unify", "status": "info", "source": "postgresql", "attributes": {"env": "int", "duration": 1170800.0, "hostname": "devotion-scope", "provider": "gcp", "service": "checkout", "id": "493a8c71", "region": "eu-east-1", "operation": "read"}}
 ```
 
+## Next Steps
+
+See XXX
+
 # Lambda Function
 
 ## Negative Attributes of this method
 
 1. Double charged for logs in Datadog: Once for API Submission, Once for rehydration using original timestamp.
-2. You have logs in Datadog which may be confusing to users searching and troubleshooting. This method does not provide any tagging strategy or other mechanisms to help you differentiate between the two.
+2. You have duplicate logs in Datadog which may be confusing to users searching and troubleshooting. This method does not provide any tagging strategy or other mechanisms to help you differentiate between the two.
   2a. However, you can use a strategy of exclusion filters to prevent them from being indexed but will still go to the archive. Discussed in more detail in [Lambda Method details](#lambda-method) below.
 3. Focuses only on an AWS solution.
 4. Requires additional infrastructure setup for temporary ingest of a finite amount of historical logs.
@@ -233,6 +265,10 @@ Create an S3 trigger for your bucket with the `All object create events` for you
 
 ![add-trigger](images/lambda-trigger.png)
 ![event-types](images/event-types.png)
+
+## Next steps
+
+See [Datadog Setup](#datadog-setup)
 
 # Datadog Setup
 
