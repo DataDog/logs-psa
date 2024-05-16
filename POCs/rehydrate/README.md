@@ -97,6 +97,75 @@ In short your script submits logs to the DD API, is then written to an S3 bucket
 
 **NOTE**: This method does have flaws. While it makes it easier to get logs into a Datadog compliant blob store, it also incurs some negatives, see the details section for more info.
 
+# Manual script
+
+## dd-rehydrate-past.py
+
+## Brief
+
+This is an early version of the lambda script for manual testing. It recursively parses an entire S3 bucket looking for matching archives to process with some super basic support for date filters. Then it submits those to a target bucket that can be used for rehydration purposes in Datadog.
+
+It is still useful now for a method which skips writting to the Datadog API and thus being charged twice for the same logs (once for the original DD submission that gets forwarded to the blob store, and again for rehydrating the log).
+
+## DD Compliant Logs Archive
+
+## Logic flow
+
+- Parse `source_bucket` for log events archives matching `.*/archive_.*.json.gz`
+  - Optionally, restrict to `YYYYMMDD` / `HH`
+- Parse log archives looking for `JSON` log events
+- Process log events by updating `date` with `original_timestamp`
+- Write processed & sorted log events to hourly archives in `target_bucket`
+
+## Basic Usage
+
+`python3 dd-rehydrate-past.py source_bucket target_bucket`
+
+## Available Options
+
+| option          | description           | required |
+|-----------------|-----------------------|----------|
+| `source_bucket` | _bucket to read from_ | **Y**    |
+| `target_bucket` | _bucket to write to_  | **Y**    |
+| `YYYYMMDD`      | _filter by day_       |   N      |
+| `HH`            | _filter by hour_      |   N      |
+
+## Advanced Usage
+
+### Filtered by day
+
+`python3 dd-rehydrate-past.py source_bucket target_bucket YYYYMMDD`
+
+### Filtered by day & hour
+
+`python3 dd-rehydrate-past.py source_bucket target_bucket YYYYMMDD HH`
+
+### Filtered using RegEx
+
+`python3 dd-rehydrate-past.py source_bucket target_bucket YYYY.*`
+
+### Debug Output
+
+`DEBUG=true python3 dd-rehydrate-past.py source_bucket target_bucket`
+
+- All **DEBUG** information is gets written **to stderr**
+- **stdout** only **returns JSON**
+
+## Example
+
+```bash
+DEBUG=true python3 dd-rehydrate-past.py d1c7d0a8 7c5fa03b 20200714 09
+ TOTAL OBJECTS : 2
+ READ s3://d1c7d0a8/dt=20200714/hour=09/archive_090520.5947.y7A1F0KAQa-xDePWJH757A.json.gz
+ TEXT LINES COUNT : 1
+ READ s3://d1c7d0a8/dt=20200714/hour=09/archive_090523.7324.IO5bcdvcRIKMHZEV7q0yDw.json.gz
+ TEXT LINES COUNT : 1
+ PROCESSED LINES COUNT : 2
+ CREATING s3://7c5fa03b/dt=20200115/hour=09/archive.json.gz
+ {"_id": "AXNMkkGJ2h5H-KmRnQAA", "date": "2020-01-15T09:05:19.000Z", "service": "checkout", "host": "sesame-angles", "message": "Consonant Anteater Zoning", "status": "info", "source": "nginx", "attributes": {"env": "dev", "duration": "1.9793", "hostname": "sesame-angles", "provider": "azure", "service": "checkout", "id": "9a392359", "region": "eu-east-1", "operation": "update"}}
+ {"_id": "AXNMkkiLncRhsC1IjQAA", "date": "2020-01-15T09:05:21.000Z", "service": "checkout", "host": "devotion-scope", "message": "Gout Blatantly Unify", "status": "info", "source": "postgresql", "attributes": {"env": "int", "duration": 1170800.0, "hostname": "devotion-scope", "provider": "gcp", "service": "checkout", "id": "493a8c71", "region": "eu-east-1", "operation": "read"}}
+```
+
 1. Double charged for logs in Datadog: Once for API Submission, Once for rehydration using original timestamp.
 2. You have logs in Datadog which may be confusing to users searching and troubleshooting. This method does not provide any tagging strategy or other mechanisms to help you differentiate between the two.
   a. However, you can use a strategy of exclusion filters to prevent them from being indexed but will still go to the archive. Discussed in more detail in [Lambda Method details](#lambda-method) below.
