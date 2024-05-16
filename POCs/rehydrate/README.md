@@ -100,12 +100,18 @@ Should you require a log retention increase (say 6 months / 180 days for instanc
 
 ## Configuration > AWS > S3 Buckets
 
-| bucket   | description                                             |
-|----------|---------------------------------------------------------|
-| d1c7d0a8 | _the bucket that Datadog will archive ingested logs to_ |
-| 7c5fa03b | _the bucket that Datadog will read archived logs from_  |
+Create two buckets
+
+| bucket name   | description                                                               |
+|---------------|---------------------------------------------------------------------------|
+| d1c7d0a8      | _"source_bucket" - the bucket that Datadog will archive ingested logs to_ |
+| 7c5fa03b      | _"target_bucket" - the bucket that Datadog will read archived logs from_  |
 
 While it is possible to use the same bucket, **it is better practice to use distinct buckets** for a number of reasons:
+
+- AWS cautions against it, when setting up bucket triggers:
+
+> I acknowledge that using the same S3 bucket for both input and output is not recommended and that this configuration can cause recursive invocations, increased Lambda usage, and increased costs.
 
 - Using distinct source / destination buckets guarantees that the bucket containing the **archives created by Datadog remains "pristine"**.
 - Leaving their contents untouched / unmodified **ensures they can be used as the "source of truth"**.
