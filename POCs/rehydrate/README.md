@@ -1,4 +1,4 @@
-# Rehydrate Proof of Concept
+# Rehydrate Old Logs [Proof of Concept]
 
 ## TODO (Kelner)
 
