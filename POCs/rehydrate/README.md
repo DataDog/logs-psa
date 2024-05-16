@@ -281,7 +281,7 @@ Datadog is actually able to rehydrate archives using a static / generic archive 
 
 ### Dummy Log Event Generator
 
-Ship dummy log event using DD API
+Ship dummy log event using DD API - can be used to test your archive setup, the manual script, or the lambda function method.
 
 Depends on :
 
