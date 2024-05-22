@@ -2,6 +2,21 @@
 
 This is a non-fork copy of <https://github.com/GoogleCloudPlatform/microservices-demo>.
 
+# Table of Contents
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+
+- [Purpose](#purpose)
+- [Original README from GCP](#original-readme-from-gcp)
+  - [Architecture](#architecture)
+  - [Screenshots](#screenshots)
+  - [Quickstart (GKE)](#quickstart-gke)
+  - [Additional deployment options](#additional-deployment-options)
+  - [Documentation](#documentation)
+  - [Demos featuring Online Boutique](#demos-featuring-online-boutique)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 # Purpose
 
 - May 2024: To help provide an OP installation into a DD Partner's demo environment (they use this project)
