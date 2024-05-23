@@ -1,7 +1,3 @@
-# Notice
-
-This is a non-fork copy of <https://github.com/GoogleCloudPlatform/microservices-demo>.
-
 # Table of Contents
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
@@ -20,6 +16,20 @@ This is a non-fork copy of <https://github.com/GoogleCloudPlatform/microservices
 # Purpose
 
 - May 2024: To help provide an OP installation into a DD Partner's demo environment (they use this project)
+
+# Notice
+
+This is a non-fork copy of the OSS project <https://github.com/GoogleCloudPlatform/microservices-demo>.
+
+# Disclaimer
+
+These projects are not a part of Datadog's subscription services and are provided for example purposes only. They are NOT guaranteed to be bug free and are not production quality. If you choose to use to adapt them for use in a production environment, you do so at your own risk.
+
+# Assumptions
+
+- You already have this project running in a kubernetes environment
+  - If not, please follow the original [Quickstart (GKE)](#quickstart-gke) or [Additional deployment options](#additional-deployment-options)
+-
 
 # Original README from GCP
 
