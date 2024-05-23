@@ -4,6 +4,10 @@ Proof of concept to show Datadog's multi-line logging aggregation capability,
 reproducing a customer environment. A simple java application that throws an
 exception run from k8s, with containerized Datadog agent configured via helm.
 
+## Disclaimer
+
+These projects are not a part of Datadog's subscription services and are provided for example purposes only. They are NOT guaranteed to be bug free and are not production quality. If you choose to use to adapt them for use in a production environment, you do so at your own risk.
+
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 **Table of Contents**
