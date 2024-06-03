@@ -7,9 +7,10 @@
   - [Notice](#notice)
   - [Disclaimer](#disclaimer)
   - [OP Demo Environment (for partners)](#op-demo-environment-for-partners)
-    - [Assumptions](#assumptions)
+    - [Prerequesites & Assumptions](#prerequesites--assumptions)
   - [Starting from scratch (non-partners)](#starting-from-scratch-non-partners)
     - [Prerequesites](#prerequesites)
+    - [Install the microservices](#install-the-microservices)
     - [Observability Pipeline Steps](#observability-pipeline-steps)
     - [Datadog Agent](#datadog-agent)
 - [Original README from GCP](#original-readme-from-gcp)
@@ -38,12 +39,28 @@ These projects are not a part of Datadog's subscription services and are provide
 
 ## OP Demo Environment (for partners)
 
-### Assumptions
+### Prerequesites & Assumptions
 
+- You have a k8s cluster
 - You already have this project running in a kubernetes environment
   - If not, please follow the original [Quickstart (GKE)](#quickstart-gke) or [Additional deployment options](#additional-deployment-options)
 - You have already deployed the Datadog Agent to this environment in some way
   - The Author(s) have implemented the agent using helm, see [Datadog Agent](#datadog-agent) for details
+
+### Partner Steps
+
+- Follow [Observability Pipeline Steps](#observability-pipeline-steps)
+- Update your Datadog Agent configurations to include:
+
+  ```
+  env:
+    - name: DD_OBSERVABILITY_PIPELINES_WORKER_LOGS_ENABLED
+      value: true
+    - name: DD_OBSERVABILITY_PIPELINES_WORKER_LOGS_URL
+      value: "http://opw-observability-pipelines-worker:8282"
+  ```
+
+- Restart your agents
 
 ## Starting from scratch (non-partners)
 
@@ -54,19 +71,30 @@ _It ONLY comes with infrastructure, containers, and logs out of the box. Any oth
 ### Prerequesites
 
 - A k8s cluster
-- Deploy the services: [Quickstart (GKE)](#quickstart-gke)
-- Deploy the agent: [Datadog Agent](#datadog-agent)
+- `helm` and `kubectl` CLI utils installed
+
+### Install the microservices
+
+Follow the original guide from GCP: [Quickstart (GKE)](#quickstart-gke) or [local machine (minikube / kind)](./docs/development-guide.md#option-2---local-cluster)
 
 ### Observability Pipeline Steps
 
-- Add an API Key to your environment
+- Create a new API Key with [Remote Configuration (RC)](https://docs.datadoghq.com/agent/remote_config/) enabled or update an existing one to use RC
+  - Fine if you want to use the same one as/for the Datadog Agent
+- Add the API Key to your k8s environment secrets
   - `kubectl create secret generic dd-api-key --from-literal api-key="<API-KEY>"`
-- Update the helm values with your Pipeline ID in the file: `./k8s-dd/observability-pipelines/values.yaml`
-  - Modify `DD_OP_PIPELINE_ID`
-- `helm repo add datadog https://helm.datadoghq.com`
-- `helm repo update`
-- `helm upgrade --install opw datadog/observability-pipelines-worker -f k8s-dd/observability-pipelines/values.yaml`
-- You will see two "errors": `ERROR: You did not set a datadog.apiKey` and `ERROR: You did not set a datadog.pipelineId` - we set these via environment variables in the helm manifest, so they are invalid and everything should work fine.
+- Create a new pipeline via <https://khax.datadoghq.com/observability-pipelines>
+  - For the purposes of illustration the Author decided to simply do `DD Agent -> OP -> DD` using the "Log Volume Control" template
+  - Add any Processors you want, delete any you don't need
+- Follow the in-app instructions for install for k8s OR follow those inline below to deploy:
+  - Update the helm values with your Pipeline ID in the file: `./k8s-dd/observability-pipelines/values.yaml`
+    - Modify `DD_OP_PIPELINE_ID`
+  - `helm repo add datadog https://helm.datadoghq.com`
+  - `helm repo update`
+  - `helm upgrade --install opw datadog/observability-pipelines-worker -f k8s-dd/observability-pipelines/values.yaml`
+  - You will see two "errors": `ERROR: You did not set a datadog.apiKey` and `ERROR: You did not set a datadog.pipelineId` - we set these via environment variables in the helm manifest, so they are invalid and everything should work fine.
+- Proceed to the "Deploy" step in-app, then "view pipeline" once the pipeline has been deployed
+- You will **not** see any events passing through OP yet, you'll need to proceed to the
 
 ### Datadog Agent
 
@@ -74,11 +102,23 @@ Installed via helm:
 
 - `helm repo add datadog https://helm.datadoghq.com`
 - `helm repo update`
-- `kubectl create secret generic dd-api-key --from-literal api-key="<API-KEY>"`
+- You should already have an API key secret from the OP step and not need to do this, if you missed it, do so now (and you may need to restart your OP containers as well)!
+  - Alternatively you may want to use a different secret from OP, if so you'll need to swap `dd-api-key` with some other value, and update `./k8s-dd/datadog-agent/values.yaml` key: `apiKeyExistingSecret` with the new name.
+  - `kubectl create secret generic dd-api-key --from-literal api-key="<API-KEY>"`
 - `kubectl create secret generic dd-app-key --from-literal app-key="<APP-KEY>"`
 - `helm upgrade --install datadog-agent datadog/datadog -f k8s-dd/datadog-agent/values.yaml`
 
 This only enables infrastructure and log collection, if you want other telemetry, you'll need to do update various configs for whichever telemetry you are  after.
+
+### Final
+
+You should now see something like the following in-app for your pipeline:
+
+![Screenshot of OP overview](/docs/img/op-pipelines.png)
+
+![Screenshot of OP config](/docs/img/simple-op-pipe.png)
+
+![Screenshot of OP workers](/docs/img/op-workers.png)
 
 # Original README from GCP
 
