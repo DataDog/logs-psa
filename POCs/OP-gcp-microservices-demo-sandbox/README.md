@@ -89,11 +89,11 @@ This only enables infrastructure and log collection, if you want other telemetry
 
 You should now see something like the following in-app for your pipeline:
 
-![Screenshot of OP overview](/docs/img/op-pipelines.png)
+![Screenshot of OP overview](./docs/img/op-pipelines.png)
 
-![Screenshot of OP config](/docs/img/simple-op-pipe.png)
+![Screenshot of OP config](./docs/img/simple-op-pipe.png)
 
-![Screenshot of OP workers](/docs/img/op-workers.png)
+![Screenshot of OP workers](./docs/img/op-workers.png)
 
 ## OP Demo Environment (for partners)
 
@@ -160,7 +160,7 @@ Find **Protocol Buffers Descriptions** at the [`./protos` directory](/protos).
 
 | Home Page                                                                                                         | Checkout Screen                                                                                                    |
 | ----------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
-| [![Screenshot of store homepage](/docs/img/online-boutique-frontend-1.png)](/docs/img/online-boutique-frontend-1.png) | [![Screenshot of checkout screen](/docs/img/online-boutique-frontend-2.png)](/docs/img/online-boutique-frontend-2.png) |
+| [![Screenshot of store homepage](./docs/img/online-boutique-frontend-1.png)](./docs/img/online-boutique-frontend-1.png) | [![Screenshot of checkout screen](./docs/img/online-boutique-frontend-2.png)](/docs/img/online-boutique-frontend-2.png) |
 
 ## Quickstart (GKE)
 
