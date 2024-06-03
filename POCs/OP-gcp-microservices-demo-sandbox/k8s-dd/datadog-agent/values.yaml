@@ -5,10 +5,10 @@ datadog:
   env:
     - name: DD_LOGS_CONFIG_DOCKER_CONTAINER_USE_FILE
       value: true
-    # - name: DD_OBSERVABILITY_PIPELINES_WORKER_LOGS_ENABLED
-    #   value: true
-    # - name: DD_OBSERVABILITY_PIPELINES_WORKER_LOGS_URL
-    #   value: "http://opw-observability-pipelines-worker:8282"
+    - name: DD_OBSERVABILITY_PIPELINES_WORKER_LOGS_ENABLED
+      value: true
+    - name: DD_OBSERVABILITY_PIPELINES_WORKER_LOGS_URL
+      value: "http://opw-observability-pipelines-worker:8282"
   logs:
     enabled: true
     containerCollectAll: true
