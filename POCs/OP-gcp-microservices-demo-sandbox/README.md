@@ -9,6 +9,7 @@
   - [OP Demo Environment (for partners)](#op-demo-environment-for-partners)
     - [Assumptions](#assumptions)
   - [Changes from original project](#changes-from-original-project)
+    - [Observability Pipeline Steps](#observability-pipeline-steps)
     - [Datadog Agent](#datadog-agent)
 - [Original README from GCP](#original-readme-from-gcp)
   - [Architecture](#architecture)
@@ -44,6 +45,16 @@ These projects are not a part of Datadog's subscription services and are provide
   - The Author(s) have implemented the agent using helm, see [Datadog Agent](#datadog-agent) for details
 
 ## Changes from original project
+### Observability Pipeline Steps
+
+- Add an API Key to your environment
+  - `kubectl create secret generic dd-api-key --from-literal api-key="<API-KEY>"`
+- Update the helm values with your Pipeline ID in the file: `./k8s-dd/observability-pipelines/values.yaml`
+  - Modify `DD_OP_PIPELINE_ID`
+- `helm repo add datadog https://helm.datadoghq.com`
+- `helm repo update`
+- `helm upgrade --install opw datadog/observability-pipelines-worker -f k8s-dd/observability-pipelines/values.yaml`
+- You will see two "errors": `ERROR: You did not set a datadog.apiKey` and `ERROR: You did not set a datadog.pipelineId` - we set these via environment variables in the helm manifest, so they are invalid and everything should work fine.
 
 ### Datadog Agent
 
@@ -54,6 +65,8 @@ Installed via helm:
 - `kubectl create secret generic dd-api-key --from-literal api-key="<API-KEY>"`
 - `kubectl create secret generic dd-app-key --from-literal app-key="<APP-KEY>"`
 - `helm upgrade --install datadog-agent datadog/datadog -f k8s-dd/datadog-agent/values.yaml`
+
+This only enables infrastructure and log collection, if you want other telemetry, you'll need to do update various configs for whichever telemetry you are  after.
 
 # Original README from GCP
 
