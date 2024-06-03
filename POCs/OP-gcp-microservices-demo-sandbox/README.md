@@ -30,6 +30,15 @@ These projects are not a part of Datadog's subscription services and are provide
 - You already have this project running in a kubernetes environment
   - If not, please follow the original [Quickstart (GKE)](#quickstart-gke) or [Additional deployment options](#additional-deployment-options)
 -
+### Datadog Agent
+
+Installed via helm:
+
+- `helm repo add datadog https://helm.datadoghq.com`
+- `helm repo update`
+- `kubectl create secret generic dd-api-key --from-literal api-key="<API-KEY>"`
+- `kubectl create secret generic dd-app-key --from-literal app-key="<APP-KEY>"`
+- `helm upgrade --install datadog-agent datadog/datadog -f k8s-dd/datadog-agent/values.yaml`
 
 # Original README from GCP
 
