@@ -2,7 +2,14 @@
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
-- [Purpose](#purpose)
+- [Datadog clone](#datadog-clone)
+  - [Purpose](#purpose)
+  - [Notice](#notice)
+  - [Disclaimer](#disclaimer)
+  - [OP Demo Environment (for partners)](#op-demo-environment-for-partners)
+    - [Assumptions](#assumptions)
+  - [Changes from original project](#changes-from-original-project)
+    - [Datadog Agent](#datadog-agent)
 - [Original README from GCP](#original-readme-from-gcp)
   - [Architecture](#architecture)
   - [Screenshots](#screenshots)
@@ -13,23 +20,31 @@
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
-# Purpose
+# Datadog clone
+
+## Purpose
 
 - May 2024: To help provide an OP installation into a DD Partner's demo environment (they use this project)
 
-# Notice
+## Notice
 
 This is a non-fork copy of the OSS project <https://github.com/GoogleCloudPlatform/microservices-demo>.
 
-# Disclaimer
+## Disclaimer
 
 These projects are not a part of Datadog's subscription services and are provided for example purposes only. They are NOT guaranteed to be bug free and are not production quality. If you choose to use to adapt them for use in a production environment, you do so at your own risk.
 
-# Assumptions
+## OP Demo Environment (for partners)
+
+### Assumptions
 
 - You already have this project running in a kubernetes environment
   - If not, please follow the original [Quickstart (GKE)](#quickstart-gke) or [Additional deployment options](#additional-deployment-options)
--
+- You've deployed the Datadog Agent to this environment in some way
+  - The Author(s) have implemented the agent using helm, see [Datadog Agent](#datadog-agent) for details
+
+## Changes from original project
+
 ### Datadog Agent
 
 Installed via helm:
