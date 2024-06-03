@@ -1,0 +1,47 @@
+# https://github.com/DataDog/helm-charts/blob/main/charts/datadog/values.yaml
+datadog:
+  apiKeyExistingSecret: dd-api-key
+  appKeyExistingSecret: dd-app-key
+  env:
+    - name: DD_LOGS_CONFIG_DOCKER_CONTAINER_USE_FILE
+      value: true
+    # - name: DD_OBSERVABILITY_PIPELINES_WORKER_LOGS_ENABLED
+    #   value: true
+    # - name: DD_OBSERVABILITY_PIPELINES_WORKER_LOGS_URL
+    #   value: "http://opw-observability-pipelines-worker:8282"
+  logs:
+    enabled: true
+    containerCollectAll: true
+    containerCollectUsingFiles: true
+    autoMultiLineDetection: true
+  apm:
+    portEnabled: true
+    socketPath: /var/run/datadog/apm.socket
+    hostSocketPath: /var/run/datadog/
+  processAgent:
+    enabled: true
+    processCollection: true
+  systemProbe:
+    enableTCPQueueLength: false
+    enableOOMKill: false
+    collectDNSStats: false
+  #
+  # @ckelner: This doesn't yet exist in the agent helm chart
+  #
+  # observability_pipelines_worker:
+  #   logs:
+  #     enabled: true
+  #     url: "http://opw-service:8282"
+  #
+  # @ckelner: this was a hack because the above wasn't working... BUT...
+  # this doesn't work either, stole it from shopist
+  # https://github.com/DataDog/shopist/blob/prod/k8s/dd-agent/opw-values.yaml#L9-L22
+  #
+  # agents:
+  #   useConfigMap: true
+  #   ## OPW config
+  #   customAgentConfig:
+  #     vector:
+  #       logs:
+  #         enabled: true
+  #         url: "http://opw-observability-pipelines-worker:8282"
