@@ -8,7 +8,8 @@
   - [Disclaimer](#disclaimer)
   - [OP Demo Environment (for partners)](#op-demo-environment-for-partners)
     - [Assumptions](#assumptions)
-  - [Changes from original project](#changes-from-original-project)
+  - [Starting from scratch (non-partners)](#starting-from-scratch-non-partners)
+    - [Prerequesites](#prerequesites)
     - [Observability Pipeline Steps](#observability-pipeline-steps)
     - [Datadog Agent](#datadog-agent)
 - [Original README from GCP](#original-readme-from-gcp)
@@ -41,10 +42,21 @@ These projects are not a part of Datadog's subscription services and are provide
 
 - You already have this project running in a kubernetes environment
   - If not, please follow the original [Quickstart (GKE)](#quickstart-gke) or [Additional deployment options](#additional-deployment-options)
-- You've deployed the Datadog Agent to this environment in some way
+- You have already deployed the Datadog Agent to this environment in some way
   - The Author(s) have implemented the agent using helm, see [Datadog Agent](#datadog-agent) for details
 
-## Changes from original project
+## Starting from scratch (non-partners)
+
+This project can be used as a learning tool, "sandbox", or demo environment (for internal Datadog employees, this would be supplemental to US1 Org `11287` and data supplied by [Demo Engineering](https://datadoghq.atlassian.net/wiki/spaces/DH/pages/2381840410/Ownership#Who-owns-Demo-Data-feeding-the-Demo-Environment)).
+
+_It ONLY comes with infrastructure, containers, and logs out of the box. Any other telemetry will be on you to configure._
+
+### Prerequesites
+
+- A k8s cluster
+- Deploy the services: [Quickstart (GKE)](#quickstart-gke)
+- Deploy the agent: [Datadog Agent](#datadog-agent)
+
 ### Observability Pipeline Steps
 
 - Add an API Key to your environment
