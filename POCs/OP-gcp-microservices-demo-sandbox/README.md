@@ -4,15 +4,16 @@
 
 - [Datadog clone](#datadog-clone)
   - [Purpose](#purpose)
-  - [Notice](#notice)
   - [Disclaimer](#disclaimer)
-  - [OP Demo Environment (for partners)](#op-demo-environment-for-partners)
-    - [Prerequesites & Assumptions](#prerequesites--assumptions)
   - [Starting from scratch (non-partners)](#starting-from-scratch-non-partners)
     - [Prerequesites](#prerequesites)
     - [Install the microservices](#install-the-microservices)
     - [Observability Pipeline Steps](#observability-pipeline-steps)
     - [Datadog Agent](#datadog-agent)
+    - [Final](#final)
+  - [OP Demo Environment (for partners)](#op-demo-environment-for-partners)
+    - [Prerequesites & Assumptions](#prerequesites--assumptions)
+    - [Partner Steps](#partner-steps)
 - [Original README from GCP](#original-readme-from-gcp)
   - [Architecture](#architecture)
   - [Screenshots](#screenshots)
@@ -25,42 +26,16 @@
 
 # Datadog clone
 
+This is a non-fork clone of the OSS project <https://github.com/GoogleCloudPlatform/microservices-demo> with modifications to deploy the Datadog Agent and Observability Pipelines.
+
 ## Purpose
 
 - May 2024: To help provide an OP installation into a DD Partner's demo environment (they use this project)
-
-## Notice
-
-This is a non-fork copy of the OSS project <https://github.com/GoogleCloudPlatform/microservices-demo>.
+- June 2024: To help provide an OP "sandbox" for DD Sales Engineering
 
 ## Disclaimer
 
 These projects are not a part of Datadog's subscription services and are provided for example purposes only. They are NOT guaranteed to be bug free and are not production quality. If you choose to use to adapt them for use in a production environment, you do so at your own risk.
-
-## OP Demo Environment (for partners)
-
-### Prerequesites & Assumptions
-
-- You have a k8s cluster
-- You already have this project running in a kubernetes environment
-  - If not, please follow the original [Quickstart (GKE)](#quickstart-gke) or [Additional deployment options](#additional-deployment-options)
-- You have already deployed the Datadog Agent to this environment in some way
-  - The Author(s) have implemented the agent using helm, see [Datadog Agent](#datadog-agent) for details
-
-### Partner Steps
-
-- Follow [Observability Pipeline Steps](#observability-pipeline-steps)
-- Update your Datadog Agent configurations to include:
-
-  ```
-  env:
-    - name: DD_OBSERVABILITY_PIPELINES_WORKER_LOGS_ENABLED
-      value: true
-    - name: DD_OBSERVABILITY_PIPELINES_WORKER_LOGS_URL
-      value: "http://opw-observability-pipelines-worker:8282"
-  ```
-
-- Restart your agents
 
 ## Starting from scratch (non-partners)
 
@@ -119,6 +94,32 @@ You should now see something like the following in-app for your pipeline:
 ![Screenshot of OP config](/docs/img/simple-op-pipe.png)
 
 ![Screenshot of OP workers](/docs/img/op-workers.png)
+
+## OP Demo Environment (for partners)
+
+### Prerequesites & Assumptions
+
+- You have a k8s cluster
+- You already have this project running in a kubernetes environment
+  - If not, please follow the original [Quickstart (GKE)](#quickstart-gke) or [Additional deployment options](#additional-deployment-options)
+- You have already deployed the Datadog Agent to this environment in some way
+  - The Author(s) have implemented the agent using helm, see [Datadog Agent](#datadog-agent) for details
+
+### Partner Steps
+
+- Follow [Observability Pipeline Steps](#observability-pipeline-steps)
+- Update your Datadog Agent configurations to include:
+
+  ```
+  env:
+    - name: DD_OBSERVABILITY_PIPELINES_WORKER_LOGS_ENABLED
+      value: true
+    - name: DD_OBSERVABILITY_PIPELINES_WORKER_LOGS_URL
+      value: "http://opw-observability-pipelines-worker:8282"
+  ```
+
+- Restart your agents
+- You should now see something akin to the screenshots seen here: [Final](#final).
 
 # Original README from GCP
 
