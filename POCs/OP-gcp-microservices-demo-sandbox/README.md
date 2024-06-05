@@ -121,6 +121,12 @@ You should now see something like the following in-app for your pipeline:
 - Restart your agents
 - You should now see something akin to the screenshots seen here: [Final](#final).
 
+## Supplemental testing
+
+### Send logs over network (TCP/HTTP)
+
+- `k apply -f ./k8s-dd/datadog-agent/agent-service.yaml`
+
 # Original README from GCP
 
 **Online Boutique** is a cloud-first microservices demo application.  The application is a
