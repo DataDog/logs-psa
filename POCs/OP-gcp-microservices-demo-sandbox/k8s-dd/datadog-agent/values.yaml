@@ -45,3 +45,16 @@ datadog:
   #       logs:
   #         enabled: true
   #         url: "http://opw-observability-pipelines-worker:8282"
+
+  # @ckelner: testing
+  confd:
+    tcp-logs.yaml: |-
+      logs:
+        - type: tcp
+          port: 10518
+          source: "network-logs"
+
+containers:
+  agent:
+    ports:
+      - hostPort: 10518
