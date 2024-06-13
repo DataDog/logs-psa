@@ -14,6 +14,8 @@
   - [OP Demo Environment (for partners)](#op-demo-environment-for-partners)
     - [Prerequesites & Assumptions](#prerequesites--assumptions)
     - [Partner Steps](#partner-steps)
+  - [Supplemental testing](#supplemental-testing)
+    - [Send logs over network (TCP/HTTP)](#send-logs-over-network-tcphttp)
 - [Original README from GCP](#original-readme-from-gcp)
   - [Architecture](#architecture)
   - [Screenshots](#screenshots)
