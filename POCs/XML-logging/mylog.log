@@ -1,14 +1,1 @@
-{
-  "time": "2024-08-06 13:35:52.8673",
-  "level": "Info",
-  "message": "Logging from XML - put something useful here, even poor man's debugging: 'Made it this far 1'",
-  "eventProperties": {
-      "author": "Gambardella, Matthew",
-      "title": "XML Developer's Guide",
-      "genre": "Computer",
-      "price": "44.95",
-      "publish_date": "2000-10-01",
-      "description": "An in-depth look at creating applications with XML.",
-      "arbitrary": "arbitrary value"
-    }
-}
+{ "time": "2024-08-06 16:51:40.8013", "level": "Info", "message": "Logging from XML - put something useful here, even poor man's debugging: 'Made it this far 1'", "eventProperties": { "author": "Gambardella, Matthew", "title": "XML Developer's Guide", "genre": "Computer", "price": "44.95", "publish_date": "2000-10-01", "description": "An in-depth look at creating applications with XML.", "arbitrary": "arbitrary value" } }
