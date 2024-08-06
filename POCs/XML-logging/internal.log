@@ -1,0 +1,170 @@
+2024-08-06 13:34:42.0016 Info Shutdown() called. Logger closing...
+2024-08-06 13:34:42.0028 Info Closing old configuration.
+2024-08-06 13:34:42.0094 Info Logger has been closed down.
+2024-08-06 13:34:42.0100 Info AppDomain Shutting down. Logger closing...
+2024-08-06 13:34:42.0100 Info Logger has been shut down.
+2024-08-06 13:34:44.0077 Info Auto loading assembly file: /Users/chris.kelner/projects/dd/logs-psa-private/POCs-Opps-hacks/ABB-dot-net-xml-logging/xmlLogs/bin/Debug/net8.0/NLog.Extensions.Logging.dll
+2024-08-06 13:34:44.0304 Info Loading assembly file: /Users/chris.kelner/projects/dd/logs-psa-private/POCs-Opps-hacks/ABB-dot-net-xml-logging/xmlLogs/bin/Debug/net8.0/NLog.Extensions.Logging.dll
+2024-08-06 13:34:44.0350 Info NLog.Extensions.Logging, Version=1.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c. File version: 1.5.1.998. Product version: 1.5.1.
+2024-08-06 13:34:44.0350 Info Auto loading assembly file: /Users/chris.kelner/projects/dd/logs-psa-private/POCs-Opps-hacks/ABB-dot-net-xml-logging/xmlLogs/bin/Debug/net8.0/NLog.Extensions.Logging.dll succeeded!
+2024-08-06 13:34:44.0361 Info Message Template Auto Format enabled
+2024-08-06 13:34:44.0450 Info Adding target ConsoleTarget(Name=consoleLog)
+2024-08-06 13:34:44.0478 Info Adding target FileTarget(Name=logfile)
+2024-08-06 13:34:44.1383 Info Found 29 configuration items
+2024-08-06 13:34:44.1418 Info Configuration initialized.
+2024-08-06 13:34:44.1422 Info NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c. File version: 4.6.5.10245. Product version: 4.6.5.
+2024-08-06 13:35:03.4707 Info Shutdown() called. Logger closing...
+2024-08-06 13:35:03.4712 Info Closing old configuration.
+2024-08-06 13:35:03.4779 Info Logger has been closed down.
+2024-08-06 13:35:03.4784 Info AppDomain Shutting down. Logger closing...
+2024-08-06 13:35:03.4784 Info Logger has been shut down.
+2024-08-06 13:35:05.5848 Info Auto loading assembly file: /Users/chris.kelner/projects/dd/logs-psa-private/POCs-Opps-hacks/ABB-dot-net-xml-logging/xmlLogs/bin/Debug/net8.0/NLog.Extensions.Logging.dll
+2024-08-06 13:35:05.6073 Info Loading assembly file: /Users/chris.kelner/projects/dd/logs-psa-private/POCs-Opps-hacks/ABB-dot-net-xml-logging/xmlLogs/bin/Debug/net8.0/NLog.Extensions.Logging.dll
+2024-08-06 13:35:05.6118 Info NLog.Extensions.Logging, Version=1.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c. File version: 1.5.1.998. Product version: 1.5.1.
+2024-08-06 13:35:05.6124 Info Auto loading assembly file: /Users/chris.kelner/projects/dd/logs-psa-private/POCs-Opps-hacks/ABB-dot-net-xml-logging/xmlLogs/bin/Debug/net8.0/NLog.Extensions.Logging.dll succeeded!
+2024-08-06 13:35:05.6130 Info Message Template Auto Format enabled
+2024-08-06 13:35:05.6224 Info Adding target ConsoleTarget(Name=consoleLog)
+2024-08-06 13:35:05.6252 Info Adding target FileTarget(Name=logfile)
+2024-08-06 13:35:05.7010 Info Found 29 configuration items
+2024-08-06 13:35:05.7053 Info Configuration initialized.
+2024-08-06 13:35:05.7053 Info NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c. File version: 4.6.5.10245. Product version: 4.6.5.
+2024-08-06 13:35:50.9835 Info Shutdown() called. Logger closing...
+2024-08-06 13:35:50.9840 Info Closing old configuration.
+2024-08-06 13:35:50.9916 Info Logger has been closed down.
+2024-08-06 13:35:50.9923 Info AppDomain Shutting down. Logger closing...
+2024-08-06 13:35:50.9923 Info Logger has been shut down.
+2024-08-06 13:35:52.6798 Info Auto loading assembly file: /Users/chris.kelner/projects/dd/logs-psa-private/POCs-Opps-hacks/ABB-dot-net-xml-logging/xmlLogs/bin/Debug/net8.0/NLog.Extensions.Logging.dll
+2024-08-06 13:35:52.7036 Info Loading assembly file: /Users/chris.kelner/projects/dd/logs-psa-private/POCs-Opps-hacks/ABB-dot-net-xml-logging/xmlLogs/bin/Debug/net8.0/NLog.Extensions.Logging.dll
+2024-08-06 13:35:52.7085 Info NLog.Extensions.Logging, Version=1.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c. File version: 1.5.1.998. Product version: 1.5.1.
+2024-08-06 13:35:52.7092 Info Auto loading assembly file: /Users/chris.kelner/projects/dd/logs-psa-private/POCs-Opps-hacks/ABB-dot-net-xml-logging/xmlLogs/bin/Debug/net8.0/NLog.Extensions.Logging.dll succeeded!
+2024-08-06 13:35:52.7100 Info Message Template Auto Format enabled
+2024-08-06 13:35:52.7196 Info Adding target ConsoleTarget(Name=consoleLog)
+2024-08-06 13:35:52.7227 Info Adding target FileTarget(Name=logfile)
+2024-08-06 13:35:52.7902 Info Found 29 configuration items
+2024-08-06 13:35:52.7936 Info Configuration initialized.
+2024-08-06 13:35:52.7940 Info NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c. File version: 4.6.5.10245. Product version: 4.6.5.
+2024-08-06 13:46:33.7601 Info Shutdown() called. Logger closing...
+2024-08-06 13:46:33.7624 Info Closing old configuration.
+2024-08-06 13:46:33.7713 Info Logger has been closed down.
+2024-08-06 13:46:33.7721 Info AppDomain Shutting down. Logger closing...
+2024-08-06 13:46:33.7727 Info Logger has been shut down.
+2024-08-06 13:46:56.9914 Info Auto loading assembly file: /Users/chris.kelner/projects/dd/logs-psa-private/POCs-Opps-hacks/ABB-dot-net-xml-logging/xmlLogs/bin/Debug/net8.0/NLog.Extensions.Logging.dll
+2024-08-06 13:46:57.0144 Info Loading assembly file: /Users/chris.kelner/projects/dd/logs-psa-private/POCs-Opps-hacks/ABB-dot-net-xml-logging/xmlLogs/bin/Debug/net8.0/NLog.Extensions.Logging.dll
+2024-08-06 13:46:57.0185 Info NLog.Extensions.Logging, Version=1.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c. File version: 1.5.1.998. Product version: 1.5.1.
+2024-08-06 13:46:57.0185 Info Auto loading assembly file: /Users/chris.kelner/projects/dd/logs-psa-private/POCs-Opps-hacks/ABB-dot-net-xml-logging/xmlLogs/bin/Debug/net8.0/NLog.Extensions.Logging.dll succeeded!
+2024-08-06 13:46:57.0197 Info Message Template Auto Format enabled
+2024-08-06 13:46:57.0283 Info Adding target ConsoleTarget(Name=consoleLog)
+2024-08-06 13:46:57.0308 Info Adding target FileTarget(Name=logfile)
+2024-08-06 13:46:57.1063 Info Found 29 configuration items
+2024-08-06 13:46:57.1098 Info Configuration initialized.
+2024-08-06 13:46:57.1098 Info NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c. File version: 4.6.5.10245. Product version: 4.6.5.
+2024-08-06 13:46:57.1914 Info Shutdown() called. Logger closing...
+2024-08-06 13:46:57.1917 Info Closing old configuration.
+2024-08-06 13:46:57.1968 Info Logger has been closed down.
+2024-08-06 13:46:57.1968 Info AppDomain Shutting down. Logger closing...
+2024-08-06 13:46:57.1976 Info Logger has been shut down.
+2024-08-06 13:48:53.9982 Info Auto loading assembly file: /Users/chris.kelner/projects/dd/logs-psa-private/POCs-Opps-hacks/ABB-dot-net-xml-logging/xmlLogs/bin/Debug/net8.0/NLog.Extensions.Logging.dll
+2024-08-06 13:48:54.0197 Info Loading assembly file: /Users/chris.kelner/projects/dd/logs-psa-private/POCs-Opps-hacks/ABB-dot-net-xml-logging/xmlLogs/bin/Debug/net8.0/NLog.Extensions.Logging.dll
+2024-08-06 13:48:54.0236 Info NLog.Extensions.Logging, Version=1.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c. File version: 1.5.1.998. Product version: 1.5.1.
+2024-08-06 13:48:54.0241 Info Auto loading assembly file: /Users/chris.kelner/projects/dd/logs-psa-private/POCs-Opps-hacks/ABB-dot-net-xml-logging/xmlLogs/bin/Debug/net8.0/NLog.Extensions.Logging.dll succeeded!
+2024-08-06 13:48:54.0241 Info Message Template Auto Format enabled
+2024-08-06 13:48:54.0330 Info Adding target ConsoleTarget(Name=consoleLog)
+2024-08-06 13:48:54.0356 Info Adding target FileTarget(Name=logfile)
+2024-08-06 13:48:54.1024 Info Found 29 configuration items
+2024-08-06 13:48:54.1058 Info Configuration initialized.
+2024-08-06 13:48:54.1062 Info NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c. File version: 4.6.5.10245. Product version: 4.6.5.
+2024-08-06 13:48:54.1885 Info Shutdown() called. Logger closing...
+2024-08-06 13:48:54.1885 Info Closing old configuration.
+2024-08-06 13:48:54.1939 Info Logger has been closed down.
+2024-08-06 13:48:54.1943 Info AppDomain Shutting down. Logger closing...
+2024-08-06 13:48:54.1943 Info Logger has been shut down.
+2024-08-06 13:49:18.5204 Info Auto loading assembly file: /Users/chris.kelner/projects/dd/logs-psa-private/POCs-Opps-hacks/ABB-dot-net-xml-logging/xmlLogs/bin/Debug/net8.0/NLog.Extensions.Logging.dll
+2024-08-06 13:49:18.5425 Info Loading assembly file: /Users/chris.kelner/projects/dd/logs-psa-private/POCs-Opps-hacks/ABB-dot-net-xml-logging/xmlLogs/bin/Debug/net8.0/NLog.Extensions.Logging.dll
+2024-08-06 13:49:18.5465 Info NLog.Extensions.Logging, Version=1.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c. File version: 1.5.1.998. Product version: 1.5.1.
+2024-08-06 13:49:18.5465 Info Auto loading assembly file: /Users/chris.kelner/projects/dd/logs-psa-private/POCs-Opps-hacks/ABB-dot-net-xml-logging/xmlLogs/bin/Debug/net8.0/NLog.Extensions.Logging.dll succeeded!
+2024-08-06 13:49:18.5476 Info Message Template Auto Format enabled
+2024-08-06 13:49:18.5561 Info Adding target ConsoleTarget(Name=consoleLog)
+2024-08-06 13:49:18.5589 Info Adding target FileTarget(Name=logfile)
+2024-08-06 13:49:18.6331 Info Found 29 configuration items
+2024-08-06 13:49:18.6366 Info Configuration initialized.
+2024-08-06 13:49:18.6366 Info NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c. File version: 4.6.5.10245. Product version: 4.6.5.
+2024-08-06 13:49:18.7192 Info Shutdown() called. Logger closing...
+2024-08-06 13:49:18.7192 Info Closing old configuration.
+2024-08-06 13:49:18.7247 Info Logger has been closed down.
+2024-08-06 13:49:18.7253 Info AppDomain Shutting down. Logger closing...
+2024-08-06 13:49:18.7253 Info Logger has been shut down.
+2024-08-06 13:49:38.9244 Info Auto loading assembly file: /Users/chris.kelner/projects/dd/logs-psa-private/POCs-Opps-hacks/ABB-dot-net-xml-logging/xmlLogs/bin/Debug/net8.0/NLog.Extensions.Logging.dll
+2024-08-06 13:49:38.9461 Info Loading assembly file: /Users/chris.kelner/projects/dd/logs-psa-private/POCs-Opps-hacks/ABB-dot-net-xml-logging/xmlLogs/bin/Debug/net8.0/NLog.Extensions.Logging.dll
+2024-08-06 13:49:38.9506 Info NLog.Extensions.Logging, Version=1.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c. File version: 1.5.1.998. Product version: 1.5.1.
+2024-08-06 13:49:38.9512 Info Auto loading assembly file: /Users/chris.kelner/projects/dd/logs-psa-private/POCs-Opps-hacks/ABB-dot-net-xml-logging/xmlLogs/bin/Debug/net8.0/NLog.Extensions.Logging.dll succeeded!
+2024-08-06 13:49:38.9512 Info Message Template Auto Format enabled
+2024-08-06 13:49:38.9601 Info Adding target ConsoleTarget(Name=consoleLog)
+2024-08-06 13:49:38.9626 Info Adding target FileTarget(Name=logfile)
+2024-08-06 13:49:39.0306 Info Found 29 configuration items
+2024-08-06 13:49:39.0339 Info Configuration initialized.
+2024-08-06 13:49:39.0342 Info NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c. File version: 4.6.5.10245. Product version: 4.6.5.
+2024-08-06 13:49:39.1144 Info Shutdown() called. Logger closing...
+2024-08-06 13:49:39.1144 Info Closing old configuration.
+2024-08-06 13:49:39.1189 Info Logger has been closed down.
+2024-08-06 13:49:39.1193 Info AppDomain Shutting down. Logger closing...
+2024-08-06 13:49:39.1193 Info Logger has been shut down.
+2024-08-06 13:49:51.7663 Info Auto loading assembly file: /Users/chris.kelner/projects/dd/logs-psa-private/POCs-Opps-hacks/ABB-dot-net-xml-logging/xmlLogs/bin/Debug/net8.0/NLog.Extensions.Logging.dll
+2024-08-06 13:49:51.7885 Info Loading assembly file: /Users/chris.kelner/projects/dd/logs-psa-private/POCs-Opps-hacks/ABB-dot-net-xml-logging/xmlLogs/bin/Debug/net8.0/NLog.Extensions.Logging.dll
+2024-08-06 13:49:51.7929 Info NLog.Extensions.Logging, Version=1.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c. File version: 1.5.1.998. Product version: 1.5.1.
+2024-08-06 13:49:51.7934 Info Auto loading assembly file: /Users/chris.kelner/projects/dd/logs-psa-private/POCs-Opps-hacks/ABB-dot-net-xml-logging/xmlLogs/bin/Debug/net8.0/NLog.Extensions.Logging.dll succeeded!
+2024-08-06 13:49:51.7934 Info Message Template Auto Format enabled
+2024-08-06 13:49:51.8025 Info Adding target ConsoleTarget(Name=consoleLog)
+2024-08-06 13:49:51.8058 Info Adding target FileTarget(Name=logfile)
+2024-08-06 13:49:51.9332 Info Found 29 configuration items
+2024-08-06 13:49:51.9368 Info Configuration initialized.
+2024-08-06 13:49:51.9368 Info NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c. File version: 4.6.5.10245. Product version: 4.6.5.
+2024-08-06 13:49:52.0190 Info Shutdown() called. Logger closing...
+2024-08-06 13:49:52.0220 Info Closing old configuration.
+2024-08-06 13:49:52.0269 Info Logger has been closed down.
+2024-08-06 13:49:52.0273 Info AppDomain Shutting down. Logger closing...
+2024-08-06 13:49:52.0273 Info Logger has been shut down.
+2024-08-06 13:50:34.8158 Info Auto loading assembly file: /Users/chris.kelner/projects/dd/logs-psa-private/POCs-Opps-hacks/ABB-dot-net-xml-logging/xmlLogs/bin/Debug/net8.0/NLog.Extensions.Logging.dll
+2024-08-06 13:50:34.8375 Info Loading assembly file: /Users/chris.kelner/projects/dd/logs-psa-private/POCs-Opps-hacks/ABB-dot-net-xml-logging/xmlLogs/bin/Debug/net8.0/NLog.Extensions.Logging.dll
+2024-08-06 13:50:34.8415 Info NLog.Extensions.Logging, Version=1.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c. File version: 1.5.1.998. Product version: 1.5.1.
+2024-08-06 13:50:34.8415 Info Auto loading assembly file: /Users/chris.kelner/projects/dd/logs-psa-private/POCs-Opps-hacks/ABB-dot-net-xml-logging/xmlLogs/bin/Debug/net8.0/NLog.Extensions.Logging.dll succeeded!
+2024-08-06 13:50:34.8426 Info Message Template Auto Format enabled
+2024-08-06 13:50:34.8510 Info Adding target ConsoleTarget(Name=consoleLog)
+2024-08-06 13:50:34.8536 Info Adding target FileTarget(Name=logfile)
+2024-08-06 13:50:34.9331 Info Found 29 configuration items
+2024-08-06 13:50:34.9365 Info Configuration initialized.
+2024-08-06 13:50:34.9365 Info NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c. File version: 4.6.5.10245. Product version: 4.6.5.
+2024-08-06 13:50:35.0164 Info Shutdown() called. Logger closing...
+2024-08-06 13:50:35.0164 Info Closing old configuration.
+2024-08-06 13:50:35.0219 Info Logger has been closed down.
+2024-08-06 13:50:35.0219 Info AppDomain Shutting down. Logger closing...
+2024-08-06 13:50:35.0226 Info Logger has been shut down.
+2024-08-06 13:51:05.3391 Info Auto loading assembly file: /Users/chris.kelner/projects/dd/logs-psa-private/POCs-Opps-hacks/ABB-dot-net-xml-logging/xmlLogs/bin/Debug/net8.0/NLog.Extensions.Logging.dll
+2024-08-06 13:51:05.3616 Info Loading assembly file: /Users/chris.kelner/projects/dd/logs-psa-private/POCs-Opps-hacks/ABB-dot-net-xml-logging/xmlLogs/bin/Debug/net8.0/NLog.Extensions.Logging.dll
+2024-08-06 13:51:05.3658 Info NLog.Extensions.Logging, Version=1.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c. File version: 1.5.1.998. Product version: 1.5.1.
+2024-08-06 13:51:05.3665 Info Auto loading assembly file: /Users/chris.kelner/projects/dd/logs-psa-private/POCs-Opps-hacks/ABB-dot-net-xml-logging/xmlLogs/bin/Debug/net8.0/NLog.Extensions.Logging.dll succeeded!
+2024-08-06 13:51:05.3665 Info Message Template Auto Format enabled
+2024-08-06 13:51:05.3758 Info Adding target ConsoleTarget(Name=consoleLog)
+2024-08-06 13:51:05.3785 Info Adding target FileTarget(Name=logfile)
+2024-08-06 13:51:05.4510 Info Found 29 configuration items
+2024-08-06 13:51:05.4545 Info Configuration initialized.
+2024-08-06 13:51:05.4548 Info NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c. File version: 4.6.5.10245. Product version: 4.6.5.
+2024-08-06 13:51:05.5315 Info Shutdown() called. Logger closing...
+2024-08-06 13:51:05.5317 Info Closing old configuration.
+2024-08-06 13:51:05.5365 Info Logger has been closed down.
+2024-08-06 13:51:05.5365 Info AppDomain Shutting down. Logger closing...
+2024-08-06 13:51:05.5365 Info Logger has been shut down.
+2024-08-06 14:02:51.6216 Info Auto loading assembly file: /Users/chris.kelner/projects/dd/logs-psa-private/POCs-Opps-hacks/ABB-dot-net-xml-logging/xmlLogs/bin/Debug/net8.0/NLog.Extensions.Logging.dll
+2024-08-06 14:02:51.6444 Info Loading assembly file: /Users/chris.kelner/projects/dd/logs-psa-private/POCs-Opps-hacks/ABB-dot-net-xml-logging/xmlLogs/bin/Debug/net8.0/NLog.Extensions.Logging.dll
+2024-08-06 14:02:51.6488 Info NLog.Extensions.Logging, Version=1.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c. File version: 1.5.1.998. Product version: 1.5.1.
+2024-08-06 14:02:51.6494 Info Auto loading assembly file: /Users/chris.kelner/projects/dd/logs-psa-private/POCs-Opps-hacks/ABB-dot-net-xml-logging/xmlLogs/bin/Debug/net8.0/NLog.Extensions.Logging.dll succeeded!
+2024-08-06 14:02:51.6494 Info Message Template Auto Format enabled
+2024-08-06 14:02:51.6587 Info Adding target ConsoleTarget(Name=consoleLog)
+2024-08-06 14:02:51.6613 Info Adding target FileTarget(Name=logfile)
+2024-08-06 14:02:51.7359 Info Found 29 configuration items
+2024-08-06 14:02:51.7392 Info Configuration initialized.
+2024-08-06 14:02:51.7392 Info NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c. File version: 4.6.5.10245. Product version: 4.6.5.
+2024-08-06 14:02:51.8188 Info Shutdown() called. Logger closing...
+2024-08-06 14:02:51.8188 Info Closing old configuration.
+2024-08-06 14:02:51.8240 Info Logger has been closed down.
+2024-08-06 14:02:51.8244 Info AppDomain Shutting down. Logger closing...
+2024-08-06 14:02:51.8244 Info Logger has been shut down.
