@@ -32,4 +32,4 @@ Configure your agent to read from whatever directory you've checked this repo
 out into and tail the file `mylog.log`, see https://docs.datadoghq.com/agent/logs/?tab=tailfiles
 
 It will look something like:
-![img](screenshot-of-log-in-dd.png)
+![img](screenshot-of-karge-log-in-dd.png)
