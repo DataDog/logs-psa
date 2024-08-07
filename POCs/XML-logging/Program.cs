@@ -114,9 +114,10 @@ namespace ConsoleExample
         static IList<string> SplitIntoChunks(string xmlString)
         {
             List<string> stringList = new List<string>();
-            // 1mb of chars is about 1048576, lets take a little less to make
-            // sure we don't go over the limit imposed by the DD API Logs Intake
-            int stringSize = 900000;
+            // 1mb of chars should be about 1000000 characters, but after
+            // testing, we found that 250000 was a good size to stay below
+            // the DD Logs Intake API limit of 1mb per log event.
+            int stringSize = 250000;
             int offset = 0;
 
             while (offset < xmlString.Length)
