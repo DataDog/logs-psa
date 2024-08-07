@@ -14,20 +14,22 @@ API Logs Ingest limit) and submits them to Datadog.
 
 # Running
 
-- `dotnet run` - will produce json output to console and `mylog.log`
+- `dotnet run` - will produce json output to `mylog.log`
+    - If you want console logging, uncomment in `nlog.config` but with Scenario
+    #2 we would not recommend it (a lot of output)
 
 # Logs in Datadog
 
 ## Scenario #1
 Configure your agent to read from whatever directory you've checked this repo
-out into and tail the file `mylog.log`
+out into and tail the file `mylog.log`, see https://docs.datadoghq.com/agent/logs/?tab=tailfiles
 
 It will look something like:
 ![img](screenshot-of-log-in-dd.png)
 
 ## Scenario #2
 Configure your agent to read from whatever directory you've checked this repo
-out into and tail the file `mylog.log`
+out into and tail the file `mylog.log`, see https://docs.datadoghq.com/agent/logs/?tab=tailfiles
 
 It will look something like:
 ![img](screenshot-of-log-in-dd.png)
