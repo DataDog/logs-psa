@@ -35,6 +35,7 @@ namespace ConsoleExample
                     }).BuildServiceProvider();
 
                 scenarioOne();
+                scenarioTwo();
 
             }
             catch (Exception ex)
@@ -90,6 +91,41 @@ namespace ConsoleExample
             {
                 throw new Exception("Document element is null");
             }
+        }
+
+        /*
+            Scenario Two - splits up a massive XML file (24mb in this case) and
+            submits them as stringified messages in seperate log events.
+        */
+        static void scenarioTwo() {
+            var nLogLogger = NLog.LogManager.GetCurrentClassLogger();
+
+            string xmlString =  System.IO.File.ReadAllText("sample-large-24mb.xml");
+            IList<string> chunks = SplitIntoChunks(xmlString);
+
+            foreach (string chunk in chunks)
+            {
+                var logEvent = new LogEventInfo(NLog.LogLevel.Info, "XmlLogs", null);
+                logEvent.Message = chunk;
+                nLogLogger.Log(logEvent);
+            }
+        }
+
+        static IList<string> SplitIntoChunks(string xmlString)
+        {
+            List<string> stringList = new List<string>();
+            // 1mb of chars is about 1048576, lets take a little less to make
+            // sure we don't go over the limit imposed by the DD API Logs Intake
+            int stringSize = 900000;
+            int offset = 0;
+
+            while (offset < xmlString.Length)
+            {
+                int size = Math.Min(stringSize, xmlString.Length - offset);
+                stringList.Add(xmlString.Substring(offset, size));
+                offset += size;
+            }
+            return stringList;
         }
     }
 }
