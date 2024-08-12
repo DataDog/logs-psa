@@ -67,10 +67,42 @@ def read_archives( bucket ) :
                 if "attributes" in json_ :
                     if "original_timestamp" in json_["attributes"] :
                         original_timestamp = json_[ "attributes" ][ "original_timestamp" ]
-                        json_.update( { "date" : original_timestamp } )
+                        if "date" in json_ :
+                            json_.update( { "date" : str(original_timestamp) } )
+                        else :
+                            json_[ "date" ] = str(original_timestamp)
                         del json_[ "attributes" ][ "original_timestamp" ]
-                        del json_[ "attributes" ][ "@timestamp" ]
-                        json_[ "@path" ] = datetime.datetime.strptime( json_[ "date" ] , "%Y-%m-%dT%H:%M:%S.000Z" ).strftime( "dt=%Y%m%d/hour=%H/archive.json.gz" )
+                        if "@timestamp" in json_ :
+                            del json_[ "attributes" ][ "@timestamp" ]
+                        try:
+                            json_[ "@path" ] = datetime.datetime.strptime( str(json_[ "date" ]) , "%Y-%m-%dT%H:%M:%S.000Z" ).strftime( "dt=%Y%m%d/hour=%H/archive.json.gz" )
+                        except:
+                            # only tries again for nanosecond epoch strings - came from customer
+                            # TODO: add more logic for other formats
+                            ns_dt = datetime.datetime.fromtimestamp(int(json_[ "date" ]) // 1000000000)
+                            new_date = ns_dt.strftime("%Y-%m-%dT%H:%M:%S.000Z")
+                            json_[ "date" ] = new_date
+                            json_[ "@path" ] = datetime.datetime.strptime( str(json_[ "date" ]) , "%Y-%m-%dT%H:%M:%S.000Z" ).strftime( "dt=%Y%m%d/hour=%H/archive.json.gz" )
+                        buffer_.append( json_ )
+                else :
+                    if "original_timestamp" in json_ :
+                        original_timestamp = json_[ "original_timestamp" ]
+                        if "date" in json_ :
+                            json_.update( { "date" : str(original_timestamp) } )
+                        else :
+                            json_[ "date" ] = str(original_timestamp)
+                        del json_[ "original_timestamp" ]
+                        if "@timestamp" in json_ :
+                            del json_[ "@timestamp" ]
+                        try:
+                            json_[ "@path" ] = datetime.datetime.strptime( str(json_[ "date" ]) , "%Y-%m-%dT%H:%M:%S.000Z" ).strftime( "dt=%Y%m%d/hour=%H/archive.json.gz" )
+                        except:
+                            # only tries again for nanosecond epoch strings - came from customer
+                            # TODO: add more logic for other formats
+                            ns_dt = datetime.datetime.fromtimestamp(int(json_[ "date" ])) // 1000000000)
+                            new_date = ns_dt.strftime("%Y-%m-%dT%H:%M:%S.000Z")
+                            json_[ "date" ] = new_date
+                            json_[ "@path" ] = datetime.datetime.strptime( str(json_[ "date" ]) , "%Y-%m-%dT%H:%M:%S.000Z" ).strftime( "dt=%Y%m%d/hour=%H/archive.json.gz" )
                         buffer_.append( json_ )
     eprint( "PROCESSED LINES COUNT : " + str( len( buffer_ ) ) )
     return( sorted( buffer_ , key=operator.itemgetter( "date" ) , reverse = False ) )
