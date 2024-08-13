@@ -83,25 +83,34 @@ def read_archives( bucket ) :
             if json.loads( line ) :
                 json_ = json.loads( line )
                 if "attributes" in json_ :
+                    if "@timestamp" in json_["attributes"] :
+                        del json_[ "attributes" ][ "@timestamp" ]
+                    if "timestamp" in json_["attributes"] :
+                        del json_[ "attributes" ][ "timestamp" ]
                     if "original_timestamp" in json_["attributes"] :
                         original_timestamp = json_[ "attributes" ][ "original_timestamp" ]
-                        if "date" in json_ :
+                        del json_[ "attributes" ][ "original_timestamp" ]
+
+                        if "date" in json_["attributes"] :
                             json_.update( { "date" : str(original_timestamp) } )
                         else :
                             json_[ "date" ] = str(original_timestamp)
-                        del json_[ "attributes" ][ "original_timestamp" ]
-                        if "@timestamp" in json_ :
-                            del json_[ "attributes" ][ "@timestamp" ]
+                            json_[ "timestamp" ] = str(original_timestamp)
                 else :
+                    if "@timestamp" in json_ :
+                        del json_[ "@timestamp" ]
+                    if "timestamp" in json_ :
+                        del json_[ "timestamp" ]
                     if "original_timestamp" in json_ :
                         original_timestamp = json_[ "original_timestamp" ]
+                        del json_[ "original_timestamp" ]
+
                         if "date" in json_ :
                             json_.update( { "date" : str(original_timestamp) } )
                         else :
                             json_[ "date" ] = str(original_timestamp)
-                        del json_[ "original_timestamp" ]
-                        if "@timestamp" in json_ :
-                            del json_[ "@timestamp" ]
+                            json_[ "timestamp" ] = str(original_timestamp)
+
                 try:
                     # if date is in expected format, it will be parsed and reformatted
                     json_[ "@path" ] = datetime.datetime.strptime( str(json_[ "date" ]) , "%Y-%m-%dT%H:%M:%S.000Z" ).strftime( "dt=%Y%m%d/hour=%H/" + archive_name )
