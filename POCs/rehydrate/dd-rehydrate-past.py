@@ -83,6 +83,10 @@ def read_archives( bucket ) :
             if json.loads( line ) :
                 json_ = json.loads( line )
 
+                # required by DD rehydration to work
+                rand_id = ''.join(random.choice("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ") for i in range(24))
+                json_["_id"] = rand_id
+
                 # if there are tags, make sure they are a list
                 # if not a list, convert equal delimited string to list
                 if "tags" in json_ :
