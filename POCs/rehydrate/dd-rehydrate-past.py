@@ -74,10 +74,10 @@ def read_archives( bucket ) :
         # where _225212.0418.3cq4YGouR1CeXmZR0FZqIQ can be any string
         # if just `archive.json.gz` is used, the rehydration will fail to find
         # any logs to rehydrate
-        first_ran = random.randrange(100000,999999)
-        second_ran = random.randrange(1000,9999)
-        third_ran = ''.join(random.choice("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789") for i in range(22))
-        archive_name = "archive_" + str(first_ran) + "." + str(second_ran) + "." + str(third_ran) + ".json.gz"
+        first_rand = random.randrange(100000,999999)
+        second_rand = random.randrange(1000,9999)
+        third_rand = ''.join(random.choice("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789") for i in range(22))
+        archive_name = "archive_" + str(first_rand) + "." + str(second_rand) + "." + str(third_rand) + ".json.gz"
 
         for line in text_.splitlines() :
             if json.loads( line ) :
