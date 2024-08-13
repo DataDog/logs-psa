@@ -104,13 +104,13 @@ def read_archives( bucket ) :
 
 
                         if "date" in json_["attributes"] :
-                            json_.update( { "date" : str(original_timestamp) } )
+                            json_["attributes"].update( { "date" : str(original_timestamp) } )
                         else :
-                            json_[ "date" ] = str(original_timestamp)
+                            json_["attributes"][ "date" ] = str(original_timestamp)
                         if "timestamp" in json_["attributes"] :
-                            json_.update( { "timestamp" : str(original_timestamp) } )
+                            json_["attributes"].update( { "timestamp" : str(original_timestamp) } )
                         else:
-                            json_[ "timestamp" ] = str(original_timestamp)
+                            json_["attributes"][ "timestamp" ] = str(original_timestamp)
                 else :
                     if "@timestamp" in json_ :
                         del json_[ "@timestamp" ]
@@ -131,12 +131,16 @@ def read_archives( bucket ) :
 
                         if "date" in json_ :
                             json_.update( { "date" : str(original_timestamp) } )
+                            json_["attributes"][ "date" ] = str(original_timestamp)
                         else :
                             json_[ "date" ] = str(original_timestamp)
+                            json_["attributes"][ "date" ] = str(original_timestamp)
                         if "timestamp" in json_ :
                             json_.update( { "timestamp" : str(original_timestamp) } )
+                            json_["attributes"][ "timestamp" ] = str(original_timestamp)
                         else:
                             json_[ "timestamp" ] = str(original_timestamp)
+                            json_["attributes"][ "timestamp" ] = str(original_timestamp)
 
                 json_[ "@path" ] = datetime.datetime.strptime( str(json_[ "date" ]) , "%Y-%m-%dT%H:%M:%S.000Z" ).strftime( "dt=%Y%m%d/hour=%H/" + archive_name )
                 buffer_.append( json_ )
