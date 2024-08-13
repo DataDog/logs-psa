@@ -112,6 +112,9 @@ def read_archives( bucket ) :
                         else:
                             json_["attributes"][ "timestamp" ] = str(original_timestamp)
                 else :
+                    # add attributes
+                    json_["attributes"] = {}
+
                     if "@timestamp" in json_ :
                         del json_[ "@timestamp" ]
                     if "timestamp" in json_ :
