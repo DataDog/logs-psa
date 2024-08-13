@@ -64,6 +64,9 @@ def read_archives( bucket ) :
         for line in text_.splitlines() :
             if json.loads( line ) :
                 json_ = json.loads( line )
+                # NOTE: This if else repeats itself, any changes should be done in both
+                # In the future, we should refactor this to make it DRY
+                # TODO: make this DRY
                 if "attributes" in json_ :
                     if "original_timestamp" in json_["attributes"] :
                         original_timestamp = json_[ "attributes" ][ "original_timestamp" ]
