@@ -122,18 +122,19 @@ def read_archives( bucket ) :
                         # example: 1718774683182501000
                         # TODO: add more logic for other formats
                         if len(str(original_timestamp)) > 18 and str(original_timestamp).isdigit():
-                            ns_dt = datetime.datetime.fromtimestamp(int(original_timestamp) // 1000000000)
-                            original_timestamp = ns_dt.strftime("%Y-%m-%dT%H:%M:%S.000Z")
+                            original_timestamp = int(original_timestamp) // 1000000000
+                            ns_dt = datetime.datetime.fromtimestamp(int(original_timestamp))
+                            original_date = ns_dt.strftime("%Y-%m-%dT%H:%M:%S.000Z")
 
 
                         if "date" in json_["attributes"] :
-                            json_["attributes"].update( { "date" : str(original_timestamp) } )
+                            json_["attributes"].update( { "date" : str(original_date) } )
                         else :
-                            json_["attributes"][ "date" ] = str(original_timestamp)
+                            json_["attributes"][ "date" ] = str(original_date)
                         if "timestamp" in json_["attributes"] :
-                            json_["attributes"].update( { "timestamp" : str(original_timestamp) } )
+                            json_["attributes"].update( { "timestamp" : int(original_timestamp) } )
                         else:
-                            json_["attributes"][ "timestamp" ] = str(original_timestamp)
+                            json_["attributes"][ "timestamp" ] = int(original_timestamp)
                 else :
                     # add attributes
                     json_["attributes"] = {}
@@ -152,21 +153,22 @@ def read_archives( bucket ) :
                         # example: 1718774683182501000
                         # TODO: add more logic for other formats
                         if len(str(original_timestamp)) > 18 and str(original_timestamp).isdigit():
-                            ns_dt = datetime.datetime.fromtimestamp(int(original_timestamp) // 1000000000)
-                            original_timestamp = ns_dt.strftime("%Y-%m-%dT%H:%M:%S.000Z")
+                            original_timestamp = int(original_timestamp) // 1000000000
+                            ns_dt = datetime.datetime.fromtimestamp(int(original_timestamp))
+                            original_date = ns_dt.strftime("%Y-%m-%dT%H:%M:%S.000Z")
 
                         if "date" in json_ :
-                            json_.update( { "date" : str(original_timestamp) } )
-                            json_["attributes"][ "date" ] = str(original_timestamp)
+                            json_.update( { "date" : str(original_date) } )
+                            json_["attributes"][ "date" ] = str(original_date)
                         else :
-                            json_[ "date" ] = str(original_timestamp)
-                            json_["attributes"][ "date" ] = str(original_timestamp)
+                            json_[ "date" ] = str(original_date)
+                            json_["attributes"][ "date" ] = str(original_date)
                         if "timestamp" in json_ :
-                            json_.update( { "timestamp" : str(original_timestamp) } )
-                            json_["attributes"][ "timestamp" ] = str(original_timestamp)
+                            json_.update( { "timestamp" : int(original_timestamp) } )
+                            json_["attributes"][ "timestamp" ] = int(original_timestamp)
                         else:
-                            json_[ "timestamp" ] = str(original_timestamp)
-                            json_["attributes"][ "timestamp" ] = str(original_timestamp)
+                            json_[ "timestamp" ] = int(original_timestamp)
+                            json_["attributes"][ "timestamp" ] = int(original_timestamp)
 
                 json_[ "@path" ] = datetime.datetime.strptime( str(json_[ "date" ]) , "%Y-%m-%dT%H:%M:%S.000Z" ).strftime( "dt=%Y%m%d/hour=%H/" + archive_name )
                 buffer_.append( json_ )
