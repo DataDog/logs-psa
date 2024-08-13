@@ -130,7 +130,7 @@ for path_ in targets_ :
         if "@path" in item_ :
             if item_[ "@path" ] == path_ :
                 del item_[ "@path" ]
-                print( json.dumps( item_ ) )
+                # print( json.dumps( item_ ) )
                 buffer_.append( json.dumps( item_ ) )
     buffer_ = sorted( list( set( buffer_ ) ) )
     body = gzip_str( "\n".join( buffer_ ) )
