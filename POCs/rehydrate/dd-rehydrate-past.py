@@ -82,6 +82,29 @@ def read_archives( bucket ) :
         for line in text_.splitlines() :
             if json.loads( line ) :
                 json_ = json.loads( line )
+
+                # if there are tags, make sure they are a list
+                # if not a list, convert equal delimited string to list
+                if "tags" in json_ :
+                    tags = json_[ "tags" ]
+                    try:
+                        json.loads(tags)
+                    except:
+                        if type(tags) != list:
+                            d = []
+                            s = str(tags).split(",")
+
+                            for item in s:
+                                if "=" in item:
+                                    i = item.split("=",1)
+                                    d.append(i[0] + ':' + i[-1])
+                                else:
+                                    d.append(item)
+
+                            #print(json.dumps(d))
+                            del json_[ "tags" ]
+                            json_["tags"] = d
+
                 # @kelner: this isn't the most DRY logic, some repetition here
                 # TODO: refactor to be more DRY
                 if "attributes" in json_ :
