@@ -102,7 +102,7 @@ def read_archives( bucket ) :
                         except:
                             # only tries again for nanosecond epoch strings - came from customer
                             # TODO: add more logic for other formats
-                            ns_dt = datetime.datetime.fromtimestamp(int(json_[ "date" ])) // 1000000000)
+                            ns_dt = datetime.datetime.fromtimestamp(int(json_[ "date" ]) // 1000000000)
                             new_date = ns_dt.strftime("%Y-%m-%dT%H:%M:%S.000Z")
                             json_[ "date" ] = new_date
                             json_[ "@path" ] = datetime.datetime.strptime( str(json_[ "date" ]) , "%Y-%m-%dT%H:%M:%S.000Z" ).strftime( "dt=%Y%m%d/hour=%H/archive.json.gz" )
