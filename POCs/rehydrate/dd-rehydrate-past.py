@@ -95,6 +95,14 @@ def read_archives( bucket ) :
                         original_timestamp = json_[ "attributes" ][ "original_timestamp" ]
                         del json_[ "attributes" ][ "original_timestamp" ]
 
+                        # checks for nanosecond epoch strings - came from customer using nanosecond epoch
+                        # example: 1718774683182501000
+                        # TODO: add more logic for other formats
+                        if len(str(original_timestamp)) > 18 and str(original_timestamp).isdigit():
+                            ns_dt = datetime.datetime.fromtimestamp(int(original_timestamp) // 1000000000)
+                            original_timestamp = ns_dt.strftime("%Y-%m-%dT%H:%M:%S.000Z")
+
+
                         if "date" in json_["attributes"] :
                             json_.update( { "date" : str(original_timestamp) } )
                         else :
@@ -114,6 +122,13 @@ def read_archives( bucket ) :
                         original_timestamp = json_[ "original_timestamp" ]
                         del json_[ "original_timestamp" ]
 
+                        # checks for nanosecond epoch strings - came from customer using nanosecond epoch
+                        # example: 1718774683182501000
+                        # TODO: add more logic for other formats
+                        if len(str(original_timestamp)) > 18 and str(original_timestamp).isdigit():
+                            ns_dt = datetime.datetime.fromtimestamp(int(original_timestamp) // 1000000000)
+                            original_timestamp = ns_dt.strftime("%Y-%m-%dT%H:%M:%S.000Z")
+
                         if "date" in json_ :
                             json_.update( { "date" : str(original_timestamp) } )
                         else :
@@ -123,16 +138,7 @@ def read_archives( bucket ) :
                         else:
                             json_[ "timestamp" ] = str(original_timestamp)
 
-                try:
-                    # if date is in expected format, it will be parsed and reformatted
-                    json_[ "@path" ] = datetime.datetime.strptime( str(json_[ "date" ]) , "%Y-%m-%dT%H:%M:%S.000Z" ).strftime( "dt=%Y%m%d/hour=%H/" + archive_name )
-                except:
-                    # only tries again for nanosecond epoch strings - came from customer
-                    # TODO: add more logic for other formats
-                    ns_dt = datetime.datetime.fromtimestamp(int(json_[ "date" ]) // 1000000000)
-                    new_date = ns_dt.strftime("%Y-%m-%dT%H:%M:%S.000Z")
-                    json_[ "date" ] = new_date
-                    json_[ "@path" ] = datetime.datetime.strptime( str(json_[ "date" ]) , "%Y-%m-%dT%H:%M:%S.000Z" ).strftime( "dt=%Y%m%d/hour=%H/" + archive_name )
+                json_[ "@path" ] = datetime.datetime.strptime( str(json_[ "date" ]) , "%Y-%m-%dT%H:%M:%S.000Z" ).strftime( "dt=%Y%m%d/hour=%H/" + archive_name )
                 buffer_.append( json_ )
     eprint( "PROCESSED LINES COUNT : " + str( len( buffer_ ) ) )
     return( sorted( buffer_ , key=operator.itemgetter( "date" ) , reverse = False ) )
