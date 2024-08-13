@@ -82,11 +82,15 @@ def read_archives( bucket ) :
         for line in text_.splitlines() :
             if json.loads( line ) :
                 json_ = json.loads( line )
+                # @kelner: this isn't the most DRY logic, some repetition here
+                # TODO: refactor to be more DRY
                 if "attributes" in json_ :
                     if "@timestamp" in json_["attributes"] :
                         del json_[ "attributes" ][ "@timestamp" ]
                     if "timestamp" in json_["attributes"] :
                         del json_[ "attributes" ][ "timestamp" ]
+                    if "time" in json_["attributes"] :
+                        del json_[ "attributes" ][ "time" ]
                     if "original_timestamp" in json_["attributes"] :
                         original_timestamp = json_[ "attributes" ][ "original_timestamp" ]
                         del json_[ "attributes" ][ "original_timestamp" ]
@@ -95,12 +99,17 @@ def read_archives( bucket ) :
                             json_.update( { "date" : str(original_timestamp) } )
                         else :
                             json_[ "date" ] = str(original_timestamp)
+                        if "timestamp" in json_["attributes"] :
+                            json_.update( { "timestamp" : str(original_timestamp) } )
+                        else:
                             json_[ "timestamp" ] = str(original_timestamp)
                 else :
                     if "@timestamp" in json_ :
                         del json_[ "@timestamp" ]
                     if "timestamp" in json_ :
                         del json_[ "timestamp" ]
+                    if "time" in json_ :
+                        del json_[ "time" ]
                     if "original_timestamp" in json_ :
                         original_timestamp = json_[ "original_timestamp" ]
                         del json_[ "original_timestamp" ]
@@ -109,6 +118,9 @@ def read_archives( bucket ) :
                             json_.update( { "date" : str(original_timestamp) } )
                         else :
                             json_[ "date" ] = str(original_timestamp)
+                        if "timestamp" in json_ :
+                            json_.update( { "timestamp" : str(original_timestamp) } )
+                        else:
                             json_[ "timestamp" ] = str(original_timestamp)
 
                 try:
