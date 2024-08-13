@@ -89,6 +89,7 @@ def read_archives( bucket ) :
 
                 # if there are tags, make sure they are a list
                 # if not a list, convert equal delimited string to list
+                # TODO: add more logic for other delimited formats as needed by customers
                 if "tags" in json_ :
                     tags = json_[ "tags" ]
                     try:
