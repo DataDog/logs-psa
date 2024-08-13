@@ -42,10 +42,17 @@ def list_objects( bucket ) :
     list_ = []
     if "Contents" in boto3.client( "s3" ).list_objects_v2( Bucket = bucket ) :
         for item_ in boto3.client( "s3" ).list_objects_v2( Bucket = bucket )[ "Contents" ] :
-            if re.match( r".*dt=.*/hour=.*/archive_.*\..*\..*\.json\.gz", item_[ "Key" ] ) :
-                if len( re.findall( "dt=" + date_filter + "/hour=" , item_[ "Key" ] ) ) > 0 :
-                    if len( re.findall( "/hour=" + hour_filter + "/archive_" , item_[ "Key" ] ) ) > 0 :
-                        list_.append( item_[ "Key" ] )
+            # @kelner: I'm not sure if this is necessary, the user may not want to
+            # create a directory structure that mimics a DD archive structure
+            # and we can't assume that the user will always have the same structure
+            # it's better to just list all objects and let the script rebuild the
+            # structure based on the datetime fields and rebuild the directory
+            # path on the target bucket
+            # if re.match( r".*dt=.*/hour=.*/archive_.*\..*\..*\.json\.gz", item_[ "Key" ] ) :
+            #     if len( re.findall( "dt=" + date_filter + "/hour=" , item_[ "Key" ] ) ) > 0 :
+            #         if len( re.findall( "/hour=" + hour_filter + "/archive_" , item_[ "Key" ] ) ) > 0 :
+            #             list_.append( item_[ "Key" ] )
+            list_.append( item_[ "Key" ] )
         return( sorted( list_ , reverse = False ) )
     else:
         eprint( "TOTAL OBJECTS : 0" )
