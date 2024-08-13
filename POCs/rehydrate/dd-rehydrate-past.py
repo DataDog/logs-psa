@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-import sys, os, boto3, io, gzip, re, time, json, datetime, jinja2, operator
+import sys, os, boto3, io, gzip, json, datetime, operator
 
 DEBUG = os.getenv("DEBUG")
 
