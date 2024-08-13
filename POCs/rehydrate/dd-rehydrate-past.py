@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-import sys, os, boto3, io, gzip, json, datetime, operator
+import sys, os, boto3, io, gzip, json, datetime, operator, random
 
 DEBUG = os.getenv("DEBUG")
 
@@ -68,6 +68,17 @@ def read_archives( bucket ) :
         gzip_ = io.BytesIO( data_[ "Body" ].read() )
         text_ = gzip.GzipFile( None, "rb", fileobj=gzip_ ).read().decode( "utf-8" )
         eprint( "TEXT LINES COUNT : " + str( len( text_.splitlines() ) ) )
+
+        # @kelner: DD rehydration expects a file with the format of
+        # archive_225212.0418.3cq4YGouR1CeXmZR0FZqIQ.json.gz
+        # where _225212.0418.3cq4YGouR1CeXmZR0FZqIQ can be any string
+        # if just `archive.json.gz` is used, the rehydration will fail to find
+        # any logs to rehydrate
+        first_ran = random.randrange(100000,999999)
+        second_ran = random.randrange(1000,9999)
+        third_ran = ''.join(random.choice("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789") for i in range(22))
+        archive_name = "archive_" + str(first_ran) + "." + str(second_ran) + "." + str(third_ran) + ".json.gz"
+
         for line in text_.splitlines() :
             if json.loads( line ) :
                 json_ = json.loads( line )
@@ -93,14 +104,14 @@ def read_archives( bucket ) :
                             del json_[ "@timestamp" ]
                 try:
                     # if date is in expected format, it will be parsed and reformatted
-                    json_[ "@path" ] = datetime.datetime.strptime( str(json_[ "date" ]) , "%Y-%m-%dT%H:%M:%S.000Z" ).strftime( "dt=%Y%m%d/hour=%H/archive.json.gz" )
+                    json_[ "@path" ] = datetime.datetime.strptime( str(json_[ "date" ]) , "%Y-%m-%dT%H:%M:%S.000Z" ).strftime( "dt=%Y%m%d/hour=%H/" + archive_name )
                 except:
                     # only tries again for nanosecond epoch strings - came from customer
                     # TODO: add more logic for other formats
                     ns_dt = datetime.datetime.fromtimestamp(int(json_[ "date" ]) // 1000000000)
                     new_date = ns_dt.strftime("%Y-%m-%dT%H:%M:%S.000Z")
                     json_[ "date" ] = new_date
-                    json_[ "@path" ] = datetime.datetime.strptime( str(json_[ "date" ]) , "%Y-%m-%dT%H:%M:%S.000Z" ).strftime( "dt=%Y%m%d/hour=%H/archive.json.gz" )
+                    json_[ "@path" ] = datetime.datetime.strptime( str(json_[ "date" ]) , "%Y-%m-%dT%H:%M:%S.000Z" ).strftime( "dt=%Y%m%d/hour=%H/" + archive_name )
                 buffer_.append( json_ )
     eprint( "PROCESSED LINES COUNT : " + str( len( buffer_ ) ) )
     return( sorted( buffer_ , key=operator.itemgetter( "date" ) , reverse = False ) )
