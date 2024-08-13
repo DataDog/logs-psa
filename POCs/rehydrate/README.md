@@ -189,6 +189,8 @@ See [Datadog Setup](#datadog-setup) then see [DD Rehydration](#dd-rehydration).
 
 # Lambda Function
 
+**THIS METHOD IS OUTDATED -- THE LATEST WORKING CODE EXISTS ONLY IN `dd-rehydrate-past.py` AND YOU WILL NEED TO ADAPT THAT CODE TO THE LAMBDA CODE IF YOU WANT THIS TO WORK**
+
 ## Negative Attributes of this method
 
 1. Double charged for logs in Datadog: Once for API Submission, Once for rehydration using original timestamp.
