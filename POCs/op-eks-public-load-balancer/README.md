@@ -43,15 +43,6 @@ opw-observability-pipelines-worker-headless   ClusterIP      None            <no
     {"text":"Success","code":0}
     ```
 
-- And you should be able to see event statistics showing up in the DD OP Control Plane
+- And you should be able to see event statistics showing up in the DD OP Control Plane:
 
-## Fake logs
-
-Supplemental for testing purposes is [`fake-logs.yaml`](./fake-logs.yaml) which will generate some fake VPC logs and
-send them to the OPW endpoint that is exposed to generate some traffic.
-
-You can also test this via curl from your local machine:
-
-```
-curl -k http://a003a1a88ff8b42fdb05e8bb1d8e79d8-b0147bca32a05c83.elb.us-west-2.amazonaws.com:8888/services/collector/event -d '{ "event": "this is my log message"}'
-```
+![opw control plane](./op-ctrl-logs.png)
