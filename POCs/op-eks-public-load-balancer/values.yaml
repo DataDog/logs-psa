@@ -1,0 +1,78 @@
+# https://github.com/DataDog/helm-charts/tree/main/charts/observability-pipelines-worker
+
+datadog:
+  ## The site parameter is based on the Datadog site you are using.
+  ## For example, the site URL for US1 is "datadoghq.com". See Datadog Site
+  ## for more information: https://docs.datadoghq.com/getting_started/site/
+  site: "datadoghq.com"
+
+image:
+  # image.name -- Specify the image name to use (relative to `image.repository`).
+  name: observability-pipelines-worker
+  # image.tag -- Specify the image tag to use.
+  tag: 2.1.2
+  ## Currently, we offer images at:
+  ## - GCP: gcr.io/datadoghq
+  ## - DockerHub: docker.io/datadog
+  ## - AWS: public.ecr.aws/datadog
+  # image.repository -- Specify the image repository to use.
+  repository: public.ecr.aws/datadog
+  # image.pullPolicy -- Specify the
+  # [pullPolicy](https://kubernetes.io/docs/concepts/containers/images/#image-pull-policy).
+  pullPolicy: IfNotPresent
+
+## Autoscaling
+##
+autoscaling:
+  enabled: true
+  minReplicas: 2
+  maxReplicas: 10
+  targetCPUUtilizationPercentage: 80
+
+podDisruptionBudget:
+  enabled: true
+  minAvailable: 1
+
+## HorizontalPodAutoscaler (HPA) requires resource requests to function,
+## so this example configures several default values. Datadog recommends
+## that you change the values to match the actual size of the instances that
+## you are using.
+resources:
+  requests:
+    cpu: 1000m
+    memory: 512Mi
+
+
+## To prevent a single datacenter from causing a complete system failure,
+## the topologySpreadConstraints in this example controls how OP Worker pods
+## are spread across your cluster among availability zones.
+topologySpreadConstraints:
+  - maxSkew: 1
+    topologyKey: topology.kubernetes.io/zone
+    whenUnsatisfiable: ScheduleAnyway
+    labelSelector:
+      matchExpressions:
+        - key: app.kubernetes.io/name
+          operator: In
+          values:
+            - observability-pipelines-worker
+
+
+## Load Balancing
+## This example configuration avoids cross-availability-zone costs where possible.
+service:
+  enabled: true
+  type: "LoadBalancer"
+  externalTrafficPolicy: "Local"
+  annotations:
+    ## This example marks the service as ignored by the in-tree AWS LB controller.
+    service.beta.kubernetes.io/aws-load-balancer-type: "external"
+    ## This is the default for the AWS LB Controller but it is worthwhile to be explicit.
+    service.beta.kubernetes.io/aws-load-balancer-scheme: "internet-facing"
+    ## NLBs should communicate directly with the OP container instead of
+    ## passing through kube-proxy. This avoids cross-availability-zone traffic
+    ## to keep things within the availability zone, which kube-proxy might change.
+    service.beta.kubernetes.io/aws-load-balancer-nlb-target-type: "ip"
+    # This is the security group that the NLB will use.
+    # This is NOT required, but due to policies in the DD AWS account, it is required.
+    service.beta.kubernetes.io/aws-load-balancer-security-groups: "sg-0684050368acf9d26"
