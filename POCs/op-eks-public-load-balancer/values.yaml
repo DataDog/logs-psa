@@ -73,6 +73,3 @@ service:
     ## passing through kube-proxy. This avoids cross-availability-zone traffic
     ## to keep things within the availability zone, which kube-proxy might change.
     service.beta.kubernetes.io/aws-load-balancer-nlb-target-type: "ip"
-    # This is the security group that the NLB will use.
-    # This is NOT required, but due to policies in the DD AWS account, it is required.
-    service.beta.kubernetes.io/aws-load-balancer-security-groups: "sg-0684050368acf9d26"
