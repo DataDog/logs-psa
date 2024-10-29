@@ -21,7 +21,7 @@ env:
 ## Autoscaling
 ##
 autoscaling:
-  enabled: true
+  enabled: false # TODO: Undo
   minReplicas: 2
   targetCPUUtilizationPercentage: 80
 
