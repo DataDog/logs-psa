@@ -158,6 +158,166 @@ spec:
                 path: ab.sh
           restartPolicy: OnFailure
 ---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: vpc-logs-six
+  labels:
+    app: vpc-logs-six
+spec:
+  schedule: "* * * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: ab
+            image: gcr.io/datadog-sandbox/ab:latest
+            imagePullPolicy: IfNotPresent
+            command:
+            - /bin/sh
+            - /script/ab.sh
+            volumeMounts:
+              - name: shell-script
+                mountPath: /script
+          volumes:
+          - name: shell-script
+            configMap:
+              name: vpc-logs-config
+              defaultMode: 0744
+              items:
+              - key: ab.sh
+                path: ab.sh
+          restartPolicy: OnFailure
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: vpc-logs-seven
+  labels:
+    app: vpc-logs-seven
+spec:
+  schedule: "* * * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: ab
+            image: gcr.io/datadog-sandbox/ab:latest
+            imagePullPolicy: IfNotPresent
+            command:
+            - /bin/sh
+            - /script/ab.sh
+            volumeMounts:
+              - name: shell-script
+                mountPath: /script
+          volumes:
+          - name: shell-script
+            configMap:
+              name: vpc-logs-config
+              defaultMode: 0744
+              items:
+              - key: ab.sh
+                path: ab.sh
+          restartPolicy: OnFailure
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: vpc-logs-eight
+  labels:
+    app: vpc-logs-eight
+spec:
+  schedule: "* * * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: ab
+            image: gcr.io/datadog-sandbox/ab:latest
+            imagePullPolicy: IfNotPresent
+            command:
+            - /bin/sh
+            - /script/ab.sh
+            volumeMounts:
+              - name: shell-script
+                mountPath: /script
+          volumes:
+          - name: shell-script
+            configMap:
+              name: vpc-logs-config
+              defaultMode: 0744
+              items:
+              - key: ab.sh
+                path: ab.sh
+          restartPolicy: OnFailure
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: vpc-logs-nine
+  labels:
+    app: vpc-logs-nine
+spec:
+  schedule: "* * * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: ab
+            image: gcr.io/datadog-sandbox/ab:latest
+            imagePullPolicy: IfNotPresent
+            command:
+            - /bin/sh
+            - /script/ab.sh
+            volumeMounts:
+              - name: shell-script
+                mountPath: /script
+          volumes:
+          - name: shell-script
+            configMap:
+              name: vpc-logs-config
+              defaultMode: 0744
+              items:
+              - key: ab.sh
+                path: ab.sh
+          restartPolicy: OnFailure
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: vpc-logs-ten
+  labels:
+    app: vpc-logs-ten
+spec:
+  schedule: "* * * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: ab
+            image: gcr.io/datadog-sandbox/ab:latest
+            imagePullPolicy: IfNotPresent
+            command:
+            - /bin/sh
+            - /script/ab.sh
+            volumeMounts:
+              - name: shell-script
+                mountPath: /script
+          volumes:
+          - name: shell-script
+            configMap:
+              name: vpc-logs-config
+              defaultMode: 0744
+              items:
+              - key: ab.sh
+                path: ab.sh
+          restartPolicy: OnFailure
+---
 apiVersion: v1
 kind: ConfigMap
 metadata:
