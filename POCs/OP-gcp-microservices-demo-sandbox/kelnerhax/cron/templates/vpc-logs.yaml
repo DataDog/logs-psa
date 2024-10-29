@@ -188,6 +188,11 @@ data:
         # debug
         # cat post.data
         ab -n 10 -c 2 -p post.data -dSq -v 1 http://opw-observability-pipelines-worker:8282/api/v2/logs &>/dev/null
+        # for dd agent to pick up
+        for i in $(seq 1 1 5)
+        do
+            cat post.data
+        done
 
         RANDOM_IP_ONE=$(printf "%d.%d.%d.%d" "$((RANDOM % 256))" "$((RANDOM % 256))" "$((RANDOM % 256))" "$((RANDOM % 256))")
         RANDOM_IP_TWO=$(printf "%d.%d.%d.%d" "$((RANDOM % 256))" "$((RANDOM % 256))" "$((RANDOM % 256))" "$((RANDOM % 256))")
@@ -204,6 +209,11 @@ data:
         # debug
         # cat post.data
         ab -n 10 -c 2 -p post.data -dSq -v 1 http://opw-observability-pipelines-worker:8088/api/v2/logs &>/dev/null
+        # for dd agent to pick up
+        for i in $(seq 1 1 5)
+        do
+            cat post.data
+        done
 
         sleep 1
     done
