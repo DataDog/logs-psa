@@ -1,0 +1,11 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: dd-agent-service
+spec:
+  selector:
+    app: datadog-agent
+  ports:
+    - protocol: TCP
+      port: 10518
+      targetPort: 10518
