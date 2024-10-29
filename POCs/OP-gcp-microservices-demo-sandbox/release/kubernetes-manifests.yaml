@@ -103,7 +103,7 @@ spec:
   selector:
     matchLabels:
       app: loadgenerator
-  replicas: 155
+  replicas: 100
   template:
     metadata:
       labels:
@@ -167,10 +167,10 @@ spec:
           value: "50"
         resources:
           requests:
-            cpu: 200m
+            cpu: 50m
             memory: 256Mi
           limits:
-            cpu: 400m
+            cpu: 150m
             memory: 512Mi
 ---
 apiVersion: v1
@@ -713,7 +713,7 @@ spec:
   selector:
     matchLabels:
       app: frontend
-  replicas: 3
+  replicas: 10
   template:
     metadata:
       labels:
