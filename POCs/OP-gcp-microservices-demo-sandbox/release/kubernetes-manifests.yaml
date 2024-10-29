@@ -28,7 +28,7 @@ spec:
   selector:
     matchLabels:
       app: currencyservice
-  replicas: 5
+  replicas: 3
   template:
     metadata:
       labels:
@@ -103,7 +103,7 @@ spec:
   selector:
     matchLabels:
       app: loadgenerator
-  replicas: 150
+  replicas: 155
   template:
     metadata:
       labels:
@@ -164,13 +164,13 @@ spec:
         - name: FRONTEND_ADDR
           value: "frontend:80"
         - name: USERS
-          value: "10"
+          value: "50"
         resources:
           requests:
-            cpu: 300m
+            cpu: 200m
             memory: 256Mi
           limits:
-            cpu: 500m
+            cpu: 400m
             memory: 512Mi
 ---
 apiVersion: v1
@@ -188,7 +188,7 @@ spec:
   selector:
     matchLabels:
       app: productcatalogservice
-  replicas: 5
+  replicas: 3
   template:
     metadata:
       labels:
@@ -262,7 +262,7 @@ spec:
   selector:
     matchLabels:
       app: checkoutservice
-  replicas: 5
+  replicas: 3
   template:
     metadata:
       labels:
@@ -345,7 +345,7 @@ spec:
   selector:
     matchLabels:
       app: shippingservice
-  replicas: 5
+  replicas: 3
   template:
     metadata:
       labels:
@@ -419,7 +419,7 @@ spec:
   selector:
     matchLabels:
       app: cartservice
-  replicas: 5
+  replicas: 3
   template:
     metadata:
       labels:
@@ -563,7 +563,7 @@ spec:
   selector:
     matchLabels:
       app: emailservice
-  replicas: 5
+  replicas: 3
   template:
     metadata:
       labels:
@@ -639,7 +639,7 @@ spec:
   selector:
     matchLabels:
       app: paymentservice
-  replicas: 5
+  replicas: 3
   template:
     metadata:
       labels:
@@ -713,7 +713,7 @@ spec:
   selector:
     matchLabels:
       app: frontend
-  replicas: 5
+  replicas: 3
   template:
     metadata:
       labels:
@@ -842,7 +842,7 @@ spec:
   selector:
     matchLabels:
       app: recommendationservice
-  replicas: 5
+  replicas: 3
   template:
     metadata:
       labels:
@@ -920,7 +920,7 @@ spec:
   selector:
     matchLabels:
       app: adservice
-  replicas: 5
+  replicas: 3
   template:
     metadata:
       labels:
