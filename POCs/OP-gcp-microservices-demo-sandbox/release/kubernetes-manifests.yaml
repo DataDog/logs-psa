@@ -28,7 +28,7 @@ spec:
   selector:
     matchLabels:
       app: currencyservice
-  replicas: 10
+  replicas: 15
   template:
     metadata:
       labels:
