@@ -1,0 +1,123 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: vpc-logs
+  labels:
+    app: vpc-logs
+spec:
+  schedule: "* * * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: ab
+            image: gcr.io/datadog-sandbox/ab:latest
+            imagePullPolicy: IfNotPresent
+            command:
+            - /bin/sh
+            - /script/ab.sh
+            volumeMounts:
+              - name: shell-script
+                mountPath: /script
+          volumes:
+          - name: shell-script
+            configMap:
+              name: vpc-logs-config
+              defaultMode: 0744
+              items:
+              - key: ab.sh
+                path: ab.sh
+          restartPolicy: OnFailure
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: vpc-logs-two
+  labels:
+    app: vpc-logs-two
+spec:
+  schedule: "* * * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: ab
+            image: gcr.io/datadog-sandbox/ab:latest
+            imagePullPolicy: IfNotPresent
+            command:
+            - /bin/sh
+            - /script/ab.sh
+            volumeMounts:
+              - name: shell-script
+                mountPath: /script
+          volumes:
+          - name: shell-script
+            configMap:
+              name: vpc-logs-config
+              defaultMode: 0744
+              items:
+              - key: ab.sh
+                path: ab.sh
+          restartPolicy: OnFailure
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: vpc-logs-config
+data:
+  ab.sh: |
+    #!/bin/bash
+
+    # loop 5 times (roughly 1 sec each)
+    for i in $(seq 1 1 5)
+    do
+
+        # debug
+        # echo "Kelnerhax : ${i}"
+
+        RANDOM_IP_ONE=$(printf "%d.%d.%d.%d" "$((RANDOM % 256))" "$((RANDOM % 256))" "$((RANDOM % 256))" "$((RANDOM % 256))")
+        RANDOM_IP_TWO=$(printf "%d.%d.%d.%d" "$((RANDOM % 256))" "$((RANDOM % 256))" "$((RANDOM % 256))" "$((RANDOM % 256))")
+        PACKETS=$(shuf -i 5-45 -n 1)
+        BYTES=$(shuf -i 6788-45044 -n 1)
+        CUR_MS=$(date +%s%3N)
+        START_OFFSET=$(shuf -i 60000-180000 -n 1)
+        END_OFFSET=$(shuf -i 60000-180000 -n 1)
+        START_MS=$((CUR_MS - START_OFFSET))
+        END_MS=$((CUR_MS - END_OFFSET))
+
+        INGRESS_VPC_LOG="5 172597598159 eni-01406d3fd54b6ebbb ${RANDOM_IP_ONE} ${RANDOM_IP_TWO} 443 8080 IPv4 ${PACKETS} ${BYTES} ${START_MS} ${END_MS} ingress ACCEPT vpc-008f180656f12488b subnet-0a32a7d335d3b2037 i-0cf8a64af62989629 ap-southeast-2 apse2-az3"
+        echo "{ \"event\": \"${INGRESS_VPC_LOG}\"}" > post.data
+        # debug
+        # cat post.data
+        ab -n 10 -c 2 -p post.data -dSq -v 1 http://opw-observability-pipelines-worker:8282/api/v2/logs &>/dev/null
+        # for dd agent to pick up
+        for i in $(seq 1 1 5)
+        do
+            cat post.data
+        done
+
+        RANDOM_IP_ONE=$(printf "%d.%d.%d.%d" "$((RANDOM % 256))" "$((RANDOM % 256))" "$((RANDOM % 256))" "$((RANDOM % 256))")
+        RANDOM_IP_TWO=$(printf "%d.%d.%d.%d" "$((RANDOM % 256))" "$((RANDOM % 256))" "$((RANDOM % 256))" "$((RANDOM % 256))")
+        PACKETS=$(shuf -i 5-45 -n 1)
+        BYTES=$(shuf -i 6788-45044 -n 1)
+        CUR_MS=$(date +%s%3N)
+        START_OFFSET=$(shuf -i 60000-180000 -n 1)
+        END_OFFSET=$(shuf -i 60000-180000 -n 1)
+        START_MS=$((CUR_MS - START_OFFSET))
+        END_MS=$((CUR_MS - END_OFFSET))
+
+        EGRESS_VPC_LOG="5 172597598159 eni-01406d3fd54b6ebbb ${RANDOM_IP_TWO} ${RANDOM_IP_ONE} 443 8080 IPv4 ${PACKETS} ${BYTES} ${START_MS} ${END_MS} egress ACCEPT vpc-008f180656f12488b subnet-0a32a7d335d3b2037 i-0cf8a64af62989629 ap-southeast-2 apse2-az3"
+        echo "{ \"event\": \"${EGRESS_VPC_LOG}\"}" > post.data
+        # debug
+        # cat post.data
+        ab -n 10 -c 2 -p post.data -dSq -v 1 http://opw-observability-pipelines-worker:8088/api/v2/logs &>/dev/null
+        # for dd agent to pick up
+        for i in $(seq 1 1 5)
+        do
+            cat post.data
+        done
+
+        sleep 1
+    done
