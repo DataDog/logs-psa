@@ -186,7 +186,7 @@ data:
         INGRESS_VPC_LOG="5 172597598159 eni-01406d3fd54b6ebbb ${RANDOM_IP_ONE} ${RANDOM_IP_TWO} 443 8080 IPv4 ${PACKETS} ${BYTES} ${START_MS} ${END_MS} ingress ACCEPT vpc-008f180656f12488b subnet-0a32a7d335d3b2037 i-0cf8a64af62989629 ap-southeast-2 apse2-az3"
         TIMESTAMP=$(date +%s)
 
-        echo "[{\"status\":\"info\",\"timestamp\":${TIMESTAMP},\"hostname\":\"kelnerhax\",\"service\":\"vpc\",\"ddsource\":\"vpc\",\"ddtags\": \"kelnerhax\",\"message\":\"${INGRESS_VPC_LOG}\"}]" > post.data
+        echo "[{\"status\":\"info\",\"timestamp\":${TIMESTAMP},\"hostname\":\"kelnerhax\",\"service\":\"vpc\",\"ddsource\":\"vpc\",\"ddtags\":\"kelnerhax\",\"message\":\"${INGRESS_VPC_LOG}\"}]" > post.data
         # debug
         # cat post.data
         ab -n 10 -c 2 -p post.data -dSq -v 1 http://opw-observability-pipelines-worker:8282/api/v2/logs &>/dev/null
@@ -210,7 +210,7 @@ data:
         EGRESS_VPC_LOG="5 172597598159 eni-01406d3fd54b6ebbb ${RANDOM_IP_TWO} ${RANDOM_IP_ONE} 443 8080 IPv4 ${PACKETS} ${BYTES} ${START_MS} ${END_MS} egress ACCEPT vpc-008f180656f12488b subnet-0a32a7d335d3b2037 i-0cf8a64af62989629 ap-southeast-2 apse2-az3"
         TIMESTAMP=$(date +%s)
         
-        echo "[{\"status\":\"info\",\"timestamp\":${TIMESTAMP},\"hostname\":\"kelnerhax\",\"service\":\"vpc\",\"ddsource\":\"vpc\",\"ddtags\": \"kelnerhax\",\"message\":\"${EGRESS_VPC_LOG}\"}]" > post.data
+        echo "[{\"status\":\"info\",\"timestamp\":${TIMESTAMP},\"hostname\":\"kelnerhax\",\"service\":\"vpc\",\"ddsource\":\"vpc\",\"ddtags\":\"kelnerhax\",\"message\":\"${EGRESS_VPC_LOG}\"}]" > post.data
         # debug
         # cat post.data
         ab -n 10 -c 2 -p post.data -dSq -v 1 http://opw-observability-pipelines-worker:8282/api/v2/logs &>/dev/null
