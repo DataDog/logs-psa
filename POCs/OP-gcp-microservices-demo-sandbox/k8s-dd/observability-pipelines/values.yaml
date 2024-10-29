@@ -12,11 +12,11 @@ env:
         name: dd-api-key
         key: api-key
   - name: DD_OP_PIPELINE_ID
-    value: "d1a4f238-0329-11ef-8502-da7ad0900002"
+    value: "99422e04-9647-11ef-8b19-da7ad0900005" #"d1a4f238-0329-11ef-8502-da7ad0900002"
   - name: DD_OP_SOURCE_DATADOG_AGENT_ADDRESS
     value: "0.0.0.0:8282"
   - name: DD_SITE
-    value: "datadoghq.com"
+    value: "datadoghq.eu" #"datadoghq.com"
 
 ## Autoscaling
 ##
