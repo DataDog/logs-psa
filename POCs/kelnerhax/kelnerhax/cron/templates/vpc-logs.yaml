@@ -647,7 +647,7 @@ data:
     #!/bin/bash
 
     # loop 120 times
-    for i in $(seq 1 1 120)
+    for i in $(seq 1 1 60)
     do
 
         # debug
@@ -674,10 +674,10 @@ data:
         #ab -n 10 -c 2 -p post.data -dSq -v 3 http://opw-observability-pipelines-worker:8282/api/v2/logs &>/dev/null
         
         # for dd agent to pick up
-        for i in $(seq 1 1 240)
+        for i in $(seq 1 1 120)
         do
             echo "{ \"message\": \"${INGRESS_VPC_LOG}\"}"
-            echo "$(<fat.log)"
+            cat fat.log
         done
 
         RANDOM_IP_ONE=$(printf "%d.%d.%d.%d" "$((RANDOM % 256))" "$((RANDOM % 256))" "$((RANDOM % 256))" "$((RANDOM % 256))")
@@ -699,10 +699,10 @@ data:
         #ab -n 10 -c 2 -p post.data -dSq -v 3 http://opw-observability-pipelines-worker:8282/api/v2/logs &>/dev/null
         
         # for dd agent to pick up
-        for i in $(seq 1 1 240)
+        for i in $(seq 1 1 120)
         do
             echo "{ \"message\": \"${EGRESS_VPC_LOG}\"}"
-            echo "$(<fat.log)"
+            cat fat.log
         done
 
         sleep 1
