@@ -103,7 +103,7 @@ spec:
   selector:
     matchLabels:
       app: loadgenerator
-  replicas: 300
+  replicas: 200
   template:
     metadata:
       labels:
