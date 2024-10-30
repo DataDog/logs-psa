@@ -1,4 +1,4 @@
-Redirecting stderr logging to stdout via OP
+# Redirecting stderr logging to stdout & sent via OP
 
 Prerequesites:
 - k8s cluster
