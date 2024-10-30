@@ -24,6 +24,8 @@ Run two deployments in k8s, one uses `2>&1` to redirect stderr to stdout
 - `k apply -f stderr.yaml`
 - `k apply -f stderr-redirect.yaml`
 
+## Results
+
 Note that those without `2>&1` redirect get `status:error` attribute due to nature of `stream` written to k8s log files on k8s nodes under `/var/logs/pods/...` something like:
 
 Containerd:
