@@ -17,11 +17,13 @@ env:
     value: "0.0.0.0:8282"
   - name: DD_SITE
     value: "datadoghq.com"
+  # - name: VECTOR_LOG
+  #   value: "debug"
 
 ## Autoscaling
 ##
 autoscaling:
-  enabled: false # TODO: Undo
+  enabled: true
   minReplicas: 2
   targetCPUUtilizationPercentage: 80
 
