@@ -29,9 +29,9 @@
 
     ```
     NAME                                      TYPE           CLUSTER-IP      EXTERNAL-IP                             PORT(S)          AGE
-kubernetes                                    ClusterIP      172.20.0.1      <none>                                  443/TCP          79m
-opw-observability-pipelines-worker            LoadBalancer   172.20.190.54   <your-id>.us-east-2.elb.amazonaws.com   8888:32702/TCP   4m
-opw-observability-pipelines-worker-headless   ClusterIP      None            <none>                                  8888/TCP         57m
+    kubernetes                                    ClusterIP      172.20.0.1      <none>                                  443/TCP          79m
+    opw-observability-pipelines-worker            LoadBalancer   172.20.190.54   <your-id>.us-east-2.elb.amazonaws.com   8888:32702/TCP   4m
+    opw-observability-pipelines-worker-headless   ClusterIP      None            <none>                                  8888/TCP         57m
 
     ```
 
