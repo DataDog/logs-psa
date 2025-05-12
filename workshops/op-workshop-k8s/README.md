@@ -651,6 +651,7 @@ OP also ships its own logs to your DD Org, you can find these under "Latest Depl
 
 - https://docs.datadoghq.com/observability_pipelines/
 - https://docs.datadoghq.com/observability_pipelines/best_practices_for_scaling_observability_pipelines/
+- https://www.datadoghq.com/knowledge-center/telemetry-pipelines/
 - https://www.datadoghq.com/blog/observability-pipelines/
 - https://www.datadoghq.com/blog/observability-pipelines-log-volume-control/
 - https://www.datadoghq.com/blog/observability-pipelines-dual-ship-logs/
