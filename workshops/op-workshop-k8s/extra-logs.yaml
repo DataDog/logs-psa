@@ -1,0 +1,67 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: extra-logs
+  labels:
+    app: extra-logs
+    tags.datadoghq.com/env: "dev"
+    tags.datadoghq.com/service: "extra-logs"
+    service: extra-logs
+spec:
+  schedule: "* * * * *"
+  jobTemplate:
+    spec:
+      template:
+        metadata:
+          labels:
+            tags.datadoghq.com/env: "dev"
+            tags.datadoghq.com/service: "extra-logs"
+            service: extra-logs
+        spec:
+          containers:
+            - name: extra-logs
+              image: ubuntu:latest
+              imagePullPolicy: IfNotPresent
+              command:
+                - /bin/sh
+                - /script/extra-logs.sh
+              volumeMounts:
+                - name: shell-script
+                  mountPath: /script
+          volumes:
+            - name: shell-script
+              configMap:
+                name: extra-logs-config
+                defaultMode: 0777
+                items:
+                  - key: extra-logs.sh
+                    path: extra-logs.sh
+          restartPolicy: OnFailure
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: extra-logs-config
+data:
+  extra-logs.sh: |
+    #!/bin/bash
+
+    # loop 60 times (roughly 1 sec each)
+    for i in $(seq 1 1 60)
+    do
+      for i in $(seq 1 1 10)
+      do
+        echo '{ "source": "kelner-hax", "env": "dev", "message": "Random log 1", "service": "extra-logs", "cc_id": "100" }'
+        echo '{ "source": "kelner-hax", "env": "dev", "message": "Random log 2", "service": "extra-logs", "cc_id": "200" }'
+        echo '{ "source": "kelner-hax", "env": "dev", "message": "Random log 3", "service": "extra-logs", "cc_id": "300" }'
+        echo '{ "source": "kelner-hax", "env": "dev", "message": "Random log 4", "service": "extra-logs", "cc_id": "400" }'
+        echo '{ "source": "kelner-hax", "env": "dev", "message": "Random log 5", "service": "extra-logs", "cc_id": "500" }'
+        echo '{ "source": "kelner-hax", "env": "dev", "message": "Random log 6", "service": "extra-logs", "cc_id": "600" }'
+        echo '{ "source": "kelner-hax", "env": "dev", "message": "Random log 7", "service": "extra-logs", "cc_id": "700" }'
+        echo '{ "source": "kelner-hax", "env": "dev", "message": "Random log 8", "service": "extra-logs", "cc_id": "800" }'
+        echo '{ "source": "kelner-hax", "env": "dev", "message": "Random log 9", "service": "extra-logs", "cc_id": "900" }'
+        echo '{ "source": "kelner-hax", "env": "dev", "message": "Random log 10", "service": "extra-logs", "cc_id": "1000" }'
+      done
+
+      sleep 1
+    done
