@@ -7,8 +7,8 @@ This code is simplified and for example purposes only and not represenatative of
 # Setup
 
 - A MySQL Server
-- A Linux Host to run script
-- A Linux Host running Observability Pipelines
+- A host to run script
+- A host running Observability Pipelines
 
 # Requirements
 
