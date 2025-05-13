@@ -7,10 +7,10 @@ DB_PASS="your_password"
 DB_NAME="your_database"
 
 # Query to run
-QUERY="SELECT id, name, email FROM users;"
+QUERY="SELECT id, log, transaction_id FROM logs;"
 
 # URL to send data to
-ENDPOINT_URL="https://your.api.endpoint/receive"
+ENDPOINT_URL="https://your.op.endpoint/"
 
 # Connect to MySQL and read results
 mysql -h "$DB_HOST" -u "$DB_USER" -p"$DB_PASS" -D "$DB_NAME" -B -e "$QUERY" | while IFS=$'\t' read -r id name email; do
