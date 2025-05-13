@@ -34,4 +34,6 @@ while IFS=$'\t' read -r id log transaction_id event_id; do
         -d "{\"id\": \"$id\", \"log\": \"$log\", \"transaction_id\": \"$transaction_id\"}"
 
     echo "Sent: id=$id, name=$name, email=$email"
+
+    LAST_EVENT = $event_id
 done
