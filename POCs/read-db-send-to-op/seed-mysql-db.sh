@@ -5,25 +5,29 @@ DB_HOST="localhost"
 DB_USER="your_user"
 DB_PASS="your_password"
 
-# Create database and table SQL
-SQL_COMMANDS=$(cat <<EOF
+# Create database and table
+mysql -h "$DB_HOST" -u "$DB_USER" -p"$DB_PASS" -e "
 CREATE DATABASE IF NOT EXISTS logs;
-
 USE logs;
-
 CREATE TABLE IF NOT EXISTS log_entries (
     id INT AUTO_INCREMENT PRIMARY KEY,
     log TEXT NOT NULL,
     transaction_id VARCHAR(255),
     event_id VARCHAR(255)
 );
+"
 
-INSERT INTO log_entries (log, transaction_id, event_id) VALUES
-('User login', 'TX123', 'EVT001'),
-('File uploaded', 'TX124', 'EVT002'),
-('User logout', 'TX125', 'EVT003');
-EOF
-)
+# Generate and insert 3000 random entries
+for i in $(seq 1 3000); do
+    log="Random log message $((RANDOM % 1000))"
+    transaction_id="TX$((100000 + RANDOM % 900000))"
+    event_id="$(printf "$i")"
+
+    mysql -h "$DB_HOST" -u "$DB_USER" -p"$DB_PASS" logs -e "
+    INSERT INTO log_entries (log, transaction_id, event_id)
+    VALUES ('$log', '$transaction_id', '$event_id');
+    "
+done
 
 # Run SQL commands
 mysql -h "$DB_HOST" -u "$DB_USER" -p"$DB_PASS" -e "$SQL_COMMANDS"
