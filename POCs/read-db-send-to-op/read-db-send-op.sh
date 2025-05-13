@@ -6,6 +6,12 @@ DB_USER="your_user"
 DB_PASS="your_password"
 DB_NAME="your_database"
 
+# Get the last event ID from the file
+if [[ ! -f event.txt ]]; then
+    echo "0" > event.txt
+fi
+LAST_EVENT=$(< event.txt)
+
 # Query to run
 QUERY="SELECT id, log, transaction_id FROM logs;"
 
