@@ -20,7 +20,9 @@ QUERY="SELECT id, log, transaction_id, event_id FROM logs WHERE $COUNT_KEY > $LA
 ENDPOINT_URL="https://your.op.endpoint/"
 
 # Connect to MySQL and read results
-mysql -h "$DB_HOST" -u "$DB_USER" -p"$DB_PASS" -D "$DB_NAME" -B -e "$QUERY" | while IFS=$'\t' read -r id name email; do
+mysql -h "$DB_HOST" -u "$DB_USER" -p"$DB_PASS" -D "$DB_NAME" -B -e "$QUERY"
+
+while IFS=$'\t' read -r id log transaction_id event_id; do
     # Skip header
     if [[ "$id" == "id" ]]; then
         continue
