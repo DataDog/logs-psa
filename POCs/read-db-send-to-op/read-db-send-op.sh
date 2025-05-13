@@ -31,7 +31,7 @@ while IFS=$'\t' read -r id log transaction_id event_id; do
     # Send data to endpoint (adjust JSON structure as needed)
     curl -X POST "$ENDPOINT_URL" \
         -H "Content-Type: application/json" \
-        -d "{\"id\": \"$id\", \"name\": \"$name\", \"email\": \"$email\"}"
+        -d "{\"id\": \"$id\", \"log\": \"$log\", \"transaction_id\": \"$transaction_id\"}"
 
     echo "Sent: id=$id, name=$name, email=$email"
 done
