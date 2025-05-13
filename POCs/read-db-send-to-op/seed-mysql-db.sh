@@ -1,9 +1,9 @@
 #!/bin/bash
 
 # Database connection details
-# DB_HOST="localhost"
-# DB_USER="your_user"
-# DB_PASS="your_password"
+DB_HOST="localhost"
+DB_USER="your_user"
+DB_PASS="your_password"
 
 # Create database and table SQL
 SQL_COMMANDS=$(cat <<EOF
