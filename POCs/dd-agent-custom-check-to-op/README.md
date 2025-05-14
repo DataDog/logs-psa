@@ -165,7 +165,7 @@ observability_pipelines_worker:
     ## @env DD_OBSERVABILITY_PIPELINES_WORKER_LOGS_URL - string - optional - default: ""
     ## URL endpoint for the Observability Pipelines Worker to send logs to
     #
-    url: "http://127.0.0.1:8686"
+    url: "http://127.0.0.1:8282"
 ```
 
 - Restart the agent service: `sudo systemctl restart datadog-agent`
