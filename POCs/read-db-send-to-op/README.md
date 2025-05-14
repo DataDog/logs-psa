@@ -36,10 +36,10 @@ See [read-db-send-op.sh](./read-db-send-op.sh).
 
 A simple OP Pipeline utilizing HTTP Server source:
 
-![op-pipe.png]
+![op-pipe.png](./op-pipe.png)
 
 A seed script for our database: [seed-mysql-db.sh](./seed-mysql-db.sh) - seeds 3000 DB entries
 
 Results from running [read-db-send-op.sh](./read-db-send-op.sh):
 
-![results.png]
+![results.png](./results.png)
