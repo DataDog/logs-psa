@@ -17,14 +17,11 @@ LAST_EVENT=$(< event.txt)
 # URL to send data to
 ENDPOINT_URL="http://localhost:9997/"
 
-# Connect to MySQL and read results
-mysql -h "$DB_HOST" -u "$DB_USER" -p"$DB_PASS" -D "$DB_NAME" -B -e "$QUERY"
+END_TIME=$((SECONDS + 60))
 
-while IFS=$'\t' read -r id log transaction_id event_id; do
-    # Skip header
-    if [[ "$id" == "id" ]]; then
-        continue
-    fi
+# loop for 60 seconds, but can be adjusted
+# this would work nicely for a cron job that runs every minute
+while [ "$SECONDS" -lt "$END_TIME" ]; do
 
     # Send data to endpoint (adjust JSON structure as needed)
     curl -X POST "$ENDPOINT_URL" \
