@@ -170,3 +170,20 @@ observability_pipelines_worker:
 
 - Restart the agent service: `sudo systemctl restart datadog-agent`
 
+## Verify logs are flowing through OP
+
+- Back on your OP Pipeline overview page, click the gear icon on your source and click "View Details"
+
+    ![op view details](./images/op-view-details.png)
+
+- In the slide out panel you can verify events are flowing through OP:
+
+    ![op dd source metrics](./images/op-dd-source-metrics.png)
+
+- In the log explorer you can search for logs flowing through OP by targeting the attribute we added to our logs via the "Edit Fields" processor. Search for `@custom_check_op:true`: https://app.datadoghq.com/logs?query=%40custom_check_op%3Atrue as seen below:
+
+    ![op logs explorer](./images/op-logs-explorer.png)
+
+## Finish
+
+We now have a custom check running a bash script from the Datadog agent, that custom check is submitting logs over a TCP socket to the agent, and those logs are being sent to Datadog SaaS via Observability Pipelines.
