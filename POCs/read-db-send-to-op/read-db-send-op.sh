@@ -23,10 +23,8 @@ END_TIME=$((SECONDS + 60))
 # this would work nicely for a cron job that runs every minute
 while [ "$SECONDS" -lt "$END_TIME" ]; do
 
-    # Send data to endpoint (adjust JSON structure as needed)
-    curl -X POST "$ENDPOINT_URL" \
-        -H "Content-Type: application/json" \
-        -d "{\"id\": \"$id\", \"log\": \"$log\", \"transaction_id\": \"$transaction_id\"}"
+    # DEBUG
+    # echo "Last event ID: $LAST_EVENT"
 
     echo "Sent: id=$id, name=$name, email=$email"
 
