@@ -14,9 +14,6 @@ if [[ ! -f event.txt ]]; then
 fi
 LAST_EVENT=$(< event.txt)
 
-# Query to run
-QUERY="SELECT id, log, transaction_id, event_id FROM logs WHERE $COUNT_KEY > $LAST_EVENT ORDER BY $COUNT_KEY LIMIT 1000;"
-
 # URL to send data to
 ENDPOINT_URL="https://your.op.endpoint/"
 
@@ -37,4 +34,5 @@ while IFS=$'\t' read -r id log transaction_id event_id; do
     echo "Sent: id=$id, name=$name, email=$email"
 
     LAST_EVENT = $event_id
+    done < <(mysql -h "$DB_HOST" -u "$DB_USER" -p"$DB_PASS" -D "$DB_NAME" -e "$QUERY")
 done
