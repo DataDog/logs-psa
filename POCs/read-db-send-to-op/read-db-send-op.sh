@@ -55,3 +55,6 @@ while [ "$SECONDS" -lt "$END_TIME" ]; do
     # loop must be performed this way to avoid using a pipe and subshell preventing $LAST_EVENT from being updated
     done < <(mysql -h "$DB_HOST" -u "$DB_USER" -p"$DB_PASS" -D "$DB_NAME" -e "$QUERY")
 done
+
+# Update the last event ID in the file
+echo "$LAST_EVENT" > event.txt
