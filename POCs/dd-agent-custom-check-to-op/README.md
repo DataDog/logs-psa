@@ -2,6 +2,22 @@
 
 Collect output from arbitrary bash script via DD Agent Custom Check and submit it as a log to be sent to observability pipelines.
 
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+**Table of Contents**
+
+- [Install the Agent](#install-the-agent)
+- [Configure the agent to collect logs](#configure-the-agent-to-collect-logs)
+- [Configure the agent to listen for logs on a TCP port](#configure-the-agent-to-listen-for-logs-on-a-tcp-port)
+- [Test sending logs over TCP](#test-sending-logs-over-tcp)
+- [Configure a custom agent check](#configure-a-custom-agent-check)
+- [Install Observability Pipelines worker](#install-observability-pipelines-worker)
+- [Configure the Agent to send logs to Observability Pipelines Worker](#configure-the-agent-to-send-logs-to-observability-pipelines-worker)
+- [Verify logs are flowing through OP](#verify-logs-are-flowing-through-op)
+- [Finish](#finish)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 ## Install the Agent
 
 Install page: https://app.datadoghq.com/fleet/install-agent/latest?platform=overview
