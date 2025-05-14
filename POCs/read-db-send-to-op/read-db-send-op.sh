@@ -1,10 +1,11 @@
 #!/bin/bash
 
-# Database credentials
+# Database details
 DB_HOST="localhost"
-DB_USER="your_user"
-DB_PASS="your_password"
-DB_NAME="your_database"
+DB_USER="root"
+DB_PASS="password"
+DB_NAME="logs"
+TABLE_NAME="log_entries"
 COUNT_KEY="event_id"
 
 # Get the last event ID from the file
