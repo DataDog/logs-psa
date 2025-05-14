@@ -58,3 +58,43 @@ Restart the agent service: `sudo systemctl restart datadog-agent`
 
 ![tcp test log](./images/tcp-test-log.png)
 
+## Configure a custom agent check
+
+- `sudo vi /etc/datadog-agent/conf.d/custom_checkvalue.yaml`
+
+    ```yaml
+    init_config:
+
+    instances:
+        - min_collection_interval: 5
+    ```
+
+- `min_collection_interval` is in seconds and can be adjusted to the user's needs
+- `sudo vi /etc/datadog-agent/checks.d/custom_checkvalue.py`
+  - Copy the contents of [custom_checkvalue.py](./custom_checkvalue.py) into the file
+- `sudo vi /opt/custom_bash.sh`
+  - Copy the contents of [custom_bash.sh](./custom_bash.sh) into the file
+- Restart the agent service: `sudo systemctl restart datadog-agent`
+- Test the custom check: `sudo -u dd-agent datadog-agent check custom_checkvalue`:
+
+    ```bash
+    Running Checks
+    ==============
+
+    custom_checkvalue (unversioned)
+    -------------------------------
+      Instance ID: custom_checkvalue:fe880881f3bd8083 [OK]
+      Configuration Source: file:/etc/datadog-agent/conf.d/custom_checkvalue.yaml
+      Total Runs: 1
+      Metric Samples: Last Run: 0, Total: 0
+      Events: Last Run: 0, Total: 0
+      Service Checks: Last Run: 0, Total: 0
+      Average Execution Time : 3.08s
+      Last Execution Date : 2025-05-14 22:01:03 UTC (1747260063000)
+      Last Successful Execution Date : 2025-05-14 22:01:03 UTC (1747260063000)
+    ```
+
+- Verify logs show up in Datadog log explorer:
+
+    ![custom check logs](./images/custom_check_logs.png)
+
