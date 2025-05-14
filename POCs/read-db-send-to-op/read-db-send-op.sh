@@ -26,7 +26,10 @@ while [ "$SECONDS" -lt "$END_TIME" ]; do
     # DEBUG
     # echo "Last event ID: $LAST_EVENT"
 
-    echo "Sent: id=$id, name=$name, email=$email"
+    # Query to run
+    # Adjust the query to match your database schema
+    # LIMIT 100 is used to limit the number of rows fetched for debugging, can go higher
+    QUERY="SELECT id, log, transaction_id, event_id FROM $TABLE_NAME WHERE $COUNT_KEY > $LAST_EVENT LIMIT 100;"
 
     LAST_EVENT = $event_id
     done < <(mysql -h "$DB_HOST" -u "$DB_USER" -p"$DB_PASS" -D "$DB_NAME" -e "$QUERY")
