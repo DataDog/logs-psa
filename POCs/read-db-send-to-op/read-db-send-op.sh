@@ -15,7 +15,7 @@ fi
 LAST_EVENT=$(< event.txt)
 
 # URL to send data to
-ENDPOINT_URL="https://your.op.endpoint/"
+ENDPOINT_URL="http://localhost:9997/"
 
 # Connect to MySQL and read results
 mysql -h "$DB_HOST" -u "$DB_USER" -p"$DB_PASS" -D "$DB_NAME" -B -e "$QUERY"
