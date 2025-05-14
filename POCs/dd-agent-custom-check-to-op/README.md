@@ -98,3 +98,39 @@ Restart the agent service: `sudo systemctl restart datadog-agent`
 
     ![custom check logs](./images/custom_check_logs.png)
 
+## Install Observability Pipelines worker
+
+In a production setting you'd deploy Observability Pipelines in a managed instance group (e.g. autoscaling group) behind a load balancer, similar to the diagram below, for testing purposes herein we will deploy OP locally to our linux host.
+
+![op arch](./images/op-arch.png)
+
+- Navigate to https://app.datadoghq.com/observability-pipelines
+- Select "Log Volume Control"
+- Select "Datadog Agent" as your source
+- Select "Datadog" as your destination
+- Remove all processes except "Edit Fields"
+- Modify the "Edit Fields" processor as follows:
+  - "Add Field"
+  - "Filter query": `*`
+  - "Field to add": `custom_check_op`
+  - "Value to add": `true`
+- It should look like the following:
+
+    ![op init config](./images/op-init-config.png)
+
+- Click "Next: install" in the top right of the screen
+- Choose your target platform, in our test case here, Ubuntu
+- Fill in the "Listener address" as `0.0.0.0:8282`
+  - OPW listens on all interfaces on port `8282`
+- Select an API Key with Remote Config enabled
+- Copy the install command and run it on your host:
+
+    ```bash
+    sudo DD_API_KEY=abc...123 DD_OP_PIPELINE_ID=45aa6a56-3113-11f0-a489-da7ad0900002 DD_SITE=datadoghq.com DD_OP_SOURCE_DATADOG_AGENT_ADDRESS='0.0.0.0:8282' bash -c "$(curl -L https://install.datadoghq.com/scripts/install_script_op_worker2.sh)"
+    ```
+
+- Click "Deploy Pipeline" in the UI
+- After a moment you should see that your pipeline configuration has been delivered to your worker(s) via remote configuration:
+
+    ![op deploy](./images/op-deploy.png)
+
