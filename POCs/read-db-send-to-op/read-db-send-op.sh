@@ -31,6 +31,27 @@ while [ "$SECONDS" -lt "$END_TIME" ]; do
     # LIMIT 100 is used to limit the number of rows fetched for debugging, can go higher
     QUERY="SELECT id, log, transaction_id, event_id FROM $TABLE_NAME WHERE $COUNT_KEY > $LAST_EVENT LIMIT 100;"
 
-    LAST_EVENT = $event_id
+    # Connect to MySQL and read results
+    while IFS=$'\t' read id log transaction_id event_id; do
+        # Skip header
+        if [[ "$id" == "id" ]]; then
+            continue
+        fi
+
+        # Send data to endpoint (adjust JSON structure as needed)
+        curl -X POST "$ENDPOINT_URL" \
+            -H "Content-Type: application/json" \
+            -d "{\"id\": \"$id\", \"log\": \"$log\", \"transaction_id\": \"$transaction_id\"}"
+
+        # DEBUG
+        # echo "Sent: id=$id, log=$log, transaction_id=$transaction_id"
+
+        # Capture the last event ID
+        LAST_EVENT=$event_id
+
+        # DEBUG
+        # print the last event ID
+        # echo "Last event ID: $LAST_EVENT"
+    # loop must be performed this way to avoid using a pipe and subshell preventing $LAST_EVENT from being updated
     done < <(mysql -h "$DB_HOST" -u "$DB_USER" -p"$DB_PASS" -D "$DB_NAME" -e "$QUERY")
 done
