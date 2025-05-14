@@ -49,3 +49,10 @@ Configure the agent to listen for logs on a TCP port.
   - `source` is used by Datadog SaaS pipelines to apply out-of-the-box log pipelines, you can write your own custom pipeline to parse logs as well
 
 Restart the agent service: `sudo systemctl restart datadog-agent`
+
+## Test sending logs over TCP
+
+`curl telnet://localhost:10518/ -m 2 <<< '{"message":"test log"}'`
+
+![tcp test log](./images/tcp-test-log.png)
+
