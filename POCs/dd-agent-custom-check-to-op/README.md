@@ -32,7 +32,7 @@ Config options: https://github.com/DataDog/datadog-agent/blob/main/pkg/config/co
 logs_enabled: true
 ```
 
-Configure the agent to listen for logs on a TCP port.
+## Configure the agent to listen for logs on a TCP port
 
 - `sudo mkdir /etc/datadog-agent/conf.d/custom_logs.d/`
 - `sudo vi /etc/datadog-agent/conf.d/custom_logs.d/conf.yaml`
