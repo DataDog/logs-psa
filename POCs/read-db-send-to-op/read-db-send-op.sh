@@ -15,6 +15,7 @@ fi
 LAST_EVENT=$(< event.txt)
 
 # URL to send data to
+# ENDPOINT_URL="http://your.op.endpoint:port/"
 ENDPOINT_URL="http://localhost:9997/"
 
 END_TIME=$((SECONDS + 60))
