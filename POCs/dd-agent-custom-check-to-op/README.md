@@ -34,6 +34,8 @@ logs_enabled: true
 
 ## Configure the agent to listen for logs on a TCP port
 
+This will be used to send logs from our custom check. Instead of writing to a file and tailing the file, which is a viable alternative.
+
 - `sudo mkdir /etc/datadog-agent/conf.d/custom_logs.d/`
 - `sudo vi /etc/datadog-agent/conf.d/custom_logs.d/conf.yaml`
 
