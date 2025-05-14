@@ -2,8 +2,8 @@
 
 # Database connection details
 DB_HOST="localhost"
-DB_USER="your_user"
-DB_PASS="your_password"
+DB_USER="root"
+DB_PASS="password"
 
 # Create database and table
 mysql -h "$DB_HOST" -u "$DB_USER" -p"$DB_PASS" -e "
@@ -19,7 +19,7 @@ CREATE TABLE IF NOT EXISTS log_entries (
 
 # Generate and insert 3000 random entries
 for i in $(seq 1 3000); do
-    log="Random log message $((RANDOM % 1000))"
+    log="Random log message $i"
     transaction_id="TX$((100000 + RANDOM % 900000))"
     event_id="$(printf "$i")"
 
@@ -28,8 +28,5 @@ for i in $(seq 1 3000); do
     VALUES ('$log', '$transaction_id', '$event_id');
     "
 done
-
-# Run SQL commands
-mysql -h "$DB_HOST" -u "$DB_USER" -p"$DB_PASS" -e "$SQL_COMMANDS"
 
 echo "Database 'logs' and table 'log_entries' seeded successfully."
