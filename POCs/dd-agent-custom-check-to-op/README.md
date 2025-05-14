@@ -134,3 +134,39 @@ In a production setting you'd deploy Observability Pipelines in a managed instan
 
     ![op deploy](./images/op-deploy.png)
 
+## Configure the Agent to send logs to Observability Pipelines Worker
+
+In most production settings you'd deploy the OP workers in a managed instance pool (e.g. autoscaling group) behind a load balancer and point to your load balancer URL. Here we have installed OP locally for easy test reproduction. Potentially this setup could be used in a production environment as well should it suffice for your needs.
+
+- `sudo vi /etc/datadog-agent/datadog.yaml`
+- Uncomment `observability_pipelines_worker` [link](https://github.com/DataDog/datadog-agent/blob/main/pkg/config/config_template.yaml#L647)
+- Uncomment `observability_pipelines_worker.logs`, `observability_pipelines_worker.logs.enabled`, `observability_pipelines_worker.logs.url` [link](https://github.com/DataDog/datadog-agent/blob/main/pkg/config/config_template.yaml#L669-L681)
+- Set `observability_pipelines_worker.logs.enabled` to `true`
+- Set `observability_pipelines_worker.logs.url` to `http://127.0.0.1:8282`
+
+```yaml
+## Configuration for forwarding telemetry to an Observability Pipelines Worker instead of Datadog.
+## https://www.datadoghq.com/product/observability-pipelines/
+#
+observability_pipelines_worker:
+
+  ## @param  logs - custom object - optional
+  ## Specific configurations for logs
+  #
+  logs:
+
+    ## @param enabled - boolean - optional - default: false
+    ## @env DD_OBSERVABILITY_PIPELINES_WORKER_LOGS_ENABLED - boolean - optional - default: false
+    ## Enables forwarding of logs to an Observability Pipelines Worker
+    #
+    enabled: true
+
+    ## @param url - string - optional - default: ""
+    ## @env DD_OBSERVABILITY_PIPELINES_WORKER_LOGS_URL - string - optional - default: ""
+    ## URL endpoint for the Observability Pipelines Worker to send logs to
+    #
+    url: "http://127.0.0.1:8686"
+```
+
+- Restart the agent service: `sudo systemctl restart datadog-agent`
+
