@@ -1,0 +1,422 @@
+#########################
+## Basic Configuration ##
+#########################
+
+## @param api_key - string - required
+## @env DD_API_KEY - string - required
+## The Datadog API key used by your Agent to submit metrics and events to Datadog.
+## Create a new API key here: https://app.datadoghq.com/organization-settings/api-keys .
+## Read more about API keys here: https://docs.datadoghq.com/account_management/api-app-keys/#api-keys .
+api_key: <redacted>a756
+
+## @param site - string - optional - default: datadoghq.com
+## @env DD_SITE - string - optional - default: datadoghq.com
+## The site of the Datadog intake to send Agent data to.
+## The site parameter must be set to enable your agent with Remote Configuration.
+## Set to 'datadoghq.eu' to send data to the EU site.
+## Set to 'us3.datadoghq.com' to send data to the US3 site.
+## Set to 'us5.datadoghq.com' to send data to the US5 site.
+## Set to 'ap1.datadoghq.com' to send data to the AP1 site.
+## Set to 'ddog-gov.com' to send data to the US1-FED site.
+#
+site: datadoghq.com
+
+##########################################
+## Aggregator & Forwarder Configuration ##
+##########################################
+# Kelner note:
+# May be useful for performance tuning, but not recommended to change
+#
+
+## @param aggregator_stop_timeout - integer - optional - default: 2
+## @env DD_AGGREGATOR_STOP_TIMEOUT - integer - optional - default: 2
+## When stopping the agent, the Aggregator will try to flush out data ready for
+## aggregation (metrics, events, ...). Data are flushed to the Forwarder in order
+## to be sent to Datadog, therefore the Agent might take at most
+## 'aggregator_stop_timeout'+'forwarder_stop_timeout' seconds to exit.
+##
+## You can set the maximum amount of time, in seconds, allocated to the
+## Aggregator to do so. You can disable this feature by setting
+## 'aggregator_stop_timeout' to 0.
+#
+# aggregator_stop_timeout: 2
+
+## @param aggregator_buffer_size - integer - optional - default: 100
+## @env DD_AGGREGATOR_BUFFER_SIZE - integer - optional - default: 100
+## The default buffer size for the aggregator use a sane value for most of the
+## use cases, however, it could be useful to manually set it in order to trade
+## RSS usage with better performances.
+#
+# aggregator_buffer_size: 100
+
+## @param forwarder_timeout - integer - optional - default: 20
+## @env DD_FORWARDER_TIMEOUT - integer - optional - default: 20
+## Forwarder timeout in seconds
+#
+# forwarder_timeout: 20
+
+## @param forwarder_retry_queue_payloads_max_size - integer - optional - default: 15728640 (15MB)
+## @env DD_FORWARDER_RETRY_QUEUE_PAYLOADS_MAX_SIZE - integer - optional - default: 15728640 (15MB)
+## It defines the maximum size in bytes of all the payloads in the forwarder's retry queue.
+## The actual memory used is greater than the payloads size as there are extra fields like HTTP headers,
+## but no more than 2.5 times the payload size.
+#
+# forwarder_retry_queue_payloads_max_size: 15728640
+
+## @param forwarder_num_workers - integer - optional - default: 1
+## @env DD_FORWARDER_NUM_WORKERS - integer - optional - default: 1
+## The number of workers used by the forwarder.
+#
+# forwarder_num_workers: 1
+
+## @param forwarder_stop_timeout - integer - optional - default: 2
+## @env DD_FORWARDER_STOP_TIMEOUT - integer - optional - default: 2
+## When stopping the agent, the Forwarder will try to flush all new
+## transactions (not the ones in retry state).  New transactions will be created
+## as the Aggregator flush it's internal data too, therefore the Agent might take
+## at most 'aggregator_stop_timeout'+'forwarder_stop_timeout' seconds to exit.
+##
+## You can set the maximum amount of time, in seconds, allocated to the
+## Forwarder to send those transactions.  You can disable this feature by setting
+## 'forwarder_stop_timeout' to 0.
+#
+# forwarder_stop_timeout: 2
+
+## @param http_protocol - string - optional - default: auto
+## @env DD_FORWARDER_HTTP_PROTOCOL - string - optional - default: auto
+## The transport type to use for sending logs. Possible values are "auto" or "http1".
+# forwarder_http_protocol: auto
+
+## @param forwarder_max_concurrent_requests - integer - optional - default: 10
+## @ENV DD_FORWARDER_MAX_CONCURRENT_REQUESTS - integer - optional - default: 10
+## The maximum number of concurrent requests that each worker can have queued up
+## at any one time. If the connection is over HTTP/1 each request will be waiting
+## for the previous request to complete before sending the next one. With HTTP/2
+## each request can be sent before waiting for the response.
+#
+# forwarder_max_concurrent_requests: 10
+
+## @param forwarder_storage_max_size_in_bytes - integer - optional - default: 0
+## @env DD_FORWARDER_STORAGE_MAX_SIZE_IN_BYTES - integer - optional - default: 0
+## When the retry queue of the forwarder is full, `forwarder_storage_max_size_in_bytes`
+## defines the amount of disk space the Agent can use to store transactions on the disk.
+## When `forwarder_storage_max_size_in_bytes` is `0`, the transactions are never stored on the disk.
+#
+# forwarder_storage_max_size_in_bytes: 50000000
+
+## @param forwarder_storage_max_disk_ratio - float - optional - default: 0.8
+## @env DD_FORWARDER_STORAGE_MAX_DISK_RATIO - float - optional - default: 0.8
+## `forwarder_storage_max_disk_ratio` defines the disk capacity limit for storing transactions.
+## `0.8` means the Agent can store transactions on disk until `forwarder_storage_max_size_in_bytes`
+## is reached or when the disk mount for `forwarder_storage_path` exceeds 80% of the disk capacity,
+## whichever is lower.
+#
+# forwarder_storage_max_disk_ratio: 0.8
+
+## @param forwarder_outdated_file_in_days - integer - optional - default: 10
+## @env DD_FORWARDER_OUTDATED_FILE_IN_DAYS - integer - optional - default: 10
+## This value specifies how many days the overflow transactions will remain valid before
+## being discarded. During the Agent restart, if a retry file contains transactions that were
+## created more than `forwarder_outdated_file_in_days` days ago, they are removed.
+#
+# forwarder_outdated_file_in_days: 10
+
+## @param forwarder_high_prio_buffer_size - int - optional - default: 100
+## Defines the size of the high prio buffer.
+## Increasing the buffer size can help if payload drops occur due to high prio buffer being full.
+#
+# forwarder_high_prio_buffer_size: 100
+
+## @param forwarder_low_prio_buffer_size - int - optional - default: 100
+## Defines the size of the low prio buffer.
+#
+# forwarder_low_prio_buffer_size: 100
+
+## @param forwarder_requeue_buffer_size - int - optional - default: 100
+## Defines the size of the requeue prio buffer.
+#
+# forwarder_requeue_buffer_size: 100
+
+## @param forwarder_backoff_base - int - optional - default: 2
+## @env DD_FORWARDER_BACKOFF_BASE - integer - optional - default: 2
+## Defines the rate of exponential growth, and the first retry interval range.
+## Do not set a lower value than the default. You may increase it if you use a proxy that benefits from a
+## higher rate of exponential growth.
+# forwarder_backoff_base: 2
+
+## @param forwarder_backoff_max - int - optional - default: 64
+## @env DD_FORWARDER_BACKOFF_MAX - integer - optional - default: 64
+## Defines the maximum number of seconds to wait for a retry.
+## Do not set a lower value than the default. You may increase it if you use a proxy that benefits from a
+## higher maximum backoff time.
+# forwarder_backoff_max: 64
+
+#############################
+## Observability Pipelines ##
+#############################
+
+## @param observability_pipelines_worker - custom object - optional
+## Configuration for forwarding telemetry to an Observability Pipelines Worker instead of Datadog.
+## https://www.datadoghq.com/product/observability-pipelines/
+## Note: This config is interchangeable with `vector`
+#
+observability_pipelines_worker:
+
+  ## @param  logs - custom object - optional
+  ## Specific configurations for logs
+  #
+  logs:
+
+    ## @param enabled - boolean - optional - default: false
+    ## @env DD_OBSERVABILITY_PIPELINES_WORKER_LOGS_ENABLED - boolean - optional - default: false
+    ## Enables forwarding of logs to an Observability Pipelines Worker
+    #
+    enabled: true
+
+    # Kelner note:
+    # Here we are sending locally but this could be any URL endpoint on the network
+    #
+    ## @param url - string - optional - default: ""
+    ## @env DD_OBSERVABILITY_PIPELINES_WORKER_LOGS_URL - string - optional - default: ""
+    ## URL endpoint for the Observability Pipelines Worker to send logs to
+    #
+    url: "http://127.0.0.1:8282"
+
+
+##################################
+## Log collection Configuration ##
+##################################
+
+## @param logs_enabled - boolean - optional - default: false
+## @env DD_LOGS_ENABLED - boolean - optional - default: false
+## Enable Datadog Agent log collection by setting logs_enabled to true.
+#
+logs_enabled: true
+
+# Kelner note:
+# May be useful for performance tuning, but not recommended to change
+#
+## @param logs_config - custom object - optional
+## Enter specific configurations for your Log collection.
+## Uncomment this parameter and the one below to enable them.
+## See https://docs.datadoghq.com/agent/logs/
+#
+# logs_config:
+
+  ## @param container_collect_all - boolean - optional - default: false
+  ## @env DD_LOGS_CONFIG_CONTAINER_COLLECT_ALL - boolean - optional - default: false
+  ## Enable container log collection for all the containers (see ac_exclude to filter out containers)
+  #
+  # container_collect_all: false
+
+  ## @param logs_dd_url - string - optional
+  ## @env DD_LOGS_CONFIG_LOGS_DD_URL - string - optional
+  ## Define the endpoint and port to hit when using a proxy for logs. The logs are forwarded in TCP
+  ## therefore the proxy must be able to handle TCP connections.
+  #
+  # logs_dd_url: <ENDPOINT>:<PORT>
+
+  ## @param logs_no_ssl - boolean - optional - default: false
+  ## @env DD_LOGS_CONFIG_LOGS_NO_SSL - optional - default: false
+  ## Disable the SSL encryption. This parameter should only be used when logs are
+  ## forwarded locally to a proxy. It is highly recommended to then handle the SSL encryption
+  ## on the proxy side.
+  #
+  # logs_no_ssl: false
+
+  ## @param processing_rules - list of custom objects - optional
+  ## @env DD_LOGS_CONFIG_PROCESSING_RULES - list of custom objects - optional
+  ## Global processing rules that are applied to all logs. The available rules are
+  ## "exclude_at_match", "include_at_match" and "mask_sequences". More information in Datadog documentation:
+  ## https://docs.datadoghq.com/agent/logs/advanced_log_collection/#global-processing-rules
+  #
+  # processing_rules:
+  #   - type: <RULE_TYPE>
+  #     name: <RULE_NAME>
+  #     pattern: <RULE_PATTERN>
+
+  ## @param force_use_http - boolean - optional - default: false
+  ## @env DD_LOGS_CONFIG_FORCE_USE_HTTP - boolean - optional - default: false
+  ## By default, the Agent sends logs in HTTPS batches to port 443 if HTTPS connectivity can
+  ## be established at Agent startup, and falls back to TCP otherwise. Set this parameter to `true` to
+  ## always send logs with HTTPS (recommended).
+  ## Warning: force_use_http means HTTP over TCP, not HTTP over HTTPS. Please use logs_no_ssl for HTTP over HTTPS.
+  #
+  # force_use_http: true
+
+  ## @param http_protocol - string - optional - default: auto
+  ## @env DD_LOGS_CONFIG_HTTP_PROTOCOL - string - optional - default: auto
+  ## The transport type to use for sending logs. Possible values are "auto" or "http1".
+  # http_protocol: auto
+
+  ## @param force_use_tcp - boolean - optional - default: false
+  ## @env DD_LOGS_CONFIG_FORCE_USE_TCP - boolean - optional - default: false
+  ## By default, logs are sent through HTTPS if possible, set this parameter
+  ## to `true` to always send logs via TCP. If `force_use_http` is set to `true`, this parameter
+  ## is ignored.
+  #
+  # force_use_tcp: true
+
+  ## @param use_compression - boolean - optional - default: true
+  ## @env DD_LOGS_CONFIG_USE_COMPRESSION - boolean - optional - default: true
+  ## This parameter is available when sending logs with HTTPS. If enabled, the Agent
+  ## compresses logs before sending them.
+  #
+  # use_compression: true
+
+  ## @param compression_level - integer - optional - default: 6
+  ## @env DD_LOGS_CONFIG_COMPRESSION_LEVEL - boolean - optional - default: false
+  ## The compression_level parameter accepts values from 0 (no compression)
+  ## to 9 (maximum compression but higher resource usage). Only takes effect if
+  ## `use_compression` is set to `true`.
+  #
+  # compression_level: 6
+
+  ## @param batch_wait - integer - optional - default: 5
+  ## @env DD_LOGS_CONFIG_BATCH_WAIT - integer - optional - default: 5
+  ## The maximum time (in seconds) the Datadog Agent waits to fill each batch of logs before sending.
+  #
+  # batch_wait: 5
+
+  ## @param open_files_limit - integer - optional - default: 500
+  ## @env DD_LOGS_CONFIG_OPEN_FILES_LIMIT - integer - optional - default: 500
+  ## The maximum number of files that can be tailed in parallel.
+  ## Note: the default for Mac OS is 200. The default for
+  ## all other systems is 500.
+  #
+  # open_files_limit: 500
+
+  ## @param file_wildcard_selection_mode - string - optional - default: `by_name`
+  ## @env DD_LOGS_CONFIG_FILE_WILDCARD_SELECTION_MODE - string - optional - default: `by_name`
+  ## The strategy used to prioritize wildcard matches if they exceed the open file limit.
+  ##
+  ## Choices are `by_name` and `by_modification_time`.
+  ##
+  ## `by_name` means that each log source is considered and the matching files are ordered
+  ## in reverse name order. While there are less than `logs_config.open_files_limit` files
+  ## being tailed, this process repeats, collecting from each configured source.
+  ##
+  ## `by_modification_time` takes all log sources and first adds any log sources that
+  ## point to a specific file. Next, it finds matches for all wildcard sources.
+  ## This resulting list is ordered by which files have been most recently modified
+  ## and the top `logs_config.open_files_limit` most recently modified files are
+  ## chosen for tailing.
+  ##
+  ## WARNING: `by_modification_time` is less performant than `by_name` and will trigger
+  ## more disk I/O at the configured wildcard log paths.
+  #
+  # file_wildcard_selection_mode: by_name
+
+  ## @param max_message_size_bytes - integer - optional - default: 256000
+  ## @env DD_LOGS_CONFIG_MAX_MESSAGE_SIZE_BYTES - integer - optional - default : 256000
+  ## The maximum size of single log message in bytes. If maxMessageSizeBytes exceeds
+  ## the documented API limit of 1MB - any payloads larger than 1MB will be dropped by the intake.
+  # https://docs.datadoghq.com/api/latest/logs/
+  #
+  # max_message_size_bytes: 256000
+
+  ## @param integrations_logs_files_max_size - integer - optional - default: 10
+  ## @env DD_LOGS_CONFIG_INTEGRATIONS_LOGS_FILES_MAX_SIZE - integer - optional - default: 10
+  ## The max size in MB that an integration logs file is allowed to use
+  #
+  # integrations_logs_files_max_size: 10
+
+  ## @param integrations_logs_total_usage - integer - optional - default: 100
+  ## @env DD_LOGS_CONFIG_INTEGRATIONS_LOGS_TOTAL_USAGE - integer - optional - default: 100
+  ## The total combined usage all integrations logs files can use
+  #
+  # integrations_logs_total_usage: 100
+
+  ## @param streaming - custom object - optional
+  ## This section allows you to configure streaming logs via remote config.
+  # streaming:
+    ## @param streamlogs_log_file - string - optional
+    ## @env DD_LOGS_CONFIG_STREAMING_STREAMLOGS_LOG_FILE - string - optional
+    ## Path to the file containing the streamlogs log file.
+    ## Default paths:
+    ##   * Windows: c:\\programdata\\datadog\\logs\\streamlogs_info\\streamlogs.log
+    ##   * Unix: /opt/log/datadog/streamlogs_info/streamlogs.log
+    ##   * Linux: /var/log/datadog/streamlogs_info/streamlogs.log
+    # streamlogs_log_file: <path_to_streamlogs_log_file>
+
+####################################
+## Trace Collection Configuration ##
+####################################
+
+# Kelner note:
+# Disable APM agent
+#
+
+## @param apm_config - custom object - optional
+## Enter specific configurations for your trace collection.
+## Uncomment this parameter and the one below to enable them.
+## See https://docs.datadoghq.com/agent/apm/
+#
+apm_config:
+
+  ## @param enabled - boolean - optional - default: true
+  ## @env DD_APM_ENABLED - boolean - optional - default: true
+  ## Set to true to enable the APM Agent.
+  #
+  enabled: false
+
+######################################
+## Process Collection Configuration ##
+######################################
+
+# Kelner note:
+# Only enabled to pull performance data for the agent itself specifically for Yum! testing
+# If deploying this in production, you should disable this unless you want to collect process data
+#
+
+## @param process_config - custom object - optional
+## Enter specific configurations for your Process data collection.
+## Uncomment this parameter and the one below to enable them.
+## See https://docs.datadoghq.com/graphing/infrastructure/process/
+#
+process_config:
+  ## @param run_in_core_agent - custom object - optional
+  ## Controls whether the process Agent or core Agent collects process and/or container information (Linux only).
+  # run_in_core_agent:
+    ## @param enabled - boolean - optional - default: true
+    ## Enables process/container collection on the core Agent instead of the process Agent.
+    # enabled: true
+
+
+  ## @param process_collection - custom object - optional
+  ## Specifies settings for collecting processes.
+  process_collection:
+    ## @param enabled - boolean - optional - default: false
+    ## Enables collection of information about running processes.
+    enabled: true
+
+
+#############################
+## DogStatsD Configuration ##
+#############################
+
+# Kelner note:
+# Disable DogstatsD server
+#
+
+## @param use_dogstatsd - boolean - optional - default: true
+## @env DD_USE_DOGSTATSD - boolean - optional - default: true
+## Set this option to false to disable the Agent DogStatsD server.
+#
+use_dogstatsd: false
+
+###########################
+## Logging Configuration ##
+###########################
+
+# Kelner note:
+# Disable Agent logging
+#
+
+## @param log_level - string - optional - default: info
+## @env DD_LOG_LEVEL - string - optional - default: info
+## Minimum log level of the Datadog Agent.
+## Valid log levels are: trace, debug, info, warn, error, critical, and off.
+## Note: When using the 'off' log level, quotes are mandatory.
+#
+log_level: 'off'
