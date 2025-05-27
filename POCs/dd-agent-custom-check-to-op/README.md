@@ -82,7 +82,7 @@ Restart the agent service: `sudo systemctl restart datadog-agent`
     init_config:
 
     instances:
-        - min_collection_interval: 5
+        - min_collection_interval: 30
     ```
 
 - `min_collection_interval` is in seconds and can be adjusted to the user's needs
