@@ -1,0 +1,1241 @@
+{
+    "title": "OP Pipeline metrics",
+    "description": "Custom metrics for pipelines (cloned)\n\ndatadog_demo_keep:true",
+    "widgets": [
+      {
+        "id": 5,
+        "definition": {
+          "title": "pipelines.source_lag_time_seconds",
+          "show_legend": true,
+          "legend_layout": "auto",
+          "legend_columns": [
+            "avg",
+            "min",
+            "max",
+            "value",
+            "sum"
+          ],
+          "type": "timeseries",
+          "requests": [
+            {
+              "formulas": [
+                {
+                  "formula": "query1"
+                }
+              ],
+              "queries": [
+                {
+                  "data_source": "metrics",
+                  "name": "query1",
+                  "query": "pipelines.source_lag_time_seconds{$pipeline_id,$component_id,$component_type,$component_kind} by {component_id,component_kind,component_type,pipeline_id}"
+                }
+              ],
+              "response_format": "timeseries",
+              "style": {
+                "palette": "dog_classic",
+                "line_type": "solid",
+                "line_width": "normal"
+              },
+              "display_type": "line"
+            }
+          ]
+        }
+      },
+      {
+        "id": 0,
+        "definition": {
+          "title": "pipelines.component_sent_events_total",
+          "show_legend": true,
+          "legend_layout": "auto",
+          "legend_columns": [
+            "avg",
+            "min",
+            "max",
+            "value",
+            "sum"
+          ],
+          "type": "timeseries",
+          "requests": [
+            {
+              "formulas": [
+                {
+                  "formula": "query1"
+                }
+              ],
+              "queries": [
+                {
+                  "data_source": "metrics",
+                  "name": "query1",
+                  "query": "pipelines.component_sent_events_total{$pipeline_id,$component_id,$component_type,$component_kind} by {component_id,component_kind,component_type,pipeline_id}"
+                }
+              ],
+              "response_format": "timeseries",
+              "style": {
+                "palette": "dog_classic",
+                "line_type": "solid",
+                "line_width": "normal"
+              },
+              "display_type": "line"
+            }
+          ]
+        }
+      },
+      {
+        "id": 26,
+        "definition": {
+          "title": "pipelines.buffer_byte_size",
+          "show_legend": true,
+          "legend_layout": "auto",
+          "legend_columns": [
+            "avg",
+            "min",
+            "max",
+            "value",
+            "sum"
+          ],
+          "time": {},
+          "type": "timeseries",
+          "requests": [
+            {
+              "formulas": [
+                {
+                  "formula": "query1",
+                  "number_format": {
+                    "unit": {
+                      "type": "canonical_unit",
+                      "unit_name": "byte"
+                    }
+                  }
+                }
+              ],
+              "queries": [
+                {
+                  "data_source": "metrics",
+                  "name": "query1",
+                  "query": "pipelines.buffer_byte_size{$pipeline_id,$component_id,$component_type,$component_kind} by {component_id,component_kind,component_type,pipeline_id}"
+                }
+              ],
+              "response_format": "timeseries",
+              "style": {
+                "palette": "dog_classic",
+                "line_type": "solid",
+                "line_width": "normal"
+              },
+              "display_type": "line"
+            }
+          ]
+        }
+      },
+      {
+        "id": 24,
+        "definition": {
+          "title": "pipelines.component_discarded_events_total",
+          "show_legend": true,
+          "legend_layout": "auto",
+          "legend_columns": [
+            "avg",
+            "min",
+            "max",
+            "value",
+            "sum"
+          ],
+          "type": "timeseries",
+          "requests": [
+            {
+              "formulas": [
+                {
+                  "formula": "query1"
+                }
+              ],
+              "queries": [
+                {
+                  "data_source": "metrics",
+                  "name": "query1",
+                  "query": "pipelines.component_discarded_events_total{$pipeline_id,$component_id,$component_type,$component_kind} by {pipeline_id,component_id,component_kind,component_type,intentional}"
+                }
+              ],
+              "response_format": "timeseries",
+              "style": {
+                "palette": "dog_classic",
+                "line_type": "solid",
+                "line_width": "normal"
+              },
+              "display_type": "line"
+            }
+          ]
+        }
+      },
+      {
+        "id": 13,
+        "definition": {
+          "title": "pipelines.buffer_events",
+          "show_legend": true,
+          "legend_layout": "auto",
+          "legend_columns": [
+            "avg",
+            "min",
+            "max",
+            "value",
+            "sum"
+          ],
+          "type": "timeseries",
+          "requests": [
+            {
+              "formulas": [
+                {
+                  "formula": "query1"
+                }
+              ],
+              "queries": [
+                {
+                  "data_source": "metrics",
+                  "name": "query1",
+                  "query": "pipelines.buffer_events{$pipeline_id,$component_id,$component_type,$component_kind} by {component_id,component_kind,component_type,pipeline_id,buffer_type}"
+                }
+              ],
+              "response_format": "timeseries",
+              "style": {
+                "palette": "dog_classic",
+                "line_type": "solid",
+                "line_width": "normal"
+              },
+              "display_type": "line"
+            }
+          ]
+        }
+      },
+      {
+        "id": 1,
+        "definition": {
+          "title": "pipelines.component_received_bytes_total",
+          "show_legend": true,
+          "legend_layout": "auto",
+          "legend_columns": [
+            "avg",
+            "min",
+            "max",
+            "value",
+            "sum"
+          ],
+          "time": {},
+          "type": "timeseries",
+          "requests": [
+            {
+              "formulas": [
+                {
+                  "formula": "query1",
+                  "number_format": {
+                    "unit": {
+                      "type": "canonical_unit",
+                      "unit_name": "byte"
+                    }
+                  }
+                }
+              ],
+              "queries": [
+                {
+                  "data_source": "metrics",
+                  "name": "query1",
+                  "query": "pipelines.component_received_bytes_total{$pipeline_id,$component_id,$component_type,$component_kind} by {component_id,component_kind,component_type,pipeline_id}"
+                }
+              ],
+              "response_format": "timeseries",
+              "style": {
+                "palette": "dog_classic",
+                "line_type": "solid",
+                "line_width": "normal"
+              },
+              "display_type": "line"
+            }
+          ]
+        }
+      },
+      {
+        "id": 3,
+        "definition": {
+          "title": "pipelines.http_client_rtt_seconds",
+          "show_legend": true,
+          "legend_layout": "auto",
+          "legend_columns": [
+            "avg",
+            "min",
+            "max",
+            "value",
+            "sum"
+          ],
+          "type": "timeseries",
+          "requests": [
+            {
+              "formulas": [
+                {
+                  "formula": "query1"
+                }
+              ],
+              "queries": [
+                {
+                  "data_source": "metrics",
+                  "name": "query1",
+                  "query": "pipelines.http_client_rtt_seconds{$pipeline_id,$component_id,$component_type,$component_kind} by {component_id,component_kind,component_type,pipeline_id}"
+                }
+              ],
+              "response_format": "timeseries",
+              "style": {
+                "palette": "dog_classic",
+                "line_type": "solid",
+                "line_width": "normal"
+              },
+              "display_type": "line"
+            }
+          ]
+        }
+      },
+      {
+        "id": 9,
+        "definition": {
+          "title": "pipelines.adaptive_concurrency_limit",
+          "show_legend": true,
+          "legend_layout": "auto",
+          "legend_columns": [
+            "avg",
+            "min",
+            "max",
+            "value",
+            "sum"
+          ],
+          "type": "timeseries",
+          "requests": [
+            {
+              "formulas": [
+                {
+                  "formula": "query1"
+                }
+              ],
+              "queries": [
+                {
+                  "data_source": "metrics",
+                  "name": "query1",
+                  "query": "pipelines.adaptive_concurrency_limit{$pipeline_id,$component_id,$component_type,$component_kind} by {component_id,component_kind,component_type,pipeline_id}"
+                }
+              ],
+              "response_format": "timeseries",
+              "style": {
+                "palette": "dog_classic",
+                "line_type": "solid",
+                "line_width": "normal"
+              },
+              "display_type": "line"
+            }
+          ]
+        }
+      },
+      {
+        "id": 10,
+        "definition": {
+          "title": "pipelines.component_received_events_total",
+          "show_legend": true,
+          "legend_layout": "auto",
+          "legend_columns": [
+            "avg",
+            "min",
+            "max",
+            "value",
+            "sum"
+          ],
+          "type": "timeseries",
+          "requests": [
+            {
+              "formulas": [
+                {
+                  "formula": "query1"
+                }
+              ],
+              "queries": [
+                {
+                  "data_source": "metrics",
+                  "name": "query1",
+                  "query": "pipelines.component_received_events_total{$pipeline_id,$component_id,$component_type,$component_kind} by {component_id,component_kind,component_type,pipeline_id}"
+                }
+              ],
+              "response_format": "timeseries",
+              "style": {
+                "palette": "dog_classic",
+                "line_type": "solid",
+                "line_width": "normal"
+              },
+              "display_type": "line"
+            }
+          ]
+        }
+      },
+      {
+        "id": 12,
+        "definition": {
+          "title": "pipelines.included_event_bytes_total",
+          "show_legend": true,
+          "legend_layout": "auto",
+          "legend_columns": [
+            "avg",
+            "min",
+            "max",
+            "value",
+            "sum"
+          ],
+          "time": {},
+          "type": "timeseries",
+          "requests": [
+            {
+              "formulas": [
+                {
+                  "formula": "query1",
+                  "number_format": {
+                    "unit": {
+                      "type": "canonical_unit",
+                      "unit_name": "byte"
+                    }
+                  }
+                }
+              ],
+              "queries": [
+                {
+                  "data_source": "metrics",
+                  "name": "query1",
+                  "query": "pipelines.included_event_bytes_total{$pipeline_id,$component_id,$component_type,$component_kind} by {component_id,component_kind,component_type,pipeline_id}"
+                }
+              ],
+              "response_format": "timeseries",
+              "style": {
+                "palette": "dog_classic",
+                "line_type": "solid",
+                "line_width": "normal"
+              },
+              "display_type": "line"
+            }
+          ]
+        }
+      },
+      {
+        "id": 15,
+        "definition": {
+          "title": "pipelines.http_client_responses_total",
+          "show_legend": true,
+          "legend_layout": "auto",
+          "legend_columns": [
+            "avg",
+            "min",
+            "max",
+            "value",
+            "sum"
+          ],
+          "type": "timeseries",
+          "requests": [
+            {
+              "formulas": [
+                {
+                  "formula": "query1"
+                }
+              ],
+              "queries": [
+                {
+                  "data_source": "metrics",
+                  "name": "query1",
+                  "query": "pipelines.http_client_responses_total{$pipeline_id,$component_id,$component_type,$component_kind} by {component_id,component_kind,component_type,pipeline_id,status}"
+                }
+              ],
+              "response_format": "timeseries",
+              "style": {
+                "palette": "dog_classic",
+                "line_type": "solid",
+                "line_width": "normal"
+              },
+              "display_type": "line"
+            }
+          ]
+        }
+      },
+      {
+        "id": 19,
+        "definition": {
+          "title": "pipelines.http_server_responses_sent_total",
+          "show_legend": true,
+          "legend_layout": "auto",
+          "legend_columns": [
+            "avg",
+            "min",
+            "max",
+            "value",
+            "sum"
+          ],
+          "type": "timeseries",
+          "requests": [
+            {
+              "formulas": [
+                {
+                  "formula": "query1"
+                }
+              ],
+              "queries": [
+                {
+                  "data_source": "metrics",
+                  "name": "query1",
+                  "query": "pipelines.http_server_responses_sent_total{$pipeline_id,$component_id,$component_type,$component_kind} by {component_id,component_kind,component_type,pipeline_id,status}"
+                }
+              ],
+              "response_format": "timeseries",
+              "style": {
+                "palette": "dog_classic",
+                "line_type": "solid",
+                "line_width": "normal"
+              },
+              "display_type": "line"
+            }
+          ]
+        }
+      },
+      {
+        "id": 2079865639453820,
+        "definition": {
+          "title": "",
+          "title_size": "16",
+          "title_align": "left",
+          "show_legend": true,
+          "legend_layout": "auto",
+          "legend_columns": [
+            "avg",
+            "min",
+            "max",
+            "value",
+            "sum"
+          ],
+          "type": "timeseries",
+          "requests": [
+            {
+              "formulas": [
+                {
+                  "formula": "query1"
+                }
+              ],
+              "queries": [
+                {
+                  "data_source": "metrics",
+                  "name": "query1",
+                  "query": "max:pipelines.utilization{$pipeline_id, $component_id, $component_type, $component_kind} by {component_id,component_kind,component_type,pipeline_id}"
+                }
+              ],
+              "response_format": "timeseries",
+              "style": {
+                "palette": "dog_classic",
+                "order_by": "values",
+                "line_type": "solid",
+                "line_width": "normal"
+              },
+              "display_type": "line"
+            }
+          ]
+        }
+      },
+      {
+        "id": 20,
+        "definition": {
+          "title": "pipelines.adaptive_concurrency_averaged_rtt",
+          "show_legend": true,
+          "legend_layout": "auto",
+          "legend_columns": [
+            "avg",
+            "min",
+            "max",
+            "value",
+            "sum"
+          ],
+          "type": "timeseries",
+          "requests": [
+            {
+              "formulas": [
+                {
+                  "formula": "query1"
+                }
+              ],
+              "queries": [
+                {
+                  "data_source": "metrics",
+                  "name": "query1",
+                  "query": "pipelines.adaptive_concurrency_averaged_rtt{$pipeline_id,$component_id,$component_type,$component_kind} by {component_id,component_kind,component_type,pipeline_id}"
+                }
+              ],
+              "response_format": "timeseries",
+              "style": {
+                "palette": "dog_classic",
+                "line_type": "solid",
+                "line_width": "normal"
+              },
+              "display_type": "line"
+            }
+          ]
+        }
+      },
+      {
+        "id": 8,
+        "definition": {
+          "title": "pipelines.host.physical_cpus",
+          "show_legend": true,
+          "legend_layout": "auto",
+          "legend_columns": [
+            "avg",
+            "min",
+            "max",
+            "value",
+            "sum"
+          ],
+          "time": {},
+          "type": "timeseries",
+          "requests": [
+            {
+              "formulas": [
+                {
+                  "formula": "query1"
+                }
+              ],
+              "queries": [
+                {
+                  "data_source": "metrics",
+                  "name": "query1",
+                  "query": "pipelines.host.physical_cpus{$pipeline_id,$component_id,$component_type,$component_kind} by {pipeline_id,worker_uuid}"
+                }
+              ],
+              "response_format": "timeseries",
+              "style": {
+                "palette": "dog_classic",
+                "line_type": "solid",
+                "line_width": "normal"
+              },
+              "display_type": "line"
+            }
+          ]
+        }
+      },
+      {
+        "id": 18,
+        "definition": {
+          "title": "pipelines.cpu_usage_seconds_total",
+          "show_legend": true,
+          "legend_layout": "auto",
+          "legend_columns": [
+            "avg",
+            "min",
+            "max",
+            "value",
+            "sum"
+          ],
+          "time": {},
+          "type": "timeseries",
+          "requests": [
+            {
+              "formulas": [
+                {
+                  "formula": "query1"
+                }
+              ],
+              "queries": [
+                {
+                  "data_source": "metrics",
+                  "name": "query1",
+                  "query": "pipelines.cpu_usage_seconds_total{$pipeline_id,$component_id,$component_type,$component_kind} by {pipeline_id,worker_uuid}"
+                }
+              ],
+              "response_format": "timeseries",
+              "style": {
+                "palette": "dog_classic",
+                "line_type": "solid",
+                "line_width": "normal"
+              },
+              "display_type": "line"
+            }
+          ]
+        }
+      },
+      {
+        "id": 17,
+        "definition": {
+          "title": "pipelines.buffer_max_event_size",
+          "show_legend": true,
+          "legend_layout": "auto",
+          "legend_columns": [
+            "avg",
+            "min",
+            "max",
+            "value",
+            "sum"
+          ],
+          "time": {},
+          "type": "timeseries",
+          "requests": [
+            {
+              "formulas": [
+                {
+                  "formula": "query1"
+                }
+              ],
+              "queries": [
+                {
+                  "data_source": "metrics",
+                  "name": "query1",
+                  "query": "pipelines.buffer_max_event_size{$pipeline_id,$component_id,$component_type,$component_kind} by {pipeline_id}"
+                }
+              ],
+              "response_format": "timeseries",
+              "style": {
+                "palette": "dog_classic",
+                "line_type": "solid",
+                "line_width": "normal"
+              },
+              "display_type": "line"
+            }
+          ]
+        }
+      },
+      {
+        "id": 61897583809876,
+        "definition": {
+          "title": "",
+          "title_size": "16",
+          "title_align": "left",
+          "show_legend": true,
+          "legend_layout": "auto",
+          "legend_columns": [
+            "avg",
+            "min",
+            "max",
+            "value",
+            "sum"
+          ],
+          "type": "timeseries",
+          "requests": [
+            {
+              "formulas": [
+                {
+                  "formula": "query1"
+                }
+              ],
+              "queries": [
+                {
+                  "data_source": "metrics",
+                  "name": "query1",
+                  "query": "avg:pipelines.host.load5{*} by {pipeline_id}"
+                }
+              ],
+              "response_format": "timeseries",
+              "style": {
+                "palette": "dog_classic",
+                "order_by": "values",
+                "line_type": "solid",
+                "line_width": "normal"
+              },
+              "display_type": "line"
+            }
+          ]
+        }
+      },
+      {
+        "id": 23,
+        "definition": {
+          "title": "pipelines.http_client_errors_total",
+          "show_legend": true,
+          "legend_layout": "auto",
+          "type": "timeseries",
+          "requests": [
+            {
+              "response_format": "timeseries",
+              "queries": [
+                {
+                  "data_source": "metrics",
+                  "name": "query1",
+                  "query": "pipelines.http_client_errors_total{$pipeline_id,$component_id,$component_type,$component_kind}"
+                }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "id": 11,
+        "definition": {
+          "title": "pipelines.cpu_max_cores",
+          "show_legend": true,
+          "legend_layout": "auto",
+          "legend_columns": [
+            "avg",
+            "min",
+            "max",
+            "value",
+            "sum"
+          ],
+          "type": "timeseries",
+          "requests": [
+            {
+              "formulas": [
+                {
+                  "formula": "query1"
+                }
+              ],
+              "queries": [
+                {
+                  "data_source": "metrics",
+                  "name": "query1",
+                  "query": "pipelines.cpu_max_cores{$pipeline_id,$component_id,$component_type,$component_kind} by {pipeline_id}"
+                }
+              ],
+              "response_format": "timeseries",
+              "style": {
+                "palette": "dog_classic",
+                "line_type": "solid",
+                "line_width": "normal"
+              },
+              "display_type": "line"
+            }
+          ]
+        }
+      },
+      {
+        "id": 28,
+        "definition": {
+          "title": "pipelines.host.memory_used_bytes",
+          "show_legend": true,
+          "legend_layout": "auto",
+          "legend_columns": [
+            "avg",
+            "min",
+            "max",
+            "value",
+            "sum"
+          ],
+          "type": "timeseries",
+          "requests": [
+            {
+              "formulas": [
+                {
+                  "formula": "query1"
+                }
+              ],
+              "queries": [
+                {
+                  "data_source": "metrics",
+                  "name": "query1",
+                  "query": "pipelines.host.memory_used_bytes{$pipeline_id,$component_id,$component_type,$component_kind} by {pipeline_id}"
+                }
+              ],
+              "response_format": "timeseries",
+              "style": {
+                "palette": "dog_classic",
+                "line_type": "solid",
+                "line_width": "normal"
+              },
+              "display_type": "line"
+            }
+          ]
+        }
+      },
+      {
+        "id": 14,
+        "definition": {
+          "title": "pipelines.host.memory_swap_total_bytes",
+          "show_legend": true,
+          "legend_layout": "auto",
+          "legend_columns": [
+            "avg",
+            "min",
+            "max",
+            "value",
+            "sum"
+          ],
+          "type": "timeseries",
+          "requests": [
+            {
+              "formulas": [
+                {
+                  "formula": "query1"
+                }
+              ],
+              "queries": [
+                {
+                  "data_source": "metrics",
+                  "name": "query1",
+                  "query": "pipelines.host.memory_swap_total_bytes{$pipeline_id,$component_id,$component_type,$component_kind} by {pipeline_id}"
+                }
+              ],
+              "response_format": "timeseries",
+              "style": {
+                "palette": "dog_classic",
+                "line_type": "solid",
+                "line_width": "normal"
+              },
+              "display_type": "line"
+            }
+          ]
+        }
+      },
+      {
+        "id": 27,
+        "definition": {
+          "title": "pipelines.host.disk_writes_completed_total",
+          "show_legend": true,
+          "legend_layout": "auto",
+          "legend_columns": [
+            "avg",
+            "min",
+            "max",
+            "value",
+            "sum"
+          ],
+          "type": "timeseries",
+          "requests": [
+            {
+              "formulas": [
+                {
+                  "formula": "query1"
+                }
+              ],
+              "queries": [
+                {
+                  "data_source": "metrics",
+                  "name": "query1",
+                  "query": "pipelines.host.disk_writes_completed_total{$pipeline_id,$component_id,$component_type,$component_kind} by {pipeline_id}"
+                }
+              ],
+              "response_format": "timeseries",
+              "style": {
+                "palette": "dog_classic",
+                "line_type": "solid",
+                "line_width": "normal"
+              },
+              "display_type": "line"
+            }
+          ]
+        }
+      },
+      {
+        "id": 29,
+        "definition": {
+          "title": "pipelines.host.disk_written_bytes_total",
+          "show_legend": true,
+          "legend_layout": "auto",
+          "legend_columns": [
+            "avg",
+            "min",
+            "max",
+            "value",
+            "sum"
+          ],
+          "type": "timeseries",
+          "requests": [
+            {
+              "formulas": [
+                {
+                  "formula": "query1"
+                }
+              ],
+              "queries": [
+                {
+                  "data_source": "metrics",
+                  "name": "query1",
+                  "query": "pipelines.host.disk_written_bytes_total{$pipeline_id,$component_id,$component_type,$component_kind} by {pipeline_id}"
+                }
+              ],
+              "response_format": "timeseries",
+              "style": {
+                "palette": "dog_classic",
+                "line_type": "solid",
+                "line_width": "normal"
+              },
+              "display_type": "line"
+            }
+          ]
+        }
+      },
+      {
+        "id": 4,
+        "definition": {
+          "title": "pipelines.host.network_receive_errs_total",
+          "show_legend": true,
+          "legend_layout": "auto",
+          "legend_columns": [
+            "avg",
+            "min",
+            "max",
+            "value",
+            "sum"
+          ],
+          "type": "timeseries",
+          "requests": [
+            {
+              "formulas": [
+                {
+                  "formula": "query1"
+                }
+              ],
+              "queries": [
+                {
+                  "data_source": "metrics",
+                  "name": "query1",
+                  "query": "pipelines.host.network_receive_errs_total{$pipeline_id,$component_id,$component_type,$component_kind} by {pipeline_id}"
+                }
+              ],
+              "response_format": "timeseries",
+              "style": {
+                "palette": "dog_classic",
+                "line_type": "solid",
+                "line_width": "normal"
+              },
+              "display_type": "line"
+            }
+          ]
+        }
+      },
+      {
+        "id": 7,
+        "definition": {
+          "title": "pipelines.host.memory_swap_used_bytes",
+          "show_legend": true,
+          "legend_layout": "auto",
+          "legend_columns": [
+            "avg",
+            "min",
+            "max",
+            "value",
+            "sum"
+          ],
+          "type": "timeseries",
+          "requests": [
+            {
+              "formulas": [
+                {
+                  "formula": "query1"
+                }
+              ],
+              "queries": [
+                {
+                  "data_source": "metrics",
+                  "name": "query1",
+                  "query": "pipelines.host.memory_swap_used_bytes{$pipeline_id,$component_id,$component_type,$component_kind} by {pipeline_id}"
+                }
+              ],
+              "response_format": "timeseries",
+              "style": {
+                "palette": "dog_classic",
+                "line_type": "solid",
+                "line_width": "normal"
+              },
+              "display_type": "line"
+            }
+          ]
+        }
+      },
+      {
+        "id": 21,
+        "definition": {
+          "title": "pipelines.scanning.duration",
+          "show_legend": true,
+          "legend_layout": "auto",
+          "legend_columns": [
+            "avg",
+            "min",
+            "max",
+            "value",
+            "sum"
+          ],
+          "type": "timeseries",
+          "requests": [
+            {
+              "formulas": [
+                {
+                  "formula": "query1"
+                }
+              ],
+              "queries": [
+                {
+                  "data_source": "metrics",
+                  "name": "query1",
+                  "query": "pipelines.scanning.duration{$pipeline_id,$component_id,$component_type,$component_kind} by {pipeline_id,component_id,component_kind,component_type}"
+                }
+              ],
+              "response_format": "timeseries",
+              "style": {
+                "palette": "dog_classic",
+                "line_type": "solid",
+                "line_width": "normal"
+              },
+              "display_type": "line"
+            }
+          ]
+        }
+      },
+      {
+        "id": 2,
+        "definition": {
+          "title": "pipelines.scanner.total_count",
+          "show_legend": true,
+          "legend_layout": "auto",
+          "type": "timeseries",
+          "requests": [
+            {
+              "response_format": "timeseries",
+              "queries": [
+                {
+                  "data_source": "metrics",
+                  "name": "query1",
+                  "query": "pipelines.scanner.total_count{$pipeline_id,$component_id,$component_type,$component_kind}"
+                }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "id": 6,
+        "definition": {
+          "title": "pipelines.scanner.deletions",
+          "show_legend": true,
+          "legend_layout": "auto",
+          "legend_columns": [
+            "avg",
+            "min",
+            "max",
+            "value",
+            "sum"
+          ],
+          "type": "timeseries",
+          "requests": [
+            {
+              "formulas": [
+                {
+                  "formula": "query1"
+                }
+              ],
+              "queries": [
+                {
+                  "data_source": "metrics",
+                  "name": "query1",
+                  "query": "pipelines.scanner.deletions{$pipeline_id,$component_id,$component_type,$component_kind} by {component_id,component_kind,component_type,pipeline_id}"
+                }
+              ],
+              "response_format": "timeseries",
+              "style": {
+                "palette": "dog_classic",
+                "line_type": "solid",
+                "line_width": "normal"
+              },
+              "display_type": "line"
+            }
+          ]
+        }
+      },
+      {
+        "id": 16,
+        "definition": {
+          "title": "pipelines.scanning.match_count",
+          "show_legend": true,
+          "legend_layout": "auto",
+          "legend_columns": [
+            "avg",
+            "min",
+            "max",
+            "value",
+            "sum"
+          ],
+          "type": "timeseries",
+          "requests": [
+            {
+              "formulas": [
+                {
+                  "formula": "query1"
+                }
+              ],
+              "queries": [
+                {
+                  "data_source": "metrics",
+                  "name": "query1",
+                  "query": "pipelines.scanning.match_count{$pipeline_id,$component_id,$component_type,$component_kind} by {component_id,component_kind,component_type,pipeline_id}"
+                }
+              ],
+              "response_format": "timeseries",
+              "style": {
+                "palette": "dog_classic",
+                "line_type": "solid",
+                "line_width": "normal"
+              },
+              "display_type": "line"
+            }
+          ]
+        }
+      },
+      {
+        "id": 22,
+        "definition": {
+          "title": "pipelines.host.disk_reads_completed_total",
+          "show_legend": true,
+          "legend_layout": "auto",
+          "legend_columns": [
+            "avg",
+            "min",
+            "max",
+            "value",
+            "sum"
+          ],
+          "type": "timeseries",
+          "requests": [
+            {
+              "formulas": [
+                {
+                  "formula": "query1"
+                }
+              ],
+              "queries": [
+                {
+                  "data_source": "metrics",
+                  "name": "query1",
+                  "query": "pipelines.host.disk_reads_completed_total{$pipeline_id,$component_id,$component_type,$component_kind} by {pipeline_id}"
+                }
+              ],
+              "response_format": "timeseries",
+              "style": {
+                "palette": "dog_classic",
+                "line_type": "solid",
+                "line_width": "normal"
+              },
+              "display_type": "line"
+            }
+          ]
+        }
+      }
+    ],
+    "template_variables": [
+      {
+        "name": "pipeline_id",
+        "prefix": "pipeline_id",
+        "available_values": [],
+        "default": "*"
+      },
+      {
+        "name": "component_id",
+        "prefix": "component_id",
+        "available_values": [],
+        "default": "*"
+      },
+      {
+        "name": "component_type",
+        "prefix": "component_type",
+        "available_values": [],
+        "default": "*"
+      },
+      {
+        "name": "component_kind",
+        "prefix": "component_kind",
+        "available_values": [],
+        "default": "*"
+      }
+    ],
+    "layout_type": "ordered",
+    "notify_list": [],
+    "reflow_type": "auto",
+    "tags": [
+      "team:logs-psa"
+    ]
+  }
