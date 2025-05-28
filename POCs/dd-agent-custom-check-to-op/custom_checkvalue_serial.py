@@ -14,7 +14,7 @@ class BashCheck(AgentCheck):
         # purposes of proof-of-concept, this should behave the same way
         for i in range(30):
             try:
-                logs = get_subprocess_output(["bash", "/opt/custom_bash.sh"], self.log, raise_on_empty_output=True)
+                logs = get_subprocess_output(["bash", "/opt/custom_bash.sh", f"{i}"], self.log, raise_on_empty_output=True)
                 # Create a TCP socket
                 with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
                     s.connect((TCP_HOST, TCP_PORT))
