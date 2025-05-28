@@ -9,12 +9,10 @@ class BashCheck(AgentCheck):
         TCP_PORT = 10518        # tcp listener port
 
         logs = get_subprocess_output(["bash", "/opt/custom_bash.sh"], self.log, raise_on_empty_output=True)
-        for log in logs:
-            if log:
-                try:
-                    # Create a TCP socket
-                    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-                        s.connect((TCP_HOST, TCP_PORT))
-                        s.sendall(log.encode('utf-8'))
-                except Exception as e:
-                    print(f"Error sending '{log}': {e}")
+        try:
+            # Create a TCP socket
+            with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+                s.connect((TCP_HOST, TCP_PORT))
+                s.sendall(logs[0].encode('utf-8'))
+        except Exception as e:
+            print(f"Error sending logs: {e}")
