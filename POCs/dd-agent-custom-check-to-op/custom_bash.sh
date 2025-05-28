@@ -17,7 +17,7 @@ logs=(
 # Loop to print 3 log messages
 for i in {1..3}; do
     # Any CLI utility could be called here and the output captured and echoed out
-  timestamp=$(date +"%Y-%m-%d %H:%M:%S")
+  timestamp=$(date +"%Y-%m-%d %H:%M:%S:%N")  # Get current timestamp with nanoseconds
   random_log=${logs[$RANDOM % ${#logs[@]}]}
   echo "[$timestamp] $random_log"
   sleep 1  # Optional: pause for 1 second between logs
