@@ -20,6 +20,6 @@ for i in {1..3}; do
   timestamp=$(date +"%Y-%m-%d %H:%M:%S:%N")  # Get current timestamp with nanoseconds
   random_log=${logs[$RANDOM % ${#logs[@]}]}
   # Print $i to guarantee unique log entries
-  echo "[$i] [$timestamp] $random_log"
   sleep 0.1  # Optional: pause for 0.1 second between logs
+  echo "[$1] [$i] [$timestamp] $random_log"
 done
