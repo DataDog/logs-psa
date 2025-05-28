@@ -21,5 +21,4 @@ for i in {1..300}; do
   random_log=${logs[$RANDOM % ${#logs[@]}]}
   # Print $i to guarantee unique log entries
   echo "[$1] [$i] [$timestamp] $random_log"
-  sleep 0.01  # Optional: pause for 0.1 second between logs
 done
