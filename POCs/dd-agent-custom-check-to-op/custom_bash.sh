@@ -15,10 +15,6 @@ logs=(
 )
 
 # Any CLI utility could be called here and the output captured and echoed out
-
-# Get current timestamp
-timestamp=$(date +"%Y-%m-%d %H:%M:%S")
-
 # Loop to print 3 log messages
 for i in {1..3}; do
   timestamp=$(date +"%Y-%m-%d %H:%M:%S")
