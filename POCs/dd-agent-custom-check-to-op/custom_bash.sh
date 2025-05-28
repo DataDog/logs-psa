@@ -14,8 +14,8 @@ logs=(
   "New user registered"
 )
 
-# Loop to print 3 log messages
-for i in {1..3}; do
+# Loop to print 300 log messages
+for i in {1..300}; do
     # Any CLI utility could be called here and the output captured and echoed out
   timestamp=$(date +"%Y-%m-%d %H:%M:%S:%N")  # Get current timestamp with nanoseconds
   random_log=${logs[$RANDOM % ${#logs[@]}]}
