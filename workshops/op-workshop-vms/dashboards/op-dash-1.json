@@ -1,0 +1,1520 @@
+{
+    "title": "[Kelner] Obs Pipelines Monitoring",
+    "description": "datadog_demo_keep:true\n\n[[suggested_dashboards]]",
+    "widgets": [
+      {
+        "id": 6437549362322004,
+        "definition": {
+          "title": "Observability Pipelines",
+          "background_color": "vivid_purple",
+          "show_title": true,
+          "type": "group",
+          "layout_type": "ordered",
+          "widgets": [
+            {
+              "id": 5886984627359430,
+              "definition": {
+                "type": "image",
+                "url": "https://chriskelner.s3.amazonaws.com/opw.png",
+                "sizing": "contain",
+                "has_background": false,
+                "has_border": true,
+                "vertical_align": "center",
+                "horizontal_align": "center"
+              },
+              "layout": {
+                "x": 0,
+                "y": 0,
+                "width": 2,
+                "height": 2
+              }
+            },
+            {
+              "id": 1200810537655906,
+              "definition": {
+                "type": "note",
+                "content": "Observability Pipelines enables you to aggregate, process, and route all your logs so you can make value-based decisions in your own infrastructure. You can easily dual ship, filter, sample, enforce quotas and more for increased efficiency, security, and flexibility—all within your own environment. Read more in our [public docs](https://docs.datadoghq.com/observability_pipelines/) and [blog posts](https://www.datadoghq.com/blog/tag/observability-pipelines/).",
+                "background_color": "purple",
+                "font_size": "14",
+                "text_align": "left",
+                "vertical_align": "top",
+                "show_tick": false,
+                "tick_pos": "50%",
+                "tick_edge": "left",
+                "has_padding": true
+              },
+              "layout": {
+                "x": 2,
+                "y": 0,
+                "width": 5,
+                "height": 2
+              }
+            },
+            {
+              "id": 57823563928436,
+              "definition": {
+                "type": "note",
+                "content": "This objective of this dashboard is to provide both high level and granular views into your pipelines, addressing such questions as memory and CPU usage, component events in/out, bytes in/out, errors, utilization, and dropped events.",
+                "background_color": "purple",
+                "font_size": "14",
+                "text_align": "left",
+                "vertical_align": "top",
+                "show_tick": false,
+                "tick_pos": "50%",
+                "tick_edge": "left",
+                "has_padding": true
+              },
+              "layout": {
+                "x": 7,
+                "y": 0,
+                "width": 5,
+                "height": 2
+              }
+            },
+            {
+              "id": 5086796030505266,
+              "definition": {
+                "type": "note",
+                "content": "The following are good metrics/telemetry to setup monitors and alert on:\n- % change in CPU & Memory with anomaly detection, any sudden unexpected changes could be indicative of issues\n- Anomalies or % change (sudden increase or decrease) in bytes received/sent can help identify needs for capacity planning (# of workers deployed; each worker can handle roughly 1TB day per CPU core), or signify that sources are suddenly sending more traffic than expected, or desinations aren't able to keep up with volume.\n - Component utilization nearing a value of `1` or spiking/holding near `1` can indicate a need to scale up.\n- Errors to destinations and/or unintentional discarded events indicate a destination or component is unable to keep up and you should review OPW error logs\n",
+                "background_color": "purple",
+                "font_size": "14",
+                "text_align": "left",
+                "vertical_align": "top",
+                "show_tick": false,
+                "tick_pos": "50%",
+                "tick_edge": "left",
+                "has_padding": true
+              },
+              "layout": {
+                "x": 0,
+                "y": 2,
+                "width": 12,
+                "height": 2
+              }
+            }
+          ]
+        },
+        "layout": {
+          "x": 0,
+          "y": 0,
+          "width": 12,
+          "height": 1
+        }
+      },
+      {
+        "id": 1683729755073380,
+        "definition": {
+          "title": "Pipelines Overview",
+          "background_color": "vivid_green",
+          "show_title": true,
+          "type": "group",
+          "layout_type": "ordered",
+          "widgets": [
+            {
+              "id": 290815675418166,
+              "definition": {
+                "type": "note",
+                "content": "Useful for seeing the most recently deployed pipelines (where issues will most likely occur as older pipelines likely continue to behave as they have been in a majority of cases). Also overview of what versions of OP are running.",
+                "background_color": "green",
+                "font_size": "14",
+                "text_align": "left",
+                "vertical_align": "top",
+                "show_tick": true,
+                "tick_pos": "50%",
+                "tick_edge": "bottom",
+                "has_padding": true
+              },
+              "layout": {
+                "x": 0,
+                "y": 0,
+                "width": 6,
+                "height": 1
+              }
+            },
+            {
+              "id": 1986229957615676,
+              "definition": {
+                "type": "note",
+                "content": "Pipelines with the highest events per component (ranked by total in pipelines, then split by component). Can also offer insight into the complexity of a pipeline (number of components).",
+                "background_color": "green",
+                "font_size": "14",
+                "text_align": "left",
+                "vertical_align": "top",
+                "show_tick": true,
+                "tick_pos": "50%",
+                "tick_edge": "bottom",
+                "has_padding": true
+              },
+              "layout": {
+                "x": 6,
+                "y": 0,
+                "width": 6,
+                "height": 1
+              }
+            },
+            {
+              "id": 4311149184292550,
+              "definition": {
+                "title": "Pipelines Deployed Uptime",
+                "title_size": "16",
+                "title_align": "left",
+                "type": "query_table",
+                "requests": [
+                  {
+                    "response_format": "scalar",
+                    "queries": [
+                      {
+                        "query": "avg:pipelines.uptime_seconds{$pipeline_id} by {pipeline_id,op_worker_version}",
+                        "data_source": "metrics",
+                        "name": "query1",
+                        "aggregator": "last"
+                      }
+                    ],
+                    "sort": {
+                      "count": 500,
+                      "order_by": [
+                        {
+                          "type": "formula",
+                          "index": 1,
+                          "order": "asc"
+                        }
+                      ]
+                    },
+                    "formulas": [
+                      {
+                        "cell_display_mode": "bar",
+                        "alias": "Uptime Seconds",
+                        "formula": "query1"
+                      },
+                      {
+                        "alias": "Update Days",
+                        "formula": "(((query1 / 60) / 60) / 24)"
+                      }
+                    ]
+                  }
+                ],
+                "has_search_bar": "auto"
+              },
+              "layout": {
+                "x": 0,
+                "y": 1,
+                "width": 6,
+                "height": 3
+              }
+            },
+            {
+              "id": 2545600482487038,
+              "definition": {
+                "title": "Pipelines with highest events per component",
+                "title_size": "16",
+                "title_align": "left",
+                "type": "toplist",
+                "requests": [
+                  {
+                    "queries": [
+                      {
+                        "data_source": "metrics",
+                        "name": "query1",
+                        "query": "sum:pipelines.component_received_events_count{$pipeline_id,$component_kind} by {pipeline_id,component_type}.as_count()",
+                        "aggregator": "avg"
+                      }
+                    ],
+                    "response_format": "scalar",
+                    "formulas": [
+                      {
+                        "formula": "query1"
+                      }
+                    ],
+                    "sort": {
+                      "count": 10,
+                      "order_by": [
+                        {
+                          "type": "formula",
+                          "index": 0,
+                          "order": "desc"
+                        }
+                      ]
+                    }
+                  }
+                ],
+                "style": {
+                  "display": {
+                    "type": "stacked",
+                    "legend": "automatic"
+                  }
+                }
+              },
+              "layout": {
+                "x": 6,
+                "y": 1,
+                "width": 6,
+                "height": 3
+              }
+            },
+            {
+              "id": 7862325896785418,
+              "definition": {
+                "type": "note",
+                "content": "Memory usage by OP per host. High memory or hosts which are low on free memory, can be indicators to scale your OP workers.",
+                "background_color": "green",
+                "font_size": "14",
+                "text_align": "left",
+                "vertical_align": "top",
+                "show_tick": true,
+                "tick_pos": "50%",
+                "tick_edge": "bottom",
+                "has_padding": true
+              },
+              "layout": {
+                "x": 0,
+                "y": 4,
+                "width": 6,
+                "height": 1
+              }
+            },
+            {
+              "id": 2492994883920066,
+              "definition": {
+                "type": "note",
+                "content": "Assigned CPU Cores per pipeline, how many CPUs are being allocated to each pipeline in total (can be spread across workers)",
+                "background_color": "green",
+                "font_size": "14",
+                "text_align": "left",
+                "vertical_align": "top",
+                "show_tick": true,
+                "tick_pos": "50%",
+                "tick_edge": "bottom",
+                "has_padding": true
+              },
+              "layout": {
+                "x": 6,
+                "y": 4,
+                "width": 6,
+                "height": 1
+              }
+            },
+            {
+              "id": 1254492454622510,
+              "definition": {
+                "title": "OPW Memory usage",
+                "title_size": "16",
+                "title_align": "left",
+                "type": "query_table",
+                "requests": [
+                  {
+                    "queries": [
+                      {
+                        "data_source": "metrics",
+                        "name": "query1",
+                        "query": "avg:pipelines.host.memory_active_bytes{$pipeline_id} by {pipeline_id}",
+                        "aggregator": "avg"
+                      },
+                      {
+                        "data_source": "metrics",
+                        "name": "query2",
+                        "query": "avg:pipelines.host.memory_available_bytes{$pipeline_id} by {pipeline_id}",
+                        "aggregator": "avg"
+                      },
+                      {
+                        "data_source": "metrics",
+                        "name": "query3",
+                        "query": "avg:pipelines.host.memory_free_bytes{$pipeline_id} by {pipeline_id}",
+                        "aggregator": "avg"
+                      },
+                      {
+                        "data_source": "metrics",
+                        "name": "query4",
+                        "query": "avg:pipelines.host.memory_buffers_bytes{$pipeline_id} by {pipeline_id}",
+                        "aggregator": "avg"
+                      }
+                    ],
+                    "response_format": "scalar",
+                    "sort": {
+                      "count": 500,
+                      "order_by": [
+                        {
+                          "type": "formula",
+                          "index": 0,
+                          "order": "desc"
+                        }
+                      ]
+                    },
+                    "formulas": [
+                      {
+                        "cell_display_mode": "bar",
+                        "alias": "mem active (OP)",
+                        "formula": "query1"
+                      },
+                      {
+                        "cell_display_mode": "bar",
+                        "alias": "mem available",
+                        "formula": "query2"
+                      },
+                      {
+                        "cell_display_mode": "bar",
+                        "alias": "mem free",
+                        "formula": "query3"
+                      },
+                      {
+                        "cell_display_mode": "bar",
+                        "alias": "mem buffer usage",
+                        "formula": "query4"
+                      },
+                      {
+                        "alias": "% mem used by OPW",
+                        "formula": "query1 / query2 * 100"
+                      }
+                    ]
+                  }
+                ],
+                "has_search_bar": "auto"
+              },
+              "layout": {
+                "x": 0,
+                "y": 5,
+                "width": 6,
+                "height": 3
+              }
+            },
+            {
+              "id": 8089249543845570,
+              "definition": {
+                "title": "Assigned CPU Cores per pipeline",
+                "title_size": "16",
+                "title_align": "left",
+                "show_legend": true,
+                "legend_layout": "auto",
+                "legend_columns": [
+                  "avg",
+                  "min",
+                  "max",
+                  "value",
+                  "sum"
+                ],
+                "type": "timeseries",
+                "requests": [
+                  {
+                    "formulas": [
+                      {
+                        "formula": "query1"
+                      }
+                    ],
+                    "queries": [
+                      {
+                        "name": "query1",
+                        "data_source": "metrics",
+                        "query": "avg:pipelines.cpu_max_cores{$pipeline_id} by {pipeline_id}"
+                      }
+                    ],
+                    "response_format": "timeseries",
+                    "style": {
+                      "palette": "dog_classic",
+                      "order_by": "values",
+                      "line_type": "solid",
+                      "line_width": "normal"
+                    },
+                    "display_type": "line"
+                  }
+                ]
+              },
+              "layout": {
+                "x": 6,
+                "y": 5,
+                "width": 6,
+                "height": 3
+              }
+            },
+            {
+              "id": 8326233854219058,
+              "definition": {
+                "type": "note",
+                "content": "Look for irregularities (spikes, dips) in events received, correlate with other data to understand spikes elsewhere (such as CPU usage). ",
+                "background_color": "green",
+                "font_size": "14",
+                "text_align": "left",
+                "vertical_align": "top",
+                "show_tick": true,
+                "tick_pos": "50%",
+                "tick_edge": "bottom",
+                "has_padding": true
+              },
+              "layout": {
+                "x": 0,
+                "y": 8,
+                "width": 6,
+                "height": 1
+              }
+            },
+            {
+              "id": 4538915105120446,
+              "definition": {
+                "type": "note",
+                "content": "OP Worker CPU usage per OPW host via process monitoring, normalized to show usage based on total cores available. Look for any pipelines which are trending towards 100% or pegged. This relies on [process monitoring](https://docs.datadoghq.com/integrations/process/), be sure to enable it to gain these insights. Unfortunately this telemetry type is unable to use template variables.",
+                "background_color": "green",
+                "font_size": "14",
+                "text_align": "left",
+                "vertical_align": "top",
+                "show_tick": true,
+                "tick_pos": "50%",
+                "tick_edge": "bottom",
+                "has_padding": true
+              },
+              "layout": {
+                "x": 6,
+                "y": 8,
+                "width": 6,
+                "height": 1
+              }
+            },
+            {
+              "id": 5469199824092138,
+              "definition": {
+                "title": "Bytes received by pipeline",
+                "title_size": "16",
+                "title_align": "left",
+                "show_legend": true,
+                "legend_layout": "auto",
+                "legend_columns": [
+                  "avg",
+                  "min",
+                  "max",
+                  "value",
+                  "sum"
+                ],
+                "type": "timeseries",
+                "requests": [
+                  {
+                    "formulas": [
+                      {
+                        "formula": "query1"
+                      }
+                    ],
+                    "queries": [
+                      {
+                        "data_source": "metrics",
+                        "name": "query1",
+                        "query": "sum:pipelines.host.network_receive_bytes_total{$pipeline_id} by {pipeline_id}.as_rate()"
+                      }
+                    ],
+                    "response_format": "timeseries",
+                    "style": {
+                      "palette": "dog_classic",
+                      "order_by": "values",
+                      "line_type": "solid",
+                      "line_width": "normal"
+                    },
+                    "display_type": "line"
+                  }
+                ],
+                "yaxis": {
+                  "include_zero": false,
+                  "scale": "log"
+                }
+              },
+              "layout": {
+                "x": 0,
+                "y": 9,
+                "width": 6,
+                "height": 3
+              }
+            },
+            {
+              "id": 6544625136066032,
+              "definition": {
+                "title": "CPU core usage by host",
+                "title_size": "16",
+                "title_align": "left",
+                "show_legend": true,
+                "legend_layout": "auto",
+                "legend_columns": [
+                  "avg",
+                  "min",
+                  "max",
+                  "value",
+                  "sum"
+                ],
+                "type": "timeseries",
+                "requests": [
+                  {
+                    "formulas": [
+                      {
+                        "formula": "query1"
+                      }
+                    ],
+                    "queries": [
+                      {
+                        "limit": 100,
+                        "data_source": "process",
+                        "name": "query1",
+                        "query_filter": "command:observability-pipelines-worker",
+                        "metric": "process.stat.cpu.total_pct",
+                        "is_normalized_cpu": true
+                      }
+                    ],
+                    "response_format": "timeseries",
+                    "style": {
+                      "palette": "dog_classic",
+                      "order_by": "values",
+                      "line_type": "solid",
+                      "line_width": "normal"
+                    },
+                    "display_type": "line"
+                  }
+                ],
+                "yaxis": {
+                  "include_zero": true,
+                  "scale": "sqrt"
+                }
+              },
+              "layout": {
+                "x": 6,
+                "y": 9,
+                "width": 6,
+                "height": 3
+              }
+            },
+            {
+              "id": 2216162833872820,
+              "definition": {
+                "type": "note",
+                "content": "Look for irregularities (spikes, dips) in events send, correlate with other data to understand spikes elsewhere (such as CPU usage). Destinations could be lagging on ingest and cause [backpressure](https://vector.dev/docs/about/under-the-hood/architecture/buffering-model/#backpressure-and-the-need-to-buffer) in the piplines.",
+                "background_color": "green",
+                "font_size": "14",
+                "text_align": "left",
+                "vertical_align": "top",
+                "show_tick": true,
+                "tick_pos": "50%",
+                "tick_edge": "bottom",
+                "has_padding": true
+              },
+              "layout": {
+                "x": 0,
+                "y": 12,
+                "width": 6,
+                "height": 1
+              }
+            },
+            {
+              "id": 3307031403369746,
+              "definition": {
+                "type": "note",
+                "content": "When rolling out new versions of the worker, it can be helpful to see to switch over and requests going to the new version vs old version when you have multiple workers. This can be helpful if you are performing a rollout or canary to test new versions as they get promoted through lower-tier(s) and production environments.",
+                "background_color": "green",
+                "font_size": "14",
+                "text_align": "left",
+                "vertical_align": "top",
+                "show_tick": true,
+                "tick_pos": "50%",
+                "tick_edge": "bottom",
+                "has_padding": true
+              },
+              "layout": {
+                "x": 6,
+                "y": 12,
+                "width": 6,
+                "height": 1
+              }
+            },
+            {
+              "id": 1698710694184148,
+              "definition": {
+                "title": "Bytes sent to destinations by pipeline",
+                "title_size": "16",
+                "title_align": "left",
+                "show_legend": true,
+                "legend_layout": "auto",
+                "legend_columns": [
+                  "avg",
+                  "min",
+                  "max",
+                  "value",
+                  "sum"
+                ],
+                "type": "timeseries",
+                "requests": [
+                  {
+                    "formulas": [
+                      {
+                        "formula": "autosmooth(query1)"
+                      }
+                    ],
+                    "queries": [
+                      {
+                        "data_source": "metrics",
+                        "name": "query1",
+                        "query": "sum:pipelines.component_sent_bytes_total{$pipeline_id,component_kind:sink,!component_type:datadog_metrics,$component_kind} by {pipeline_id,component_type}.as_rate()"
+                      }
+                    ],
+                    "response_format": "timeseries",
+                    "style": {
+                      "palette": "dog_classic",
+                      "order_by": "values",
+                      "line_type": "solid",
+                      "line_width": "normal"
+                    },
+                    "display_type": "line"
+                  }
+                ],
+                "yaxis": {
+                  "include_zero": true,
+                  "scale": "sqrt"
+                }
+              },
+              "layout": {
+                "x": 0,
+                "y": 13,
+                "width": 6,
+                "height": 3
+              }
+            },
+            {
+              "id": 6911347246546474,
+              "definition": {
+                "title": "OP Worker requests per pipeline by Worker Version",
+                "title_size": "16",
+                "title_align": "left",
+                "show_legend": true,
+                "legend_layout": "auto",
+                "legend_columns": [
+                  "avg",
+                  "min",
+                  "max",
+                  "value",
+                  "sum"
+                ],
+                "type": "timeseries",
+                "requests": [
+                  {
+                    "formulas": [
+                      {
+                        "alias": "Requests per OPW Version",
+                        "formula": "query1"
+                      }
+                    ],
+                    "queries": [
+                      {
+                        "data_source": "metrics",
+                        "name": "query1",
+                        "query": "sum:pipelines.http_client_requests_sent_total{*} by {op_worker_version,pipeline_id}.as_count()"
+                      }
+                    ],
+                    "response_format": "timeseries",
+                    "style": {
+                      "palette": "dog_classic",
+                      "order_by": "values",
+                      "line_type": "solid",
+                      "line_width": "normal"
+                    },
+                    "display_type": "bars"
+                  }
+                ]
+              },
+              "layout": {
+                "x": 6,
+                "y": 13,
+                "width": 6,
+                "height": 3
+              }
+            }
+          ]
+        },
+        "layout": {
+          "x": 0,
+          "y": 1,
+          "width": 12,
+          "height": 17
+        }
+      },
+      {
+        "id": 7521122063100984,
+        "definition": {
+          "title": "Pipeline Internals",
+          "background_color": "vivid_yellow",
+          "show_title": true,
+          "type": "group",
+          "layout_type": "ordered",
+          "widgets": [
+            {
+              "id": 5889159722859304,
+              "definition": {
+                "type": "note",
+                "content": "A ratio from 0 to 1 of the load on a component. A value of 0 would indicate a completely idle component that is simply waiting for input. A value of 1 would indicate a that is never idle. Components pegged at 1 should be reviewed as they likely are creating back pressure which could cause events to be dropped.\n\n_Do note: sources don’t have a utilization metric_",
+                "background_color": "yellow",
+                "font_size": "14",
+                "text_align": "left",
+                "vertical_align": "top",
+                "show_tick": true,
+                "tick_pos": "50%",
+                "tick_edge": "bottom",
+                "has_padding": true
+              },
+              "layout": {
+                "x": 0,
+                "y": 0,
+                "width": 6,
+                "height": 1
+              }
+            },
+            {
+              "id": 7314834052482516,
+              "definition": {
+                "type": "note",
+                "content": "Events in and events out **per component**; Use in conjunction with `pipeline_id` template variable to isolate this to a single pipeline, then further reduce to a single component by `component_id` to get a clear cut understanding if a single pipeline component is significantly sending or reducing events more than expected.",
+                "background_color": "yellow",
+                "font_size": "14",
+                "text_align": "left",
+                "vertical_align": "top",
+                "show_tick": true,
+                "tick_pos": "50%",
+                "tick_edge": "bottom",
+                "has_padding": true
+              },
+              "layout": {
+                "x": 6,
+                "y": 0,
+                "width": 6,
+                "height": 1
+              }
+            },
+            {
+              "id": 158276297469432,
+              "definition": {
+                "title": "Component utilization",
+                "title_size": "16",
+                "title_align": "left",
+                "show_legend": true,
+                "legend_layout": "auto",
+                "legend_columns": [
+                  "avg",
+                  "min",
+                  "max",
+                  "value",
+                  "sum"
+                ],
+                "type": "timeseries",
+                "requests": [
+                  {
+                    "formulas": [
+                      {
+                        "formula": "query1"
+                      }
+                    ],
+                    "queries": [
+                      {
+                        "name": "query1",
+                        "data_source": "metrics",
+                        "query": "max:pipelines.utilization{$pipeline_id,$component_id,!component_id:_*,$component_kind} by {component_kind,component_type,component_id,pipeline_id}"
+                      }
+                    ],
+                    "response_format": "timeseries",
+                    "style": {
+                      "palette": "dog_classic",
+                      "line_type": "solid",
+                      "line_width": "normal"
+                    },
+                    "display_type": "line"
+                  }
+                ]
+              },
+              "layout": {
+                "x": 0,
+                "y": 1,
+                "width": 6,
+                "height": 3
+              }
+            },
+            {
+              "id": 2239093215471348,
+              "definition": {
+                "title": "Events in/out per pipeline per component",
+                "title_size": "16",
+                "title_align": "left",
+                "show_legend": true,
+                "legend_layout": "auto",
+                "legend_columns": [
+                  "avg",
+                  "min",
+                  "max",
+                  "value",
+                  "sum"
+                ],
+                "type": "timeseries",
+                "requests": [
+                  {
+                    "formulas": [
+                      {
+                        "alias": "events recieved",
+                        "formula": "query1"
+                      },
+                      {
+                        "alias": "events sent",
+                        "formula": "query2 * -1"
+                      }
+                    ],
+                    "queries": [
+                      {
+                        "data_source": "metrics",
+                        "name": "query1",
+                        "query": "sum:pipelines.component_received_events_total{$pipeline_id,$component_id,!component_id:_*,$component_kind} by {pipeline_id,component_id,component_kind,component_type}.as_count()"
+                      },
+                      {
+                        "data_source": "metrics",
+                        "name": "query2",
+                        "query": "sum:pipelines.component_sent_events_total{$pipeline_id,$component_id,!component_id:_*,$component_kind} by {pipeline_id,component_id,component_kind,component_type}.as_count()"
+                      }
+                    ],
+                    "response_format": "timeseries",
+                    "style": {
+                      "palette": "dog_classic",
+                      "order_by": "values",
+                      "line_type": "solid",
+                      "line_width": "normal"
+                    },
+                    "display_type": "line"
+                  }
+                ]
+              },
+              "layout": {
+                "x": 6,
+                "y": 1,
+                "width": 6,
+                "height": 3
+              }
+            },
+            {
+              "id": 819722312080886,
+              "definition": {
+                "type": "note",
+                "content": "Events in and events out **per pipeline**; use dashboard template variables to isolate this to a single pipeline by `pipeline_id` to get a clear cut understanding if a single pipeline is significantly sending or reducing events more than expected.",
+                "background_color": "yellow",
+                "font_size": "14",
+                "text_align": "left",
+                "vertical_align": "top",
+                "show_tick": true,
+                "tick_pos": "50%",
+                "tick_edge": "bottom",
+                "has_padding": true
+              },
+              "layout": {
+                "x": 0,
+                "y": 4,
+                "width": 6,
+                "height": 1
+              }
+            },
+            {
+              "id": 1328312060953826,
+              "definition": {
+                "type": "note",
+                "content": "Success/Error Requests to destinations. High error rates my indicate some issue at the destination (e.g. elasticsearch rejecting submissions from OP) or possibly rejected events due to rules at the destination (e.g. events with timestamps that are beyond are certain time period)",
+                "background_color": "yellow",
+                "font_size": "14",
+                "text_align": "left",
+                "vertical_align": "top",
+                "show_tick": true,
+                "tick_pos": "50%",
+                "tick_edge": "bottom",
+                "has_padding": true
+              },
+              "layout": {
+                "x": 6,
+                "y": 4,
+                "width": 6,
+                "height": 1
+              }
+            },
+            {
+              "id": 4798211681127060,
+              "definition": {
+                "title": "Events in/out per pipeline",
+                "title_size": "16",
+                "title_align": "left",
+                "show_legend": true,
+                "legend_layout": "auto",
+                "legend_columns": [
+                  "avg",
+                  "min",
+                  "max",
+                  "value",
+                  "sum"
+                ],
+                "type": "timeseries",
+                "requests": [
+                  {
+                    "formulas": [
+                      {
+                        "alias": "events recieved",
+                        "formula": "query1"
+                      },
+                      {
+                        "alias": "events sent",
+                        "formula": "query2 * -1"
+                      }
+                    ],
+                    "queries": [
+                      {
+                        "data_source": "metrics",
+                        "name": "query1",
+                        "query": "sum:pipelines.component_received_events_total{$pipeline_id} by {pipeline_id}.as_count()"
+                      },
+                      {
+                        "data_source": "metrics",
+                        "name": "query2",
+                        "query": "sum:pipelines.component_sent_events_total{$pipeline_id} by {pipeline_id}.as_count()"
+                      }
+                    ],
+                    "response_format": "timeseries",
+                    "style": {
+                      "palette": "dog_classic",
+                      "order_by": "values",
+                      "line_type": "solid",
+                      "line_width": "normal"
+                    },
+                    "display_type": "line"
+                  }
+                ]
+              },
+              "layout": {
+                "x": 0,
+                "y": 5,
+                "width": 6,
+                "height": 3
+              }
+            },
+            {
+              "id": 828570582741824,
+              "definition": {
+                "title": "Requests/Errors to destinations",
+                "title_size": "16",
+                "title_align": "left",
+                "show_legend": true,
+                "legend_layout": "auto",
+                "legend_columns": [
+                  "avg",
+                  "min",
+                  "max",
+                  "value",
+                  "sum"
+                ],
+                "type": "timeseries",
+                "requests": [
+                  {
+                    "formulas": [
+                      {
+                        "alias": "Requests",
+                        "style": {
+                          "palette": "cool"
+                        },
+                        "formula": "exclude_null(query1)"
+                      },
+                      {
+                        "alias": "Errors",
+                        "style": {
+                          "palette": "warm"
+                        },
+                        "formula": "default_zero(query2)"
+                      }
+                    ],
+                    "queries": [
+                      {
+                        "name": "query1",
+                        "data_source": "metrics",
+                        "query": "sum:pipelines.http_client_requests_sent_total{!component_id:_*,$component_kind} by {component_type}.as_count()"
+                      },
+                      {
+                        "name": "query2",
+                        "data_source": "metrics",
+                        "query": "sum:pipelines.http_client_errors_total{!component_id:_*,$component_kind} by {component_type}.as_count()"
+                      }
+                    ],
+                    "response_format": "timeseries",
+                    "style": {
+                      "palette": "dog_classic",
+                      "line_type": "solid",
+                      "line_width": "normal"
+                    },
+                    "display_type": "bars"
+                  }
+                ],
+                "yaxis": {
+                  "include_zero": true,
+                  "scale": "sqrt",
+                  "min": "-15"
+                }
+              },
+              "layout": {
+                "x": 6,
+                "y": 5,
+                "width": 6,
+                "height": 3
+              }
+            },
+            {
+              "id": 7017047074900682,
+              "definition": {
+                "type": "note",
+                "content": "Intentionally discarded events. Your processors at work. Filters, sampling, de-dupe, quotas, etc that reduce your overall event volume. See which are most effective, and those that may require further tuning.",
+                "background_color": "yellow",
+                "font_size": "14",
+                "text_align": "left",
+                "vertical_align": "top",
+                "show_tick": true,
+                "tick_pos": "50%",
+                "tick_edge": "bottom",
+                "has_padding": true
+              },
+              "layout": {
+                "x": 0,
+                "y": 8,
+                "width": 6,
+                "height": 1
+              }
+            },
+            {
+              "id": 8058937057222594,
+              "definition": {
+                "type": "note",
+                "content": "% Change in requests week over week, can be helpful to see how pipeline load/health has changed over time.",
+                "background_color": "yellow",
+                "font_size": "14",
+                "text_align": "left",
+                "vertical_align": "top",
+                "show_tick": true,
+                "tick_pos": "50%",
+                "tick_edge": "bottom",
+                "has_padding": true
+              },
+              "layout": {
+                "x": 6,
+                "y": 8,
+                "width": 6,
+                "height": 1
+              }
+            },
+            {
+              "id": 6335356494151116,
+              "definition": {
+                "title": "Intentionally discarded events (filtering, quotas, sampling, etc)",
+                "title_size": "16",
+                "title_align": "left",
+                "show_legend": true,
+                "legend_layout": "auto",
+                "legend_columns": [
+                  "avg",
+                  "min",
+                  "max",
+                  "value",
+                  "sum"
+                ],
+                "type": "timeseries",
+                "requests": [
+                  {
+                    "formulas": [
+                      {
+                        "formula": "query1"
+                      }
+                    ],
+                    "queries": [
+                      {
+                        "data_source": "metrics",
+                        "name": "query1",
+                        "query": "sum:pipelines.component_discarded_events_total{$pipeline_id,$component_id,intentional:true,!component_id:_*,$component_kind} by {pipeline_id,component_id,component_kind,component_type}.as_count()"
+                      }
+                    ],
+                    "response_format": "timeseries",
+                    "style": {
+                      "palette": "dog_classic",
+                      "order_by": "values",
+                      "line_type": "solid",
+                      "line_width": "normal"
+                    },
+                    "display_type": "bars"
+                  }
+                ]
+              },
+              "layout": {
+                "x": 0,
+                "y": 9,
+                "width": 6,
+                "height": 3
+              }
+            },
+            {
+              "id": 8981041503564484,
+              "definition": {
+                "title": "% Change week over week in requests by pipeline and component type",
+                "title_size": "16",
+                "title_align": "left",
+                "type": "change",
+                "requests": [
+                  {
+                    "increase_good": true,
+                    "order_by": "change",
+                    "change_type": "absolute",
+                    "order_dir": "desc",
+                    "response_format": "scalar",
+                    "formulas": [
+                      {
+                        "formula": "week_before(query1)"
+                      },
+                      {
+                        "formula": "query1",
+                        "alias": "Requests"
+                      }
+                    ],
+                    "queries": [
+                      {
+                        "name": "query1",
+                        "data_source": "metrics",
+                        "query": "sum:pipelines.http_client_requests_sent_total{!component_id:_*,$component_kind,$pipeline_id} by {pipeline_id,component_type}.as_count()",
+                        "aggregator": "avg"
+                      }
+                    ],
+                    "show_present": true
+                  }
+                ]
+              },
+              "layout": {
+                "x": 6,
+                "y": 9,
+                "width": 6,
+                "height": 3
+              }
+            },
+            {
+              "id": 3708573887160318,
+              "definition": {
+                "type": "note",
+                "content": "Unintentionally discarded events. This is generally due to [backpressure](https://vector.dev/docs/about/under-the-hood/architecture/buffering-model/#backpressure-and-the-need-to-buffer) from destinations, which means the destination cannot keep up with the number of events being sent to it. Consider scaling your destination intake/workers to accommodate the load.",
+                "background_color": "yellow",
+                "font_size": "14",
+                "text_align": "left",
+                "vertical_align": "top",
+                "show_tick": true,
+                "tick_pos": "50%",
+                "tick_edge": "bottom",
+                "has_padding": true
+              },
+              "layout": {
+                "x": 0,
+                "y": 12,
+                "width": 6,
+                "height": 1
+              }
+            },
+            {
+              "id": 8705695062060104,
+              "definition": {
+                "type": "note",
+                "content": "% Change in request errors week over week, can be helpful to see how pipeline load/health has changed over time.",
+                "background_color": "yellow",
+                "font_size": "14",
+                "text_align": "left",
+                "vertical_align": "top",
+                "show_tick": true,
+                "tick_pos": "50%",
+                "tick_edge": "bottom",
+                "has_padding": true
+              },
+              "layout": {
+                "x": 6,
+                "y": 12,
+                "width": 6,
+                "height": 1
+              }
+            },
+            {
+              "id": 6582434848103580,
+              "definition": {
+                "title": "Un-intentional discarded events",
+                "title_size": "16",
+                "title_align": "left",
+                "show_legend": true,
+                "legend_layout": "auto",
+                "legend_columns": [
+                  "avg",
+                  "min",
+                  "max",
+                  "value",
+                  "sum"
+                ],
+                "type": "timeseries",
+                "requests": [
+                  {
+                    "formulas": [
+                      {
+                        "style": {
+                          "palette": "red"
+                        },
+                        "formula": "query1"
+                      }
+                    ],
+                    "queries": [
+                      {
+                        "data_source": "metrics",
+                        "name": "query1",
+                        "query": "sum:pipelines.component_discarded_events_total{intentional:false,$pipeline_id,$component_id,$component_kind} by {pipeline_id,component_id,component_kind,component_type}.as_count()"
+                      }
+                    ],
+                    "response_format": "timeseries",
+                    "style": {
+                      "palette": "dog_classic",
+                      "order_by": "values",
+                      "line_type": "solid",
+                      "line_width": "normal"
+                    },
+                    "display_type": "line"
+                  }
+                ]
+              },
+              "layout": {
+                "x": 0,
+                "y": 13,
+                "width": 6,
+                "height": 3
+              }
+            },
+            {
+              "id": 5501755884143950,
+              "definition": {
+                "title": "% Change week over week in request errors by pipeline and component type",
+                "title_size": "16",
+                "title_align": "left",
+                "type": "change",
+                "requests": [
+                  {
+                    "increase_good": true,
+                    "order_by": "change",
+                    "change_type": "absolute",
+                    "order_dir": "desc",
+                    "response_format": "scalar",
+                    "formulas": [
+                      {
+                        "formula": "week_before(query1)"
+                      },
+                      {
+                        "formula": "query1",
+                        "alias": "Request Errors"
+                      }
+                    ],
+                    "queries": [
+                      {
+                        "name": "query1",
+                        "data_source": "metrics",
+                        "query": "sum:pipelines.http_client_errors_total{!component_id:_*,$component_kind,$pipeline_id} by {pipeline_id,component_type}.as_count()",
+                        "aggregator": "avg"
+                      }
+                    ],
+                    "show_present": true
+                  }
+                ]
+              },
+              "layout": {
+                "x": 6,
+                "y": 13,
+                "width": 6,
+                "height": 3
+              }
+            }
+          ]
+        },
+        "layout": {
+          "x": 0,
+          "y": 18,
+          "width": 12,
+          "height": 17,
+          "is_column_break": true
+        }
+      },
+      {
+        "id": 2165795541465900,
+        "definition": {
+          "title": "OP Worker Logs",
+          "background_color": "vivid_pink",
+          "show_title": true,
+          "type": "group",
+          "layout_type": "ordered",
+          "widgets": [
+            {
+              "id": 2670451504561120,
+              "definition": {
+                "type": "note",
+                "content": "Error logs from OP Workers. For containerized OPW `pipelineid` is a tag on the log, for it to show up below, you will need to create a facet on these logs for the tag `pipelineid` first, then you will be able to use the pipeline_id template variable to filter to a specific pipeline. For non-containerized environments, the log attribute `op_worker.pipeline_id` needs to be made a facet. One or the other will be filled in below depending on deployment method.",
+                "background_color": "pink",
+                "font_size": "14",
+                "text_align": "left",
+                "vertical_align": "top",
+                "show_tick": true,
+                "tick_pos": "50%",
+                "tick_edge": "bottom",
+                "has_padding": true
+              },
+              "layout": {
+                "x": 0,
+                "y": 0,
+                "width": 12,
+                "height": 1
+              }
+            },
+            {
+              "id": 6520603080829906,
+              "definition": {
+                "title": "Error logs from OP Workers",
+                "title_size": "16",
+                "title_align": "left",
+                "requests": [
+                  {
+                    "response_format": "event_list",
+                    "query": {
+                      "data_source": "logs_stream",
+                      "query_string": "source:(observability-pipelines-worker OR op_worker) (pipelineid:$pipeline_id.value OR @op_worker.pipeline_id:$pipeline_id.value) status:(ERROR OR WARNING)",
+                      "indexes": [],
+                      "storage": "flex_tier"
+                    },
+                    "columns": [
+                      {
+                        "field": "status_line",
+                        "width": "auto"
+                      },
+                      {
+                        "field": "timestamp",
+                        "width": "auto"
+                      },
+                      {
+                        "field": "host",
+                        "width": "auto"
+                      },
+                      {
+                        "field": "@op_worker.pipeline_id",
+                        "width": "auto"
+                      },
+                      {
+                        "field": "pipelineid",
+                        "width": "auto"
+                      },
+                      {
+                        "field": "content",
+                        "width": "compact"
+                      }
+                    ]
+                  }
+                ],
+                "type": "list_stream"
+              },
+              "layout": {
+                "x": 0,
+                "y": 1,
+                "width": 12,
+                "height": 6
+              }
+            },
+            {
+              "id": 7044864870356582,
+              "definition": {
+                "type": "note",
+                "content": "Other (non-error) logs from OP Workers. For `@op_worker.pipelineId` to show up, you will need to create a facet on these logs for the attribute `op_worker.pipelineId` first, then you will be able to use the pipeline_id template variable to filter to a specific pipeline. ",
+                "background_color": "pink",
+                "font_size": "14",
+                "text_align": "left",
+                "vertical_align": "top",
+                "show_tick": true,
+                "tick_pos": "50%",
+                "tick_edge": "bottom",
+                "has_padding": true
+              },
+              "layout": {
+                "x": 0,
+                "y": 7,
+                "width": 12,
+                "height": 1
+              }
+            },
+            {
+              "id": 8785056196210338,
+              "definition": {
+                "title": "Info logs from OP Workers",
+                "title_size": "16",
+                "title_align": "left",
+                "requests": [
+                  {
+                    "response_format": "event_list",
+                    "query": {
+                      "data_source": "logs_stream",
+                      "query_string": "source:(observability-pipelines-worker OR op_worker) (pipelineid:$pipeline_id.value OR @op_worker.pipeline_id:$pipeline_id.value) NOT status:error",
+                      "indexes": [],
+                      "storage": "flex_tier"
+                    },
+                    "columns": [
+                      {
+                        "field": "status_line",
+                        "width": "auto"
+                      },
+                      {
+                        "field": "timestamp",
+                        "width": "auto"
+                      },
+                      {
+                        "field": "host",
+                        "width": "auto"
+                      },
+                      {
+                        "field": "@op_worker.pipeline_id",
+                        "width": "auto"
+                      },
+                      {
+                        "field": "content",
+                        "width": "compact"
+                      },
+                      {
+                        "field": "pipelineid",
+                        "width": "auto"
+                      }
+                    ]
+                  }
+                ],
+                "type": "list_stream"
+              },
+              "layout": {
+                "x": 0,
+                "y": 8,
+                "width": 12,
+                "height": 6
+              }
+            }
+          ]
+        },
+        "layout": {
+          "x": 0,
+          "y": 35,
+          "width": 12,
+          "height": 15
+        }
+      }
+    ],
+    "template_variables": [
+      {
+        "name": "pipeline_id",
+        "prefix": "pipeline_id",
+        "available_values": [],
+        "default": "*"
+      },
+      {
+        "name": "component_id",
+        "prefix": "component_id",
+        "available_values": [],
+        "default": "*"
+      },
+      {
+        "name": "component_kind",
+        "prefix": "component_kind",
+        "available_values": [],
+        "default": "*"
+      }
+    ],
+    "layout_type": "ordered",
+    "notify_list": [],
+    "reflow_type": "fixed",
+    "tags": [
+      "team:product-sa"
+    ]
+  }
