@@ -6,6 +6,34 @@ Example of how to set up token based routing using an AWS ELB to OP Workers runn
 
 - Spin up 3 EC2 instances
 
+### Log generation
+
+On each server do the following:
+
+- `mkdir /var/log/fakelogs/ /opt/fakelogs`
+- Copy [fakelogs.sh](./fakelogs.sh) to `/opt/fakelogs`
+- `vi /etc/logrotate.d/fakelogs`:
+
+    ```
+    /var/log/fakelogs/fakelog.log {
+        hourly
+        size 100M
+        rotate 3
+        copytruncate
+        missingok
+        notifempty
+    }
+    ```
+
+- `chmod 644 /etc/logrotate.d/fakelogs`
+- `chown root:root /etc/logrotate.d/fakelogs`
+- `crontab -e`:
+
+    ```
+    # m h  dom mon dow   command
+    * * * * * bash /opt/fakelogs/fakelogs.sh
+    ```
+
 ### Splunk UF Setup
 
 - [Install Splunk UF on each instance](https://help.splunk.com/en/splunk-enterprise/forward-and-process-data/universal-forwarder-manual/9.4/install-the-universal-forwarder/install-a-nix-universal-forwarder#bfa92018_7238_476c_8351_2dd1ee65ef8c__Install_the_universal_forwarder_on_Linux):
