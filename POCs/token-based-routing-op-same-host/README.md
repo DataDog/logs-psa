@@ -81,4 +81,4 @@ We'll return later to configure out `outputs.conf` with our ELB address.
 - Input listener address of: `0.0.0.0:8282`
 - Select an API key with RC enabled
 
-Keep this page open and move to the next section.
+Keep these pages open and move to the next section.
