@@ -4,7 +4,7 @@ Example of how to set up token based routing using an AWS ELB to OP Workers runn
 
 ## Log generation & Splunk UF
 
-- Spin up 3 EC2 instances
+- Spin up 3 Ubuntu EC2 instances
 
 ### Log generation
 
