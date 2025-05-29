@@ -8,7 +8,7 @@ Example of how to set up token based routing using an AWS ELB to OP Workers runn
 
 ### Splunk UF Setup
 
-[Install Splunk UF on each instance](https://help.splunk.com/en/splunk-enterprise/forward-and-process-data/universal-forwarder-manual/9.4/install-the-universal-forwarder/install-a-nix-universal-forwarder#bfa92018_7238_476c_8351_2dd1ee65ef8c__Install_the_universal_forwarder_on_Linux):
+- [Install Splunk UF on each instance](https://help.splunk.com/en/splunk-enterprise/forward-and-process-data/universal-forwarder-manual/9.4/install-the-universal-forwarder/install-a-nix-universal-forwarder#bfa92018_7238_476c_8351_2dd1ee65ef8c__Install_the_universal_forwarder_on_Linux):
 
     ```bash
     useradd -m splunkfwd
