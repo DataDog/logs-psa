@@ -50,7 +50,7 @@ On each server do the following:
     ```
 
 - Create a directory for inputs: `mkdir -p $SPLUNK_HOME/etc/apps/fakelogs/default`
-- Create and edit `$SPLUNK_HOME/etc/apps/fakelogs/default/inputs.conf`
+- `vi $SPLUNK_HOME/etc/apps/fakelogs/default/inputs.conf`
 
     ```
     host = kelnerhax-splunk-uf-1
