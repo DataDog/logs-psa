@@ -82,3 +82,27 @@ We'll return later to configure out `outputs.conf` with our ELB address.
 - Select an API key with RC enabled
 
 Keep these pages open and move to the next section.
+
+## Observability Pipelines Host
+
+- Spin up a single Ubuntu instance
+- Copy and run the "Install the Observability Pipelines Worker" command from the Datadog UI from the first pipeline (`1111`):
+
+    ```bash
+    DD_API_KEY=aeb5...a756 DD_OP_PIPELINE_ID=89f6f736-3cd7-11f0-a00b-da7ad0900002 DD_SITE=datadoghq.com DD_OP_SOURCE_SPLUNK_TCP_ADDRESS='0.0.0.0:8282' bash -c "$(curl -L https://install.datadoghq.com/scripts/install_script_op_worker2.sh)"
+    ```
+
+- Verify the host is reporting to the control plane:
+
+    ![op-detected](./images/op-detected.png)
+
+- Click "Deploy" - the `Status` column will updated to `Deployed` once the configuration has been pulled by the OP Worker
+- Follow the instructions for running multiple OPW per host: https://docs.datadoghq.com/observability_pipelines/set_up_pipelines/run_multiple_pipelines_on_a_host/
+    - Repeat this twice for a total of 3 OPWs
+    - When modifying the environment file, e.g. `/etc/default/<filename>` be sure to:
+        - Replace `DD_OP_PIPELINE_ID` with the correct pipeline id for each unique pipeline (3 total)
+        - Replace `DD_OP_SOURCE_SPLUNK_TCP_ADDRESS` with a new port (e.g. `8383` and `8484`) as two processes cannot listen on the same port on the same interface (OS limitation); now if you have multiple network interfaces you could replace `0.0.0.0` with the appropriate interface, for this POC we have a single network interface.
+    - As you start each worker at the end of the documentation, return to the Datadog UI and click "Deploy" to get the pipeline configuration loaded on the worker
+- Now 3 OP Workers are running on the same host running 3 distinct pipelines:
+
+    ![3-op-workers-same-host](./images/3-op-workers.png)
