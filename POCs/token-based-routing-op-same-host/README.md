@@ -20,3 +20,17 @@ Example of how to set up token based routing using an AWS ELB to OP Workers runn
     sudo $SPLUNK_HOME/bin/splunk start --accept-license
     # create admin username & password at prompts
     ```
+
+- Create a directory for inputs: `mkdir -p $SPLUNK_HOME/etc/apps/fakelogs/default`
+- Create and edit `$SPLUNK_HOME/etc/apps/fakelogs/default/inputs.conf`
+
+    ```
+    host = kelnerhax-splunk-uf-1
+    source = fakelogs
+
+    [monitor:///var/log/fakelogs/fakelog.log]
+    followTail = 1
+    ```
+
+- Assign owner/group: `chown -R splunkfwd:splunkfwd $SPLUNK_HOME/etc/apps/fakelogs`
+- Restart splunk uf: `sudo $SPLUNK_HOME/bin/splunk restart`
