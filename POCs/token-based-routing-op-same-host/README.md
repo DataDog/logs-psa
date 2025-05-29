@@ -64,3 +64,21 @@ On each server do the following:
 - Restart splunk uf: `sudo $SPLUNK_HOME/bin/splunk restart`
 
 We'll return later to configure out `outputs.conf` with our ELB address.
+
+## Observability Pipelines
+
+- Create 3 OP Pipelines (one for each token): https://app.datadoghq.com/observability-pipelines
+- For simplicity sake use the log volume control template for each
+- Select "Splunk TCP" as the source
+- Select "Datadog Logs" as the destination
+- Delete all processors except "Edit Fields"
+- Set "Edit Fields" processor to "Add Field"
+- Set "Filter Query" to `*`
+- Set "Field to add" to `op_token`
+- Set "Value to add" to `1111`, `2222`, and `3333` to differentiate between the 3 pipelines in the Datadog log explorer
+- Click on "Next Install"
+- Select your target platform (for this POC: Ubuntu)
+- Input listener address of: `0.0.0.0:8282`
+- Select an API key with RC enabled
+
+Keep this page open and move to the next section.
