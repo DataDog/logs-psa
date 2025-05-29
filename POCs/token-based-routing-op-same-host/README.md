@@ -62,3 +62,5 @@ On each server do the following:
 
 - Assign owner/group: `chown -R splunkfwd:splunkfwd $SPLUNK_HOME/etc/apps/fakelogs`
 - Restart splunk uf: `sudo $SPLUNK_HOME/bin/splunk restart`
+
+We'll return later to configure out `outputs.conf` with our ELB address.
