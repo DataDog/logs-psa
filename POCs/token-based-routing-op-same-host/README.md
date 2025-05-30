@@ -2,7 +2,7 @@
 
 Example of how to set up token based routing using an AWS ELB to OP Workers running on the same  host with Splunk Universal Forwarders sending traffic to the ELB.
 
-## Architecture
+## Design
 
 ![arch](./images/arch.png)
 
