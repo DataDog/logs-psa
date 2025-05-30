@@ -177,3 +177,35 @@ On each of the Splunk UF servers do the following:
 
 - Where `httpEventCollectorToken` should be `11111111-1111-1111-1111-111111111111`, `22222222-2222-2222-2222-222222222222`, and `33333333-3333-3333-3333-333333333333` for the appropriate servers (unique on each)
 - Restart splunk uf: `$SPLUNK_HOME/bin/splunk restart`
+
+## Results
+
+TBD - issue with Splunk UF
+
+## Manually testing
+
+From Splunk UF Token 1 server:
+
+```bash
+curl -k http://kelnerhax-multi-op-2081698429.us-west-2.elb.amazonaws.com:8080/services/collector/event -H "Authorization: Splunk 11111111-1111-1111-1111-111111111111" -d '{"event": "hello world", "host": "token-1"}'
+{"text":"Success","code":0}
+```
+
+From Splunk UF Token 2 server:
+
+```bash
+curl -k http://kelnerhax-multi-op-2081698429.us-west-2.elb.amazonaws.com:8080/services/collector/event -H "Authorization: Splunk 22222222-2222-2222-2222-222222222222" -d '{"event": "hello world", "host": "token-2"}'
+{"text":"Success","code":0}
+```
+
+From Splunk UF Token 3 server:
+
+```bash
+curl -k http://kelnerhax-multi-op-2081698429.us-west-2.elb.amazonaws.com:8080/services/collector/event -H "Authorization: Splunk 33333333-3333-3333-3333-333333333333" -d '{"event": "hello world", "host": "token-3"}'
+{"text":"Success","code":0}
+```
+
+This gives the following results:
+![manual-results](./images/manual-results.png)
+
+Here we can see that the appropriate `@OP_TOKEN` is being applied by OPW as they match the `host` we sent in our requests from the 3 Splunk UF servers, which means our requests are being routed appropriately by the ALB to the correct port mapping to the correct OPW process on the OP host.
