@@ -117,3 +117,44 @@ Keep these pages open and move to the next section.
 - Restart the workers:
     - `sudo systemctl daemon-reload && sudo systemctl restart observability-pipelines-worker`
     - `sudo systemctl restart <service-name>` for the other two
+
+## ELB Setup
+
+### Security Group
+
+- Use the same SG for the Splunk instances, OP instances, and LB
+- Allow traffic on the ports `8282`, `8383`, `8484`, and `8686` from the SG
+
+### Target Groups
+
+- Create 3 target groups, one for each port (`8282` `8383` `8484`)
+- Choose `Instances` as the "Target Type"
+- For "Protocol" choose `HTTP` and one of the three ports OP is listening on
+- Configure the health check for `HTTP` with a path of `/health` and under advanced options override the port to `8686`
+- Under "Register Targets" select the OP instance
+
+![target-groups](./images/target-groups.png)
+
+### Load Balancer
+
+- Create a new load balancer
+- Select "Application Load Balancer" as the type
+- For simplicity sake of this POC choose "Internet Facing" but your networking setup may dictate/support "Internal"
+- Fill out the required fields for "Network Mapping"
+- Choose the same Security Group as the OP instances where we opened rules earlier
+- "Listeners and Routing" input port `8080` and select the first target group associated with `8282` - this will be our default route, but we'll add other rules for headers in the next steps
+- Deploy the load balancer
+
+### Listener Rules
+
+- After the load balancer is available click on your listener and click "Add Rules"
+- Add 3 rules
+- For each add a condition
+    - Select `HTTP Header`
+    - Header name: `Authorization`
+    - Header value: `Splunk <token>` where token is `Splunk 1111`, `Splunk 2222`, `Splunk 3333`
+    - ![condition](./images/rule-condition.png)
+- For each forward to the appropriate target group (one for each port `8282`, `8383`, and `8484`)
+
+Now we have three rules routing based on header tokens:
+![rules](./images/rules.png)
