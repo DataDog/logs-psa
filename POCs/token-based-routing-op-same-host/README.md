@@ -178,10 +178,6 @@ On each of the Splunk UF servers do the following:
 - Where `httpEventCollectorToken` should be `11111111-1111-1111-1111-111111111111`, `22222222-2222-2222-2222-222222222222`, and `33333333-3333-3333-3333-333333333333` for the appropriate servers (unique on each)
 - Restart splunk uf: `$SPLUNK_HOME/bin/splunk restart`
 
-## Results
-
-TBD - issue with Splunk UF
-
 ## Manually testing
 
 From Splunk UF Token 1 server:
