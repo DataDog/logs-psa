@@ -54,8 +54,8 @@ On each server do the following:
 - `vi $SPLUNK_HOME/etc/apps/fakelogs/default/inputs.conf`
 
     ```
-    host = kelnerhax-splunk-uf-1
-    source = fakelogs
+    host = <token-1111|token-2222|token-3333>
+    source = <nginx|iis|redis>
 
     [monitor:///var/log/fakelogs/fakelog.log]
     followTail = 1
