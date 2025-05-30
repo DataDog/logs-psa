@@ -2,6 +2,8 @@
 
 # Output log file
 LOG_FILE="/var/log/fakelogs/fakelog.log"
+# Number of log lines to generate
+NUM_LINES=100
 
 # Sample user agents and paths
 user_agents=(
@@ -40,9 +42,6 @@ generate_log_line() {
 
   echo "$ip - - [$datetime] \"$method $url HTTP/1.1\" $status $size \"$referrer\" \"$agent\""
 }
-
-# Number of log lines to generate
-NUM_LINES=100
 
 # Write logs to file
 for ((i=0; i<NUM_LINES; i++)); do
