@@ -102,7 +102,7 @@ Keep these pages open and move to the next section.
     - Repeat this twice for a total of 3 OPWs
     - When modifying the environment file, e.g. `/etc/default/<filename>` be sure to:
         - Replace `DD_OP_PIPELINE_ID` with the correct pipeline id for each unique pipeline (3 total)
-        - Replace `DD_OP_SOURCE_SPLUNK_TCP_ADDRESS` with a new port (e.g. `8383` and `8484`) as two processes cannot listen on the same port on the same interface (OS limitation); now if you have multiple network interfaces you could replace `0.0.0.0` with the appropriate interface, for this POC we have a single network interface.
+        - Replace `DD_OP_SOURCE_SPLUNK_HEC_ADDRESS` with a new port (e.g. `8383` and `8484`) as two processes cannot listen on the same port on the same interface (OS limitation); now if you have multiple network interfaces you could replace `0.0.0.0` with the appropriate interface, for this POC we have a single network interface.
     - As you start each worker at the end of the documentation, return to the Datadog UI and click "Deploy" to get the pipeline configuration loaded on the worker
 - Now 3 OP Workers are running on the same host running 3 distinct pipelines:
 
