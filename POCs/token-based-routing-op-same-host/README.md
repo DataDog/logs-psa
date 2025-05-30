@@ -152,7 +152,7 @@ Keep these pages open and move to the next section.
 - For each add a condition
     - Select `HTTP Header`
     - Header name: `Authorization`
-    - Header value: `Splunk <token>` where token is `Splunk 1111`, `Splunk 2222`, `Splunk 3333`
+    - Header value: `Splunk <token>` where token is `Splunk 11111111-1111-1111-1111-111111111111`, `Splunk 22222222-2222-2222-2222-222222222222`, `Splunk 33333333-3333-3333-3333-333333333333`
     - ![condition](./images/rule-condition.png)
 - For each forward to the appropriate target group (one for each port `8282`, `8383`, and `8484`)
 
