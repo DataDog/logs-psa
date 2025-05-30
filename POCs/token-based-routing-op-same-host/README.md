@@ -109,3 +109,11 @@ Keep these pages open and move to the next section.
 - Now 3 OP Workers are running on the same host running 3 distinct pipelines:
 
     ![3-op-workers-same-host](./images/3-op-workers.png)
+
+- Next [enable the OPW API](https://docs.datadoghq.com/observability_pipelines/troubleshooting/#enable-the-observability-pipelines-worker-api) for our next section to add a `/health` endpoint for our load balancer
+- `vi /etc/default/<filename>` the first installed workers is at `/etc/default/observability-pipelines-worker` and the other two are names that were chosen when following the multiple pipelines pre host step
+    - Add `DD_OP_API_ENABLED=true`
+    - Add `DD_OP_API_ADDRESS=0.0.0.0:8686`
+- Restart the workers:
+    - `sudo systemctl daemon-reload && sudo systemctl restart observability-pipelines-worker`
+    - `sudo systemctl restart <service-name>` for the other two
