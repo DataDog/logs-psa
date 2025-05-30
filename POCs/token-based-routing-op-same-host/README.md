@@ -61,8 +61,10 @@ On each server do the following:
     followTail = 1
     ```
 
+- Replacing `host` with one of three options `token-1111` `token-2222` `token-3333` - one unique for each server
+- Replacing `source` with one of three options `nginx` `iis` `redis` - one unique for each server to match the corresponding `fakelogs-<flavor>.sh` script placed and running on the server
 - Assign owner/group: `chown -R splunkfwd:splunkfwd $SPLUNK_HOME/etc/apps/fakelogs`
-- Restart splunk uf: `sudo $SPLUNK_HOME/bin/splunk restart`
+- Restart splunk uf: `$SPLUNK_HOME/bin/splunk restart`
 
 We'll return later to configure out `outputs.conf` with our ELB address.
 
