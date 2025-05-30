@@ -11,7 +11,8 @@ Example of how to set up token based routing using an AWS ELB to OP Workers runn
 On each server do the following:
 
 - `mkdir /var/log/fakelogs/ /opt/fakelogs`
-- Copy [fakelogs.sh](./fakelogs.sh) to `/opt/fakelogs`
+- Copy one unique [log generation script](./scripts/) per server to `/opt/fakelogs`
+    - That is server 1 gets `fakelogs-nginx.sh`, server 2 gets `fakelogs-redis.sh`, server 3 gets `fakelogs-iis.sh`
 - `vi /etc/logrotate.d/fakelogs`:
 
     ```
@@ -31,7 +32,7 @@ On each server do the following:
 
     ```
     # m h  dom mon dow   command
-    * * * * * bash /opt/fakelogs/fakelogs.sh
+    * * * * * bash /opt/fakelogs/fakelogs-<flavor>.sh
     ```
 
 ### Splunk UF Setup
