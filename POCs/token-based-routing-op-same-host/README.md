@@ -158,3 +158,18 @@ Keep these pages open and move to the next section.
 
 Now we have three rules routing based on header tokens:
 ![rules](./images/rules.png)
+
+## Setup `outputs.conf`
+
+On each of the Splunk UF servers do the following:
+
+- `vi $SPLUNK_HOME/etc/system/local/default/outputs.conf`:
+
+    ```
+    [httpout]
+    httpEventCollectorToken = <11111111-1111-1111-1111-111111111111|22222222-2222-2222-2222-222222222222|3333>
+    uri = http://<load-balancer-uri>:8080
+    ```
+
+- Where `httpEventCollectorToken` should be `11111111-1111-1111-1111-111111111111`, `22222222-2222-2222-2222-222222222222`, and `33333333-3333-3333-3333-333333333333` for the appropriate servers (unique on each)
+- Restart splunk uf: `$SPLUNK_HOME/bin/splunk restart`
