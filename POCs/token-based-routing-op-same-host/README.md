@@ -128,6 +128,7 @@ curl -k http://kelnerhax-multi-op-2081698429.us-west-2.elb.amazonaws.com:8080/se
 ```
 
 This gives the following results:
+
 ![manual-results](./images/manual-results.png)
 
 Here we can see that the appropriate `@OP_TOKEN` is being applied by OPW "Edit Fields" processor as they match the `host` we sent in our requests from (via event attribute), which means our requests are being routed appropriately by the ALB to the correct port mapping to the correct OPW process on the OP host.
