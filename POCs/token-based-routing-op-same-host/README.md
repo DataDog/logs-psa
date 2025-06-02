@@ -60,8 +60,9 @@ Keep these pages open and move to the next section.
 
 ### Security Group
 
-- Use the same SG for the Splunk instances, OP instances, and LB
-- Allow traffic on the ports `8282`, `8383`, `8484`, and `8686` from the SG
+- Use a common SG for the OP instances and LB
+    - Allow traffic on the ports `8282`, `8383`, `8484`, and `8686` from the SG
+- Allow port `8080` from your sources to the ALB
 
 ### Target Groups
 
