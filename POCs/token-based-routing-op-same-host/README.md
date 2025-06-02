@@ -6,72 +6,6 @@ Example of how to set up token based routing using an AWS ELB to OP Workers runn
 
 ![arch](./images/arch.png)
 
-## Log generation & Splunk UF
-
-- Spin up 3 Ubuntu EC2 instances
-
-### Log generation
-
-On each server do the following:
-
-- `mkdir /var/log/fakelogs/ /opt/fakelogs`
-- Copy one unique [log generation script](./scripts/) per server to `/opt/fakelogs`
-    - That is server 1 gets `fakelogs-nginx.sh`, server 2 gets `fakelogs-redis.sh`, server 3 gets `fakelogs-iis.sh`
-- `vi /etc/logrotate.d/fakelogs`:
-
-    ```
-    /var/log/fakelogs/fakelog.log {
-        hourly
-        size 100M
-        rotate 3
-        copytruncate
-        missingok
-        notifempty
-    }
-    ```
-
-- `chmod 644 /etc/logrotate.d/fakelogs`
-- `chown root:root /etc/logrotate.d/fakelogs`
-- `crontab -e`:
-
-    ```
-    # m h  dom mon dow   command
-    * * * * * bash /opt/fakelogs/fakelogs-<flavor>.sh
-    ```
-
-### Splunk UF Setup
-
-- [Install Splunk UF on each server](https://help.splunk.com/en/splunk-enterprise/forward-and-process-data/universal-forwarder-manual/9.4/install-the-universal-forwarder/install-a-nix-universal-forwarder#bfa92018_7238_476c_8351_2dd1ee65ef8c__Install_the_universal_forwarder_on_Linux):
-
-    ```bash
-    useradd -m splunkfwd
-    export SPLUNK_HOME="/opt/splunkforwarder"
-    cd $SPLUNK_HOME
-    wget -O splunkforwarder-9.4.2-e9664af3d956-linux-amd64.deb "https://download.splunk.com/products/universalforwarder/releases/9.4.2/linux/splunkforwarder-9.4.2-e9664af3d956-linux-amd64.deb"
-    dpkg -i splunkforwarder-9.4.2-e9664af3d956-linux-amd64.deb
-    chown -R splunkfwd:splunkfwd $SPLUNK_HOME
-    sudo $SPLUNK_HOME/bin/splunk start --accept-license
-    # create admin username & password at prompts
-    ```
-
-- Create a directory for inputs: `mkdir -p $SPLUNK_HOME/etc/apps/fakelogs/default`
-- `vi $SPLUNK_HOME/etc/apps/fakelogs/default/inputs.conf`
-
-    ```
-    host = <token-1111|token-2222|token-3333>
-    source = <nginx|iis|redis>
-
-    [monitor:///var/log/fakelogs/fakelog.log]
-    followTail = 1
-    ```
-
-- Replacing `host` with one of three options `token-1111` `token-2222` `token-3333` - one unique for each server
-- Replacing `source` with one of three options `nginx` `iis` `redis` - one unique for each server to match the corresponding `fakelogs-<flavor>.sh` script placed and running on the server
-- Assign owner/group: `chown -R splunkfwd:splunkfwd $SPLUNK_HOME/etc/apps/fakelogs`
-- Restart splunk uf: `$SPLUNK_HOME/bin/splunk restart`
-
-We'll return later to configure out `outputs.conf` with our ELB address.
-
 ## Observability Pipelines
 
 - Create 3 OP Pipelines (one for each token): https://app.datadoghq.com/observability-pipelines
@@ -163,24 +97,8 @@ Keep these pages open and move to the next section.
 Now we have three rules routing based on header tokens:
 ![rules](./images/rules.png)
 
-## Setup `outputs.conf`
 
-On each of the Splunk UF servers do the following:
-
-- `vi $SPLUNK_HOME/etc/system/local/default/outputs.conf`:
-
-    ```
-    [httpout]
-    httpEventCollectorToken = <11111111-1111-1111-1111-111111111111|22222222-2222-2222-2222-222222222222|33333333-3333-3333-3333-333333333333>
-    uri = http://<load-balancer-uri>:8080
-    ```
-
-- Where `httpEventCollectorToken` should be `11111111-1111-1111-1111-111111111111`, `22222222-2222-2222-2222-222222222222`, and `33333333-3333-3333-3333-333333333333` for the appropriate servers (unique on each)
-- Restart splunk uf: `$SPLUNK_HOME/bin/splunk restart`
-
-## Manually testing
-
-From Splunk UF Token 1 server:
+Token 1:
 
 ```bash
 curl -k http://kelnerhax-multi-op-2081698429.us-west-2.elb.amazonaws.com:8080/services/collector/event -H "Authorization: Splunk 11111111-1111-1111-1111-111111111111" -d '{"event": "hello world", "host": "token-1"}'
