@@ -98,25 +98,30 @@ Keep these pages open and move to the next section.
 Now we have three rules routing based on header tokens:
 ![rules](./images/rules.png)
 
+## Manually testing sources
 
 Token 1:
 
 ```bash
 curl -k http://kelnerhax-multi-op-2081698429.us-west-2.elb.amazonaws.com:8080/services/collector/event -H "Authorization: Splunk 11111111-1111-1111-1111-111111111111" -d '{"event": "hello world", "host": "token-1"}'
 {"text":"Success","code":0}
+curl -k http://kelnerhax-multi-op-2081698429.us-west-2.elb.amazonaws.com:8080/services/collector/event -H "Authorization: Splunk 11111111-1111-1111-1111-111111111111" -d '{"event": "this came from token 1111...", "host": "token-1"}'
+{"text":"Success","code":0}
 ```
 
-From Splunk UF Token 2 server:
+Token 2:
 
 ```bash
 curl -k http://kelnerhax-multi-op-2081698429.us-west-2.elb.amazonaws.com:8080/services/collector/event -H "Authorization: Splunk 22222222-2222-2222-2222-222222222222" -d '{"event": "hello world", "host": "token-2"}'
 {"text":"Success","code":0}
 ```
 
-From Splunk UF Token 3 server:
+Token 3:
 
 ```bash
 curl -k http://kelnerhax-multi-op-2081698429.us-west-2.elb.amazonaws.com:8080/services/collector/event -H "Authorization: Splunk 33333333-3333-3333-3333-333333333333" -d '{"event": "hello world", "host": "token-3"}'
+{"text":"Success","code":0}
+curl -k http://kelnerhax-multi-op-2081698429.us-west-2.elb.amazonaws.com:8080/services/collector/event -H "Authorization: Splunk 33333333-3333-3333-3333-333333333333" -d '{"event": "this came from token 3333...", "host": "token-3"}'
 {"text":"Success","code":0}
 ```
 
