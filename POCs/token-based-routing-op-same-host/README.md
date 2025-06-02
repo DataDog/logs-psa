@@ -10,7 +10,7 @@ Example of how to set up token based routing using an AWS ELB to OP Workers runn
 
 - Create 3 OP Pipelines (one for each token): https://app.datadoghq.com/observability-pipelines
 - For simplicity sake use the log volume control template for each
-- Select "Splunk TCP" as the source
+- Select "Splunk HEC" as the source
 - Select "Datadog Logs" as the destination
 - Delete all processors except "Edit Fields"
 - Set "Edit Fields" processor to "Add Field"
@@ -30,7 +30,7 @@ Keep these pages open and move to the next section.
 - Copy and run the "Install the Observability Pipelines Worker" command from the Datadog UI from the first pipeline (`1111`):
 
     ```bash
-    DD_API_KEY=aeb5...a756 DD_OP_PIPELINE_ID=89f6f736-3cd7-11f0-a00b-da7ad0900002 DD_SITE=datadoghq.com DD_OP_SOURCE_SPLUNK_TCP_ADDRESS='0.0.0.0:8282' bash -c "$(curl -L https://install.datadoghq.com/scripts/install_script_op_worker2.sh)"
+    DD_API_KEY=aeb5...a756 DD_OP_PIPELINE_ID=89f6f736-3cd7-11f0-a00b-da7ad0900002 DD_SITE=datadoghq.com DD_OP_SOURCE_SPLUNK_HEC_ADDRESS='0.0.0.0:8282' bash -c "$(curl -L https://install.datadoghq.com/scripts/install_script_op_worker2.sh)"
     ```
 
 - Verify the host is reporting to the control plane:
