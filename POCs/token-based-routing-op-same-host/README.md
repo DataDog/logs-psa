@@ -114,6 +114,8 @@ Token 2:
 ```bash
 curl -k http://kelnerhax-multi-op-2081698429.us-west-2.elb.amazonaws.com:8080/services/collector/event -H "Authorization: Splunk 22222222-2222-2222-2222-222222222222" -d '{"event": "hello world", "host": "token-2"}'
 {"text":"Success","code":0}
+curl -k http://kelnerhax-multi-op-2081698429.us-west-2.elb.amazonaws.com:8080/services/collector/event -H "Authorization: Splunk 22222222-2222-2222-2222-222222222222" -d '{"event": "this came from token 2222...", "host": "token-2"}'
+{"text":"Success","code":0}
 ```
 
 Token 3:
