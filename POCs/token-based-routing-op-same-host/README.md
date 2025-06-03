@@ -52,6 +52,10 @@ Keep these pages open and move to the next section.
 - `vi /etc/default/<filename>` the first installed workers is at `/etc/default/observability-pipelines-worker` and the other two are names that were chosen when following the multiple pipelines pre host step
     - Add `DD_OP_API_ENABLED=true`
     - Add `DD_OP_API_ADDRESS=0.0.0.0:8686`
+
+> [!NOTE]
+> Only one worker process can listen on 8686, so you may want to do this differently for load balancer health checks. A get request can be sent to `/` on the HEC endpoint but will return a `404`, but you can add this status code to your target group health check instead, to individually check each OP Worker process.
+
 - Restart the workers:
     - `sudo systemctl daemon-reload && sudo systemctl restart observability-pipelines-worker`
     - `sudo systemctl restart <service-name>` for the other two
@@ -70,7 +74,11 @@ Keep these pages open and move to the next section.
 - Choose `Instances` as the "Target Type"
 - For "Protocol" choose `HTTP` and one of the three ports OP is listening on
 - Configure the health check for `HTTP` with a path of `/health` and under advanced options override the port to `8686`
-- Under "Register Targets" select the OP instance
+
+> [!NOTE]
+> Only one worker process can listen on 8686, so you may want to do this differently for load balancer health checks. A get request can be sent to `/` on the HEC endpoint but will return a `404`, but you can add this status code to your target group health check instead, to individually check each OP Worker process.
+
+- Under "Register Targets" select the OP instance(s)
 
 ![target-groups](./images/target-groups.png)
 
