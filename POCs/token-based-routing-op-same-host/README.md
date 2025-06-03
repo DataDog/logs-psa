@@ -4,7 +4,7 @@ Example of how to set up token based routing using an AWS ELB to OP Workers runn
 
 ## Design
 
-![arch](./images/arch.png)
+![arch](./images/design.png)
 
 ## Observability Pipelines
 
