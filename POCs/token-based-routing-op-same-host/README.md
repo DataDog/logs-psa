@@ -60,6 +60,8 @@ Keep these pages open and move to the next section.
     - `sudo systemctl daemon-reload && sudo systemctl restart observability-pipelines-worker`
     - `sudo systemctl restart <service-name>` for the other two
 
+Repeat this process for multiple hosts.
+
 ## ELB Setup
 
 ### Security Group
