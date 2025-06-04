@@ -1,6 +1,7 @@
 # Observability Pipelines Instructions for MS Sentinel
 
 - In Azure create a workspace if you don't already have one (to be used in all following steps)
+- Add microsoft sentinel to your workspace: https://portal.azure.com/#browse/microsoft.securityinsightsarg%2Fsentinel
 - Create a Data Collection Endpoint: https://portal.azure.com/#view/HubsExtension/BrowseResource.ReactView/resourceType/microsoft.insights%2Fdatacollectionendpoints
 - Create a Logs Analytics Workspace in your workspace if you don't already have one: https://portal.azure.com/#create/Microsoft.LogAnalyticsOMS
 - In the Logs Analytics Workspace, navigate to "Settings" > "Tables"
@@ -39,3 +40,13 @@
 	```
 	ts=$(($(date +%s%N)/1000000)) && curl -k http://localhost:9997/ -d '{ "TimeGenerated": "$ts", "event": { "message": "hello joe" }}'
 	```
+
+- Now we can see logs flowing:
+
+    ![logs-flowing](./images/op-logs-flowing.png)
+
+    ![ms-sentinel-metrics](./images/ms-sentinel-metrics.png)
+
+- And we can find our logs in Azure MS Sentinel:
+
+    ![azure-sentinel-logs](./images/azure-sentinel-logs.png)
