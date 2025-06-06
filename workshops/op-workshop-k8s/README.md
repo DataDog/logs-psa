@@ -4,7 +4,7 @@ This doc will guide you through a local (your labtop) Kubernetes (minikube) base
 You can follow this doc top to bottom to complete the lab on your own, no "teacher" led instruction is required.
 
 > [!IMPORTANT]
-> This is a k8s based workshop, if you are looking for something VM based with a load balancer instead, please #TODO [see this lab](https://github.com/DataDog/...).
+> This is a k8s based workshop, if you are looking for something VM based with a load balancer instead, please [see this lab]([https://github.com/DataDog/...](https://github.com/DataDog/logs-psa/tree/main/workshops/op-workshop-vms#observability-pipelines-vm-based-workshop)).
 
 ## Lab goals
 
