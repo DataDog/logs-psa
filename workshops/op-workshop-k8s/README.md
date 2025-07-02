@@ -26,8 +26,8 @@ Get hands on with Observability Pipelines (OP) by:
   - [Prereq 2) minikube](#prereq-2-minikube)
   - [Prereq 3) Install Helm](#prereq-3-install-helm)
   - [Prereq 4) Install kubectl](#prereq-4-install-kubectl)
-  - [Prereq 5) Personal Datadog Sandbox Org](#prereq-5-personal-datadog-sandbox-org)
-  - [Prereq 6) Enable Remote Config (RC) in your Datadog Sandbox org](#prereq-6-enable-remote-config-rc-in-your-datadog-sandbox-org)
+  - [Prereq 5) Datadog Org](#prereq-5-datadog-org)
+  - [Prereq 6) Enable Remote Config (RC) in your Datadog org](#prereq-6-enable-remote-config-rc-in-your-datadog-org)
 - [Workshop](#workshop)
   - [Workshop 1) Start minikube](#workshop-1-start-minikube)
   - [Workshop 2) Create an OP Pipeline & Install OPW](#workshop-2-create-an-op-pipeline--install-opw)
@@ -111,7 +111,7 @@ Run: `brew install kubectl` or follow https://kubernetes.io/docs/tasks/tools/
 
 You'll need a Datadog Org in order to configure Observability Pipelines. Use an existing organization or start a trial: https://www.datadoghq.com/dg/monitor/free-trial/
 
-### Prereq 6) Enable Remote Config (RC) in your Datadog Sandbox org
+### Prereq 6) Enable Remote Config (RC) in your Datadog org
 
 - Navigate to https://app.datadoghq.com/organization-settings/remote-config/setup?page_id=org-enablement-step
 - Click on "Enable for your Organization"
