@@ -15,8 +15,6 @@ podDisruptionBudget:
   enabled: true
   minAvailable: 1
 
-env: []
-
 resources:
   requests:
     cpu: 0.5
