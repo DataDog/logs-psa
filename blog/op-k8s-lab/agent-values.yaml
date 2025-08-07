@@ -5,7 +5,8 @@ datadog:
     enabled: true
     containerCollectAll: true
     autoMultiLineDetection: true
-agents:
-  containers:
-    agent:
-      env: []
+  env:
+    - name: DD_OBSERVABILITY_PIPELINES_WORKER_LOGS_ENABLED
+      value: true
+    - name: DD_OBSERVABILITY_PIPELINES_WORKER_LOGS_URL
+      value: "http://<OPW_HOST>:8282"
