@@ -1,0 +1,11 @@
+datadog:
+  apiKeyExistingSecret:  datadog-secret
+  clusterName:  op-k8s-lab
+  logs:
+    enabled: true
+    containerCollectAll: true
+    autoMultiLineDetection: true
+agents:
+  containers:
+    agent:
+      env: []
