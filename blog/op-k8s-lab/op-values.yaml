@@ -4,7 +4,7 @@ datadog:
   apiKeyExistingSecret: "datadog-secret"
   workerAPI:
     enabled: true
-    address: "127.0.0.1:8686"
+    address: "0.0.0.0:8686"
 
 autoscaling:
   enabled: true
