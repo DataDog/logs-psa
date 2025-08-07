@@ -9,4 +9,4 @@ datadog:
     - name: DD_OBSERVABILITY_PIPELINES_WORKER_LOGS_ENABLED
       value: true
     - name: DD_OBSERVABILITY_PIPELINES_WORKER_LOGS_URL
-      value: "http://<OPW_HOST>:8282"
+      value: "http://opw-observability-pipelines-worker.default.svc.cluster.local::8282"
