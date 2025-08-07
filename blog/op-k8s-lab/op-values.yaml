@@ -1,0 +1,51 @@
+## For the full list of configuration options: https://github.com/DataDog/helm-charts/blob/main/charts/observability-pipelines-worker/values.yaml
+
+datadog:
+  apiKeyExistingSecret: "datadog-secret"
+  workerAPI:
+    enabled: true
+    address: "127.0.0.1:8686"
+
+autoscaling:
+  enabled: true
+  minReplicas: 2
+  targetCPUUtilizationPercentage: 80
+
+podDisruptionBudget:
+  enabled: true
+  minAvailable: 1
+
+env: []
+
+resources:
+  requests:
+    cpu: 0.5
+    memory: 512Mi
+  limits:
+    cpu: 1
+    memory: 1Gi
+
+# These are being added by default to the helm chart but not yet available
+# see https://github.com/DataDog/helm-charts/pull/1890/files
+livenessProbe:
+  failureThreshold: 5
+  httpGet:
+    path: /health
+    # if you modify datadog.workerAPI.address to a different port you'll need to update here as well
+    port: 8686
+    scheme: HTTP
+  initialDelaySeconds: 15
+  timeoutSeconds: 15
+  periodSeconds: 10
+  successThreshold: 1
+readinessProbe:
+  failureThreshold: 3
+  httpGet:
+    path: /health
+    # if you modify datadog.workerAPI.address to a different port you'll need to update here as well
+    port: 8686
+    scheme: HTTP
+  initialDelaySeconds: 15
+  timeoutSeconds: 15
+  periodSeconds: 10
+  successThreshold: 1
