@@ -4,7 +4,7 @@
     ],
     "containerDefinitions": [
         {
-            "cpu": 50,
+            "cpu": 500,
             "environment": [
                 {
                     "name": "ECS_FARGATE",
@@ -56,7 +56,7 @@
             "command": [
                 "run"
             ],
-            "cpu": 50,
+            "cpu": 500,
             "environment": [
                 {
                     "name": "DD_OP_API_ENABLED",
@@ -101,7 +101,7 @@
             "volumesFrom": []
         },
         {
-            "cpu": 0,
+            "cpu": 500,
             "environment": [
                 {
                     "name": "RATE",
