@@ -33,6 +33,15 @@
             ],
             "essential": true,
             "image": "public.ecr.aws/datadog/agent:latest",
+            "logConfiguration": {
+                "logDriver": "awslogs",
+                "options": {
+                    "awslogs-group": "/ecs/datadog-test",
+                    "awslogs-create-group": "true",
+                    "awslogs-region": "us-west-2",
+                    "awslogs-stream-prefix": "ddagent"
+                }
+            },
             "memory": 512,
             "mountPoints": [],
             "name": "datadog-agent",
@@ -81,6 +90,15 @@
             ],
             "essential": true,
             "image": "public.ecr.aws/datadog/observability-pipelines-worker:latest",
+            "logConfiguration": {
+                "logDriver": "awslogs",
+                "options": {
+                    "awslogs-group": "/ecs/datadog-test",
+                    "awslogs-create-group": "true",
+                    "awslogs-region": "us-west-2",
+                    "awslogs-stream-prefix": "opworker"
+                }
+            },
             "memory": 512,
             "mountPoints": [],
             "name": "dd-observability-pipelines-worker",
@@ -110,6 +128,15 @@
             ],
             "essential": true,
             "image": "docker.io/kscarlett/nginx-log-generator:latest",
+            "logConfiguration": {
+                "logDriver": "awslogs",
+                "options": {
+                    "awslogs-group": "/ecs/datadog-test",
+                    "awslogs-create-group": "true",
+                    "awslogs-region": "us-west-2",
+                    "awslogs-stream-prefix": "nginx"
+                }
+            },
             "mountPoints": [],
             "name": "nginx-log-generator",
             "systemControls": [],
