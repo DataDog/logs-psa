@@ -109,7 +109,7 @@
                 }
             ],
             "essential": true,
-            "image": "kscarlett/nginx-log-generator:latest",
+            "image": "docker.io/kscarlett/nginx-log-generator:latest",
             "mountPoints": [],
             "name": "nginx-log-generator",
             "systemControls": [],
