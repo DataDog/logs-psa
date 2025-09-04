@@ -1,8 +1,24 @@
 {
     "compatibilities": [
+        "FARGATE",
+        "EC2"
+    ],
+    "requiresCompatibilities": [
         "FARGATE"
     ],
     "containerDefinitions": [
+        {
+            "essential": true,
+            "image": "amazon/aws-for-fluent-bit:stable",
+            "name": "log_router",
+            "firelensConfiguration":{
+                "type":"fluentbit",
+                "options":{
+                    "enable-ecs-log-metadata":"true"
+                }
+            },
+            "memoryReservation": 50
+        },
         {
             "cpu": 500,
             "environment": [
@@ -29,6 +45,20 @@
                 {
                     "name": "DD_OBSERVABILITY_PIPELINES_WORKER_LOGS_URL",
                     "value": "http://localhost:8282"
+                },
+                {
+                    "name": "DD_LOGS_ENABLED",
+                    "value": "true"
+                },
+                {
+                    "name": "DD_LOGS_CONFIG_CONTAINER_COLLECT_ALL",
+                    "value": "true"
+                }
+            ],
+            "secrets": [
+                {
+                    "name": "DD_API_KEY",
+                    "valueFrom": "arn:aws:secretsmanager:us-west-2:439537465448:secret:kelnerDogfoodAccount-EioKim:DD_API_KEY::"
                 }
             ],
             "essential": true,
@@ -52,12 +82,6 @@
                     "protocol": "tcp"
                 }
             ],
-            "secrets": [
-                {
-                    "name": "DD_API_KEY",
-                    "valueFrom": "arn:aws:secretsmanager:us-west-2:439537465448:secret:khaxOrgDDApiKey-fd1BpP"
-                }
-            ],
             "systemControls": [],
             "volumesFrom": []
         },
@@ -72,7 +96,7 @@
                     "value": "true"
                 },
                 {
-                    "name": "DD_OP_SOURCE_DATADOG_AGENT_ADDRESS",
+                    "name": "DD_OP_SOURCE_HTTP_SERVER_ADDRESS",
                     "value": "0.0.0.0:8282"
                 },
                 {
@@ -86,10 +110,12 @@
                 {
                     "name": "DD_OP_PIPELINE_ID",
                     "value": "c051b524-8358-11f0-89af-da7ad0900002"
-                },
+                }
+            ],
+            "secrets": [
                 {
                     "name": "DD_API_KEY",
-                    "value": "XXXXXXXXX"
+                    "valueFrom": "arn:aws:secretsmanager:us-west-2:439537465448:secret:kelnerDogfoodAccount-EioKim:DD_API_KEY::"
                 }
             ],
             "essential": true,
@@ -127,13 +153,21 @@
             "essential": true,
             "image": "docker.io/kscarlett/nginx-log-generator:latest",
             "logConfiguration": {
-                "logDriver": "awslogs",
+                "logDriver":"awsfirelens",
                 "options": {
-                    "awslogs-group": "/ecs/datadog-test",
-                    "awslogs-create-group": "true",
-                    "awslogs-region": "us-west-2",
-                    "awslogs-stream-prefix": "nginx"
-                }
+                    "Name": "datadog",
+                    "Host": "localhost:8282",
+                    "TLS": "off",
+                    "dd_service": "nginx-log-generator",
+                    "dd_source": "nginx",
+                    "dd_tags": "kelner:hax",
+                    "provider": "ecs",
+                    "retry_limit": "2"
+                },
+                "secretOptions": [{
+                    "name": "apikey",
+                    "valueFrom": "arn:aws:secretsmanager:us-west-2:439537465448:secret:kelnerDogfoodAccount-EioKim:DD_API_KEY::"
+                }]
             },
             "mountPoints": [],
             "name": "nginx-log-generator",
