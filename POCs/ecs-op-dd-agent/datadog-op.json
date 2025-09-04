@@ -1,0 +1,125 @@
+{
+    "compatibilities": [
+        "FARGATE"
+    ],
+    "containerDefinitions": [
+        {
+            "cpu": 50,
+            "environment": [
+                {
+                    "name": "ECS_FARGATE",
+                    "value": "true"
+                },
+                {
+                    "name": "DD_APM_ENABLED",
+                    "value": "true"
+                },
+                {
+                    "name": "DD_APM_NON_LOCAL_TRAFFIC",
+                    "value": "true"
+                },
+                {
+                    "name": "DD_OBSERVABILITY_PIPELINES_WORKER_LOGS_ENABLED",
+                    "value": "true"
+                },
+                {
+                    "name": "DD_SITE",
+                    "value": "datadoghq.com"
+                },
+                {
+                    "name": "DD_OBSERVABILITY_PIPELINES_WORKER_LOGS_URL",
+                    "value": "http://localhost:8282"
+                }
+            ],
+            "essential": true,
+            "image": "public.ecr.aws/datadog/agent:latest",
+            "memory": 512,
+            "mountPoints": [],
+            "name": "datadog-agent",
+            "portMappings": [
+                {
+                    "containerPort": 8126,
+                    "hostPort": 8126,
+                    "protocol": "tcp"
+                }
+            ],
+            "secrets": [
+                {
+                    "name": "DD_API_KEY",
+                    "valueFrom": "arn:aws:secretsmanager:us-west-2:439537465448:secret:khaxOrgDDApiKey-fd1BpP"
+                }
+            ],
+            "systemControls": [],
+            "volumesFrom": []
+        },
+        {
+            "command": [
+                "run"
+            ],
+            "cpu": 50,
+            "environment": [
+                {
+                    "name": "DD_OP_API_ENABLED",
+                    "value": "true"
+                },
+                {
+                    "name": "DD_OP_SOURCE_DATADOG_AGENT_ADDRESS",
+                    "value": "0.0.0.0:8282"
+                },
+                {
+                    "name": "DD_SITE",
+                    "value": "datadoghq.com"
+                },
+                {
+                    "name": "DD_OP_API_ADDRESS",
+                    "value": "0.0.0.0:8181"
+                },
+                {
+                    "name": "DD_OP_PIPELINE_ID",
+                    "value": "c051b524-8358-11f0-89af-da7ad0900002"
+                }
+            ],
+            "essential": true,
+            "image": "public.ecr.aws/datadog/observability-pipelines-worker:latest",
+            "memory": 512,
+            "mountPoints": [],
+            "name": "dd-observability-pipelines-worker",
+            "portMappings": [
+                {
+                    "containerPort": 8282,
+                    "hostPort": 8282,
+                    "protocol": "tcp"
+                }
+            ],
+            "secrets": [
+                {
+                    "name": "DD_API_KEY",
+                    "valueFrom": "arn:aws:secretsmanager:us-west-2:439537465448:secret:khaxOrgDDApiKey-fd1BpP"
+                }
+            ],
+            "systemControls": [],
+            "volumesFrom": []
+        },
+        {
+            "cpu": 0,
+            "environment": [
+                {
+                    "name": "RATE",
+                    "value": "10"
+                }
+            ],
+            "essential": true,
+            "image": "kscarlett/nginx-log-generator:latest",
+            "mountPoints": [],
+            "name": "nginx-log-generator",
+            "systemControls": [],
+            "volumesFrom": []
+        }
+    ],
+    "family": "datadog-op",
+    "volumes": [],
+    "networkMode": "awsvpc",
+    "memory": "4 GB",
+    "cpu": "2 vCPU",
+    "executionRoleArn": "arn:aws:iam::439537465448:role/ecsTaskExecutionRole"
+}
