@@ -86,6 +86,10 @@
                 {
                     "name": "DD_OP_PIPELINE_ID",
                     "value": "c051b524-8358-11f0-89af-da7ad0900002"
+                },
+                {
+                    "name": "DD_API_KEY",
+                    "value": "XXXXXXXXX"
                 }
             ],
             "essential": true,
@@ -107,12 +111,6 @@
                     "containerPort": 8282,
                     "hostPort": 8282,
                     "protocol": "tcp"
-                }
-            ],
-            "secrets": [
-                {
-                    "name": "DD_API_KEY",
-                    "valueFrom": "arn:aws:secretsmanager:us-west-2:439537465448:secret:khaxOrgDDApiKey-fd1BpP"
                 }
             ],
             "systemControls": [],
