@@ -53,16 +53,8 @@ resource "aws_security_group" "alb" {
     from_port   = 0
     to_port     = 0
     protocol    = "-1"
-    # 34.223.111.71/32 and 54.212.227.124/32 comes from the running task where
-    # we assign a public ip I don't know how to get this via terraform however
-    # and given that tasks are dynamic in nature, coming and going, I don't
-    # know how to make this work in a way where it would stick. You could open
-    # the ALB to the world, but that would be bad, maybe you can use a
-    # security group id here? But I think the traffic is going out over the
-    # public internet, so I don't think that would work. Maybe if you change
-    # this back to an internal ALB it will work? I couldn't get an internal
-    # ALB working.
-    cidr_blocks = ["10.0.0.0/8", "172.16.0.0/12", "192.168.0.0/16", "216.243.40.162/32", "34.223.111.71/32", "54.212.227.124/32"]
+    cidr_blocks = ["10.0.0.0/8", "172.16.0.0/12", "192.168.0.0/16"]
+    security_groups = [aws_security_group.ecs_tasks_alb.id]
   }
 
   egress {
@@ -101,10 +93,24 @@ resource "aws_security_group" "ecs_tasks" {
   }
 }
 
+# second sg to attach to the tasks and provide an id to the ALB
+resource "aws_security_group" "ecs_tasks_alb" {
+  name        = "datadog-test-app-ecs-tasks-alb"
+  description = "Allow traffic to ALB"
+  vpc_id      = var.aws_vpc
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+}
+
 # ALB
 resource "aws_lb" "main" {
   name               = "datadog-test-app-alb"
-  internal           = false
+  internal           = true
   load_balancer_type = "application"
   security_groups    = [aws_security_group.alb.id]
   subnets            = data.aws_subnets.all.ids
@@ -275,7 +281,7 @@ resource "aws_ecs_service" "main" {
   launch_type     = "FARGATE"
 
   network_configuration {
-    security_groups  = [aws_security_group.ecs_tasks.id]
+    security_groups  = [aws_security_group.ecs_tasks.id, aws_security_group.ecs_tasks_alb.id]
     subnets          = data.aws_subnets.all.ids
     assign_public_ip = true
   }
