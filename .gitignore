@@ -10,3 +10,8 @@ POCs/ecs-op-nlb/.terraform/providers/registry.terraform.io/hashicorp/aws/5.100.0
 POCs/ecs-op-nlb/.terraform/providers/registry.terraform.io/hashicorp/aws/5.100.0/darwin_arm64/terraform-provider-aws_v5.100.0_x5
 POCs/ecs-op-nlb/terraform.tfstate
 POCs/ecs-op-nlb/terraform.tfstate.backup
+POCs/ecs-op-firelens/.terraform/providers/registry.terraform.io/hashicorp/aws/5.100.0/darwin_arm64/terraform-provider-aws_v5.100.0_x5
+POCs/ecs-op-firelens/.terraform/providers/registry.terraform.io/hashicorp/aws/5.100.0/darwin_arm64/LICENSE.txt
+POCs/ecs-op-firelens/.terraform.lock.hcl
+POCs/ecs-op-firelens/terraform.tfstate
+POCs/ecs-op-firelens/terraform.tfstate.backup
