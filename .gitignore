@@ -15,3 +15,4 @@ POCs/ecs-op-firelens/.terraform/providers/registry.terraform.io/hashicorp/aws/5.
 POCs/ecs-op-firelens/.terraform.lock.hcl
 POCs/ecs-op-firelens/terraform.tfstate
 POCs/ecs-op-firelens/terraform.tfstate.backup
+blog/op-k8s-lab/microservices-demo/
