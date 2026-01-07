@@ -198,7 +198,8 @@ resource "aws_ecs_task_definition" "app" {
       environment = [
         { name = "DD_OP_API_ENABLED", value = "true" },
         { name = "DD_OP_API_ADDRESS", value = "0.0.0.0:8181" },
-        { name = "DD_OP_SOURCE_HTTP_SERVER_ADDRESS", value = "0.0.0.0:8282" },
+        #{ name = "DD_OP_SOURCE_HTTP_SERVER_ADDRESS", value = "0.0.0.0:8282" },
+        { name = "DD_OP_SOURCE_FLUENT_ADDRESS", value = "0.0.0.0:8282" },
         { name = "DD_SITE", value = "datadoghq.com" },
         { name = "DD_OP_PIPELINE_ID", value ="c051b524-8358-11f0-89af-da7ad0900002" },
         # Had issues with AWS Secrets Manager, shortcut to get things working
