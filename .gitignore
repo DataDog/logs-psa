@@ -16,3 +16,8 @@ POCs/ecs-op-firelens/.terraform.lock.hcl
 POCs/ecs-op-firelens/terraform.tfstate
 POCs/ecs-op-firelens/terraform.tfstate.backup
 blog/op-k8s-lab/microservices-demo/
+POCs/op-aws-autoscaling-tf/.terraform.lock.hcl
+POCs/op-aws-autoscaling-tf/.terraform/providers/registry.terraform.io/hashicorp/aws/6.31.0/darwin_arm64/LICENSE.txt
+POCs/op-aws-autoscaling-tf/.terraform/providers/registry.terraform.io/hashicorp/aws/6.31.0/darwin_arm64/terraform-provider-aws_v6.31.0_x5
+POCs/op-aws-autoscaling-tf/.terraform/providers/registry.terraform.io/hashicorp/null/3.2.4/darwin_arm64/LICENSE.txt
+POCs/op-aws-autoscaling-tf/.terraform/providers/registry.terraform.io/hashicorp/null/3.2.4/darwin_arm64/terraform-provider-null_v3.2.4_x5
