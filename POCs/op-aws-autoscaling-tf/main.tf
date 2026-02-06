@@ -44,6 +44,30 @@ variable "datadog_site" {
   }
 }
 
+# opw_env allows you to pass additional environment variables to the
+# Observability Pipelines Worker.
+#
+# FORMAT:
+# - Single string
+# - Key/value pairs separated by semicolons (;)
+# - Each entry must be KEY=VALUE
+#
+# At boot time, this string is transformed so that each semicolon (;) becomes
+# a newline and is written into:
+#   /etc/default/observability-pipelines-worker
+#
+# EXAMPLE:
+#   opw_env = "DD_OP_SOURCE_HTTP_SERVER_ADDRESS=0.0.0.0:8686;DD_OP_DESTINATION_SPLUNK_HEC_TOKEN=abc123;DD_OP_DESTINATION_SPLUNK_HEC_ENDPOINT_URL=https://splunk.example.com:8088"
+#
+# RESULTS IN /etc/default/observability-pipelines-worker:
+#   DD_OP_SOURCE_HTTP_SERVER_ADDRESS=0.0.0.0:8686
+#   DD_OP_DESTINATION_SPLUNK_HEC_TOKEN=abc123
+#   DD_OP_DESTINATION_SPLUNK_HEC_ENDPOINT_URL=https://splunk.example.com:8088
+#
+# NOTES:
+# - Do NOT include trailing semicolons
+# - Values may include numbers or strings
+# - This variable is marked sensitive to avoid leaking secrets in plans
 variable "opw_env" {
   type      = string
   sensitive = true
