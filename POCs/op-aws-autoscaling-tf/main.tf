@@ -237,8 +237,8 @@ locals {
     sudo mount -o rw "$${device}" /var/lib/observability-pipelines-worker || true
     sudo chown observability-pipelines-worker:observability-pipelines-worker /var/lib/observability-pipelines-worker || true
 
-    sudo systemctl enable observability-pipelines-worker
-    sudo systemctl restart observability-pipelines-worker
+    sudo systemctl daemon-reload
+    sudo systemctl enable --now observability-pipelines-worker
   EOF
 }
 
