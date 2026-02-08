@@ -112,7 +112,9 @@ variable "instance_type" {
   default = "c6g.large"
 }
 
+# Increase this size to fit your disk buffering needs (if configured)
 variable "ebs_size_gb" {
+  description = "Size of the gp3 EBS volume attached to each instance (GB)."
   type    = number
   default = 20
 }
