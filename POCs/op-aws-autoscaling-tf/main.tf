@@ -99,7 +99,7 @@ variable "instance_type" {
 
 variable "ebs_size_gb" {
   type    = number
-  default = 288
+  default = 20
 }
 
 variable "asg_min_size" {
