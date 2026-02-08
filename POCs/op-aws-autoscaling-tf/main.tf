@@ -220,7 +220,7 @@ locals {
     sudo apt -y install observability-pipelines-worker datadog-signing-keys
 
     OPW_ENV_ENCODED='${replace(var.opw_env, "'", "'\"'\"'")}'
-    OPW_ENV_DECODED="$${OPW_ENV_ENCODED//;/$'\\n'}"
+    OPW_ENV_DECODED="$$(printf '%s' "$${OPW_ENV_ENCODED}" | tr ';' '\n')"
 
     sudo tee /etc/default/observability-pipelines-worker >/dev/null <<EOT
     DD_OP_API_ENABLED=true
