@@ -119,6 +119,12 @@ variable "ebs_size_gb" {
   default = 20
 }
 
+variable "nlb_ingress_cidr" {
+  description = "CIDR block that is allowed to access the NLB"
+  type        = string
+  default = "0.0.0.0"
+}
+
 variable "asg_min_size" {
   type    = number
   default = 2
@@ -231,6 +237,7 @@ locals {
     sudo mount -o rw "$${device}" /var/lib/observability-pipelines-worker || true
     sudo chown observability-pipelines-worker:observability-pipelines-worker /var/lib/observability-pipelines-worker || true
 
+    sudo systemctl enable observability-pipelines-worker
     sudo systemctl restart observability-pipelines-worker
   EOF
 }
@@ -277,7 +284,7 @@ resource "aws_security_group" "nlb_sg" {
     from_port   = var.opw_port
     to_port     = var.opw_port
     protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
+    cidr_blocks = [var.nlb_ingress_cidr]
     description = "Allow client access to NLB on OPW input port (adjust as needed)"
   }
 
@@ -300,6 +307,17 @@ resource "aws_security_group_rule" "allow_nlb_to_instances" {
   source_security_group_id = aws_security_group.nlb_sg.id
   description              = "Allow traffic from NLB to instances on OPW port"
 }
+
+resource "aws_security_group_rule" "allow_nlb_to_instances_api" {
+  type                     = "ingress"
+  from_port                = var.op_api_port
+  to_port                  = var.op_api_port
+  protocol                 = "tcp"
+  security_group_id        = aws_security_group.instance_sg.id
+  source_security_group_id = aws_security_group.nlb_sg.id
+  description              = "Allow NLB to reach instances on OP API / health-check port"
+}
+
 
 ########################
 # IAM Role / Instance Profile
@@ -387,7 +405,7 @@ resource "aws_lb" "nlb" {
 
 resource "aws_lb_target_group" "tg" {
   name        = "${var.name_prefix}-tg"
-  port        = var.op_api_port
+  port        = var.opw_port
   protocol    = "TCP"
   vpc_id      = var.vpc_id
   target_type = "instance"
