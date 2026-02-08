@@ -140,6 +140,13 @@ variable "asg_capacity" {
 
 data "aws_region" "current" {}
 
+# These AMIs are for Ubuntu 22.04 in each region and were valid as of June 2024.
+# They are UEFI-compatible, which is required for Nitro-based instances. If you
+# change regions or need to refresh them, you can find the right AMI IDs using the AWS CLI:
+# aws ssm get-parameters-by-path --path "/aws/service/canonical/ubuntu/server/22_04/stable/current/arm64/hvm/ebs-gp3/ami-id" --region us-west-2
+# Or you may not want to use ARM instances at all you can search for x86_64 AMIs instead:
+# aws ssm get-parameters-by-path --path "/aws/service/canonical/ubuntu/server/22_04/stable/current/x86_64/hvm/ebs-gp3/ami-id" --region us-west-2
+
 locals {
   aws_region_to_ami = {
     "af-south-1"     = "ami-0d39ef5932bf23109"
