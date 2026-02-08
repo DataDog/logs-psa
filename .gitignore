@@ -22,3 +22,5 @@ POCs/op-aws-autoscaling-tf/.terraform/providers/registry.terraform.io/hashicorp/
 POCs/op-aws-autoscaling-tf/.terraform/providers/registry.terraform.io/hashicorp/null/3.2.4/darwin_arm64/LICENSE.txt
 POCs/op-aws-autoscaling-tf/.terraform/providers/registry.terraform.io/hashicorp/null/3.2.4/darwin_arm64/terraform-provider-null_v3.2.4_x5
 POCs/op-aws-autoscaling-tf/terraform.tfvars
+POCs/op-aws-autoscaling-tf/.terraform.tfstate.lock.info
+POCs/op-aws-autoscaling-tf/terraform.tfstate
