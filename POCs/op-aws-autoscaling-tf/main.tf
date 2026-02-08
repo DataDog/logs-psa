@@ -176,7 +176,8 @@ locals {
     "us-west-2"      = "ami-057a2512faa740640"
   }
 
-  selected_ami = try(local.aws_region_to_ami[data.aws_region.current.name], null)
+  # Avoid deprecated data.aws_region.* attributes by using var.aws_region directly.
+  selected_ami = lookup(local.aws_region_to_ami, var.aws_region, null)
 
   user_data = <<-EOF
     #!/bin/bash
@@ -224,14 +225,14 @@ locals {
 
 resource "null_resource" "validate_region" {
   triggers = {
-    region = data.aws_region.current.name
+    region = var.aws_region
     ami    = local.selected_ami == null ? "UNSUPPORTED" : local.selected_ami
   }
 
   lifecycle {
     precondition {
       condition     = local.selected_ami != null
-      error_message = "Region ${data.aws_region.current.name} is not present in the AMI mapping. Add it to local.aws_region_to_ami."
+      error_message = "Region ${var.aws_region} is not present in the AMI mapping. Add it to local.aws_region_to_ami."
     }
   }
 }
