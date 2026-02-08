@@ -218,20 +218,27 @@ locals {
 
     sudo apt -y update
     sudo apt -y install observability-pipelines-worker datadog-signing-keys
+    sudo apt -y install xfsprogs
 
+    # Decode OPWEnv: semicolons become newlines
     OPW_ENV_ENCODED='${replace(var.opw_env, "'", "'\"'\"'")}'
-    OPW_ENV_DECODED="$$(printf '%s' "$${OPW_ENV_ENCODED}" | tr ';' '\n')"
+    OPW_ENV_DECODED="$(printf '%s' "$OPW_ENV_ENCODED" | tr ';' '\n')"
 
+    # Write base config
     sudo tee /etc/default/observability-pipelines-worker >/dev/null <<EOT
     DD_OP_API_ENABLED=true
     DD_SITE=${var.datadog_site}
     DD_API_KEY=${var.api_key}
     DD_OP_PIPELINE_ID=${var.pipeline_id}
     DD_OP_API_ADDRESS=0.0.0.0:${var.op_api_port}
-    $${OPW_ENV_DECODED}
     EOT
 
-    device=$$(get_opw_ebs_drive)
+    # Append decoded env lines (if any)
+    if [ -n "$OPW_ENV_DECODED" ]; then
+    printf '%s\n' "$OPW_ENV_DECODED" | sudo tee -a /etc/default/observability-pipelines-worker >/dev/null
+    fi
+
+    device=$(get_opw_ebs_drive)
     sudo mkfs.xfs "$${device}" || true
     sudo mkdir -p /var/lib/observability-pipelines-worker
     sudo mount -o rw "$${device}" /var/lib/observability-pipelines-worker || true
@@ -460,6 +467,11 @@ resource "aws_autoscaling_group" "asg" {
 
   lifecycle {
     create_before_destroy = true
+  }
+
+  instance_refresh {
+    strategy = "Rolling"
+    triggers = ["launch_template"]
   }
 }
 
