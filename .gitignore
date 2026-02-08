@@ -24,3 +24,4 @@ POCs/op-aws-autoscaling-tf/.terraform/providers/registry.terraform.io/hashicorp/
 POCs/op-aws-autoscaling-tf/terraform.tfvars
 POCs/op-aws-autoscaling-tf/.terraform.tfstate.lock.info
 POCs/op-aws-autoscaling-tf/terraform.tfstate
+POCs/op-aws-autoscaling-tf/terraform.tfstate.backup
