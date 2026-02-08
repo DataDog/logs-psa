@@ -66,7 +66,7 @@ variable "instance_type" {
 variable "ebs_size_gb" {
   description = "Size of the gp3 EBS volume attached to each instance (GB)."
   type        = number
-  default     = 288
+  default     = 20
 }
 
 variable "opw_port" {
