@@ -107,6 +107,12 @@ variable "subnet_ids" {
   # ]
 }
 
+variable "internal_nlb" {
+  description = "Whether the NLB should be internal (private) or internet-facing."
+  type        = bool
+  default     = false
+}
+
 variable "instance_type" {
   type    = string
   default = "c6g.large"
@@ -402,7 +408,7 @@ resource "aws_launch_template" "opw" {
 resource "aws_lb" "nlb" {
   name               = "${var.name_prefix}-nlb"
   load_balancer_type = "network"
-  internal           = true
+  internal           = var.internal_nlb
   subnets            = var.subnet_ids
 
   security_groups = [aws_security_group.nlb_sg.id]
