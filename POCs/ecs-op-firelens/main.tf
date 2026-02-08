@@ -203,7 +203,7 @@ resource "aws_ecs_task_definition" "app" {
         { name = "DD_SITE", value = "datadoghq.com" },
         { name = "DD_OP_PIPELINE_ID", value ="c051b524-8358-11f0-89af-da7ad0900002" },
         # Had issues with AWS Secrets Manager, shortcut to get things working
-        { name = "DD_API_KEY", value="<REPLACE_ME>" }
+        { name = "DD_API_KEY", value="aeb532b287b54358b0be018051ffa756" }
       ]
       logConfiguration = {
         logDriver = "awslogs"
