@@ -18,6 +18,7 @@ provider "aws" {
 
 variable "aws_region" {
   type = string
+  default     = "us-west-2"
 }
 
 variable "name_prefix" {
@@ -28,10 +29,14 @@ variable "name_prefix" {
 variable "api_key" {
   type      = string
   sensitive = true
+  # Example: set via terraform.tfvars or TF_VAR_api_key
+  # default   = "dd_api_key_goes_here"
 }
 
 variable "pipeline_id" {
   type = string
+  # Example:
+  # default = "00000000-0000-0000-0000-000000000000"
 }
 
 variable "datadog_site" {
@@ -74,6 +79,8 @@ variable "opw_env" {
   default   = ""
 }
 
+# This should match the port that you pass in to op_env for your source
+# (e.g. DD_OP_SOURCE_HTTP_SERVER_ADDRESS=8282) and the port your NLB listens on
 variable "opw_port" {
   type    = number
   default = 8282
@@ -86,10 +93,18 @@ variable "op_api_port" {
 
 variable "vpc_id" {
   type = string
+  # Example:
+  # default = "vpc-0123456789abcdef0"
 }
 
 variable "subnet_ids" {
   type = list(string)
+  # Example:
+  # default = [
+  #   "subnet-0123456789abcdef0",
+  #   "subnet-0123456789abcdef1",
+  #   "subnet-0123456789abcdef2",
+  # ]
 }
 
 variable "instance_type" {
