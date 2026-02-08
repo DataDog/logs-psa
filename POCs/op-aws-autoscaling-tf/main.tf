@@ -134,6 +134,11 @@ variable "asg_capacity" {
   default = 2
 }
 
+variable "ssh_key_pair_name" {
+  description = "Name of the EC2 key pair to attach to instances"
+  type        = string
+}
+
 ########################
 # AMI mapping & user_data
 ########################
@@ -334,6 +339,7 @@ resource "aws_launch_template" "opw" {
   name_prefix   = "${var.name_prefix}-lt-"
   image_id      = local.selected_ami
   instance_type = var.instance_type
+  key_name = var.ssh_key_pair_name
 
   iam_instance_profile {
     name = aws_iam_instance_profile.opw_profile.name
