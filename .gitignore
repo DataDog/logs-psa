@@ -25,3 +25,10 @@ POCs/op-aws-autoscaling-tf/terraform.tfvars
 POCs/op-aws-autoscaling-tf/.terraform.tfstate.lock.info
 POCs/op-aws-autoscaling-tf/terraform.tfstate
 POCs/op-aws-autoscaling-tf/terraform.tfstate.backup
+POCs/op-pipeline-tf-example/.terraform.lock.hcl
+POCs/op-pipeline-tf-example/.terraform/providers/registry.terraform.io/datadog/datadog/3.88.0/darwin_arm64/CHANGELOG.md
+POCs/op-pipeline-tf-example/.terraform/providers/registry.terraform.io/datadog/datadog/3.88.0/darwin_arm64/LICENSE
+POCs/op-pipeline-tf-example/.terraform/providers/registry.terraform.io/datadog/datadog/3.88.0/darwin_arm64/LICENSE-3rdparty.csv
+POCs/op-pipeline-tf-example/.terraform/providers/registry.terraform.io/datadog/datadog/3.88.0/darwin_arm64/README.md
+POCs/op-pipeline-tf-example/.terraform/providers/registry.terraform.io/datadog/datadog/3.88.0/darwin_arm64/terraform-provider-datadog_v3.88.0
+POCs/op-pipeline-tf-example/terraform.tfstate
