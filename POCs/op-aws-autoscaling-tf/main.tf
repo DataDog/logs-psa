@@ -157,11 +157,16 @@ variable "ssh_key_pair_name" {
 
 data "aws_region" "current" {}
 
-# These AMIs are for Ubuntu 22.04 in each region and were valid as of June 2024.
+# Rather than using a base OS AMI and needing to run a user-data script at boot
+# to install OPW, we recommend a custom AMI that already has the
+# observability-pipelines-worker package and its dependencies installed.
+# This allows for a faster and more reliable boot time, which is important for autoscaling.
+#
+# These AMIs are for Ubuntu 22.04 LTS in each region and were valid as of June 2024.
 # They are UEFI-compatible, which is required for Nitro-based instances. If you
 # change regions or need to refresh them, you can find the right AMI IDs using the AWS CLI:
 # aws ssm get-parameters-by-path --path "/aws/service/canonical/ubuntu/server/22_04/stable/current/arm64/hvm/ebs-gp3/ami-id" --region us-west-2
-# Or you may not want to use ARM instances at all you can search for x86_64 AMIs instead:
+# Or you may not want to use x86 instances you can search for x86_64 AMIs instead:
 # aws ssm get-parameters-by-path --path "/aws/service/canonical/ubuntu/server/22_04/stable/current/x86_64/hvm/ebs-gp3/ami-id" --region us-west-2
 
 locals {
@@ -203,6 +208,10 @@ locals {
   # Avoid deprecated data.aws_region.* attributes by using var.aws_region directly.
   selected_ami = lookup(local.aws_region_to_ami, var.aws_region, null)
 
+  # Rather than using a base OS AMI and needing to run a user-data script at boot
+  # to install OPW, we recommend a custom AMI that already has the
+  # observability-pipelines-worker package and its dependencies installed.
+  # This allows for a faster and more reliable boot time, which is important for autoscaling.
   user_data = <<-EOF
     #!/bin/bash
     set -euo pipefail
