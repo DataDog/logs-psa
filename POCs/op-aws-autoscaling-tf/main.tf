@@ -632,7 +632,7 @@ resource "aws_autoscaling_group" "asg" {
 
   launch_template {
     id      = aws_launch_template.opw.id
-    version = "$Latest"
+    version = aws_launch_template.opw.latest_version
   }
 
   target_group_arns = [aws_lb_target_group.tg.arn]
