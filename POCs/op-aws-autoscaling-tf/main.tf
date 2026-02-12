@@ -382,7 +382,14 @@ if [ -b "$device" ]; then
 
   # Mount at the detected data directory
   mkdir -p "$data_dir"
-  mount -o rw "$device" "$data_dir"
+
+  # Only mount if not already mounted
+  if ! mountpoint -q "$data_dir"; then
+    mount -o rw "$device" "$data_dir"
+    echo "Mounted $device at $data_dir"
+  else
+    echo "Mount point $data_dir is already mounted, skipping mount"
+  fi
 
   # Add to fstab for automatic mounting after reboots
   if ! grep -q "$device" /etc/fstab; then
