@@ -162,6 +162,16 @@ variable "ssh_key_pair_name" {
   type        = string
 }
 
+# If your VPC subnets have a NAT gateway configured, instances can reach the internet
+# without a public IP address. However, if your subnets do NOT have a NAT gateway,
+# you must set this to true so instances can download packages and dependencies
+# during the user data script execution.
+variable "assign_public_ip" {
+  description = "Whether to assign a public IP address to instances. Set to true if your VPC subnets do not have a NAT gateway."
+  type        = bool
+  default     = false
+}
+
 ########################
 # AMI mapping & user_data
 ########################
@@ -366,7 +376,7 @@ resource "aws_launch_template" "opw" {
 
   network_interfaces {
     device_index                = 0
-    associate_public_ip_address = false
+    associate_public_ip_address = var.assign_public_ip
     security_groups             = [aws_security_group.instance_sg.id]
   }
 
