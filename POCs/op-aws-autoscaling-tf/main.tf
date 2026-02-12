@@ -221,11 +221,10 @@ locals {
   # This allows for a faster and more reliable boot time, which is important for autoscaling.
   user_data = <<-EOF
 #!/bin/bash
-# Exit on error, but log everything first
 set -euxo pipefail
 
 # Log everything to file and console for debugging
-exec > >(tee /var/log/user-data.log | logger -t user-data -s 2>/dev/console) 2>&1 || true
+exec > >(tee /var/log/user-data.log | logger -t user-data -s 2>/dev/console) 2>&1
 
 echo "=========================================="
 echo "Starting OPW user-data script"
