@@ -129,9 +129,20 @@ variable "architecture" {
   }
 }
 
-# Increase this size to fit your disk buffering needs (if configured)
+# Disk buffering allows OPW to buffer data to disk when downstream destinations
+# are unavailable or slow, preventing data loss during outages.
+#
+# Datadog recommends a dedicated EBS volume for disk buffering to:
+# - Isolate buffer I/O from the root volume
+# - Prevent root volume from filling up during buffer growth
+# - Allow independent sizing based on buffering requirements
+#
+# To calculate size needed: (expected throughput MB/s) × (max outage duration seconds)
+# Example: 10 MB/s × 3600s (1 hour) = 36 GB recommended
+#
+# Documentation: https://docs.datadoghq.com/observability_pipelines/scaling_and_performance/handling_load_and_backpressure/#destination-buffer-behavior
 variable "ebs_size_gb" {
-  description = "Size of the gp3 EBS volume attached to each instance (GB)."
+  description = "Size of the gp3 EBS volume for disk buffering (GB). Set to 0 to disable the extra volume if not using disk buffering."
   type    = number
   default = 20
 }
@@ -210,53 +221,189 @@ locals {
   # This allows for a faster and more reliable boot time, which is important for autoscaling.
   user_data = <<-EOF
     #!/bin/bash
-    set -euo pipefail
+    set -euxo pipefail
 
-    get_opw_ebs_drive() {
-      echo "/dev/nvme1n1"
+    # Log everything to file and console for debugging
+    exec > >(tee /var/log/user-data.log | logger -t user-data -s 2>/dev/console) 2>&1
+
+    echo "=========================================="
+    echo "Starting OPW user-data script"
+    echo "Timestamp: $(date -u +"%Y-%m-%d %H:%M:%S UTC")"
+    echo "=========================================="
+
+    # Wait for network connectivity before continuing
+    wait_for_network() {
+      local tries=0
+      while [ $tries -lt 12 ]; do
+        # Test basic IP connectivity
+        if ping -c1 -W1 8.8.8.8 >/dev/null 2>&1; then
+          # Test HTTPS connectivity to Datadog
+          if curl -sS --connect-timeout 5 --max-time 10 https://keys.datadoghq.com/ -I >/dev/null 2>&1; then
+            echo "Network connectivity confirmed"
+            return 0
+          fi
+        fi
+        tries=$((tries + 1))
+        echo "Network not ready, attempt $tries/12 - waiting 5s..."
+        sleep 5
+      done
+      return 1
     }
 
-    sudo apt -y update
-    sudo apt -y install apt-transport-https curl gnupg
+    if ! wait_for_network; then
+      echo "ERROR: Network unreachable after retries. Dumping diagnostics:" >&2
+      ip -4 addr show || true
+      ip route show || true
+      echo "iptables rules:" >&2
+      iptables -L -n || true
+      echo "WARNING: Continuing anyway, but installation may fail" >&2
+    fi
 
-    sudo sh -c "echo 'deb [signed-by=/usr/share/keyrings/datadog-archive-keyring.gpg] https://apt.datadoghq.com/ stable observability-pipelines-worker-2' > /etc/apt/sources.list.d/datadog-observability-pipelines-worker.list"
-    sudo touch /usr/share/keyrings/datadog-archive-keyring.gpg
-    sudo chmod a+r /usr/share/keyrings/datadog-archive-keyring.gpg
+    # Install minimal required tools
+    echo "Installing base dependencies..."
+    apt-get update
+    apt-get install -y apt-transport-https curl gnupg xfsprogs
 
-    curl https://keys.datadoghq.com/DATADOG_APT_KEY_CURRENT.public | sudo gpg --no-default-keyring --keyring /usr/share/keyrings/datadog-archive-keyring.gpg --import --batch
-    curl https://keys.datadoghq.com/DATADOG_APT_KEY_C0962C7D.public   | sudo gpg --no-default-keyring --keyring /usr/share/keyrings/datadog-archive-keyring.gpg --import --batch
-    curl https://keys.datadoghq.com/DATADOG_APT_KEY_F14F620E.public   | sudo gpg --no-default-keyring --keyring /usr/share/keyrings/datadog-archive-keyring.gpg --import --batch
+    # Add Datadog apt key with retries
+    add_datadog_key() {
+      local tries=0
+      while [ $tries -lt 5 ]; do
+        if curl -fsSL https://keys.datadoghq.com/DATADOG_APT_KEY_CURRENT.public -o /tmp/datadog-key.asc; then
+          if gpg --dearmor < /tmp/datadog-key.asc > /usr/share/keyrings/datadog-archive-keyring.gpg; then
+            chmod 644 /usr/share/keyrings/datadog-archive-keyring.gpg
+            rm -f /tmp/datadog-key.asc
+            echo "Datadog GPG key added successfully"
+            return 0
+          fi
+        fi
+        tries=$((tries + 1))
+        echo "Failed to fetch/install Datadog key, attempt $tries/5 - waiting 5s..."
+        sleep 5
+      done
+      return 1
+    }
 
-    sudo apt -y update
-    sudo apt -y install observability-pipelines-worker datadog-signing-keys
-    sudo apt -y install xfsprogs
+    if ! add_datadog_key; then
+      echo "FATAL: Failed to install Datadog GPG key after retries" >&2
+      exit 1
+    fi
 
-    # Decode OPWEnv: semicolons become newlines
+    # Add Datadog repository
+    cat > /etc/apt/sources.list.d/datadog-observability-pipelines-worker.list <<'EOX'
+deb [signed-by=/usr/share/keyrings/datadog-archive-keyring.gpg] https://apt.datadoghq.com/ stable observability-pipelines-worker-2
+EOX
+
+    # Install OPW with retries
+    echo "Installing Observability Pipelines Worker..."
+    install_success=false
+    for attempt in 1 2 3; do
+      if apt-get update && apt-get install -y observability-pipelines-worker datadog-signing-keys; then
+        install_success=true
+        echo "OPW installed successfully"
+        break
+      fi
+      echo "apt-get install failed, attempt $attempt/3 - waiting 5s..."
+      sleep 5
+    done
+
+    if [ "$install_success" = false ]; then
+      echo "FATAL: Failed to install OPW after 3 attempts" >&2
+      exit 1
+    fi
+
+    # Configure OPW
+    echo "Writing OPW configuration..."
     OPW_ENV_ENCODED='${replace(var.opw_env, "'", "'\"'\"'")}'
     OPW_ENV_DECODED="$(printf '%s' "$OPW_ENV_ENCODED" | tr ';' '\n')"
 
-    # Write base config
-    sudo tee /etc/default/observability-pipelines-worker >/dev/null <<EOT
-    DD_OP_API_ENABLED=true
-    DD_SITE=${var.datadog_site}
-    DD_API_KEY=${var.api_key}
-    DD_OP_PIPELINE_ID=${var.pipeline_id}
-    DD_OP_API_ADDRESS=0.0.0.0:${var.op_api_port}
-    EOT
+    cat > /etc/default/observability-pipelines-worker <<'EOT'
+DD_OP_API_ENABLED=true
+DD_SITE=${var.datadog_site}
+DD_API_KEY=${var.api_key}
+DD_OP_PIPELINE_ID=${var.pipeline_id}
+DD_OP_API_ADDRESS=0.0.0.0:${var.op_api_port}
+EOT
 
-    # Append decoded env lines (if any)
     if [ -n "$OPW_ENV_DECODED" ]; then
-    printf '%s\n' "$OPW_ENV_DECODED" | sudo tee -a /etc/default/observability-pipelines-worker >/dev/null
+      printf '%s\n' "$OPW_ENV_DECODED" >> /etc/default/observability-pipelines-worker
     fi
 
-    device=$(get_opw_ebs_drive)
-    sudo mkfs.xfs "$${device}" || true
-    sudo mkdir -p /var/lib/observability-pipelines-worker
-    sudo mount -o rw "$${device}" /var/lib/observability-pipelines-worker || true
-    sudo chown observability-pipelines-worker:observability-pipelines-worker /var/lib/observability-pipelines-worker || true
+    # ==================================================================================
+    # Setup dedicated data disk for disk buffering
+    # ==================================================================================
+    #
+    # Disk buffering is a critical resiliency feature that prevents data loss when
+    # downstream destinations (Splunk, S3, etc.) are unavailable or experiencing issues.
+    #
+    # How it works:
+    # - OPW buffers incoming data to /var/lib/observability-pipelines-worker
+    # - If destinations are down, data accumulates on disk instead of being dropped
+    # - When destinations recover, buffered data is automatically sent
+    #
+    # Why a dedicated volume:
+    # - Isolates buffer I/O from root volume (better performance)
+    # - Prevents root volume from filling up during long outages
+    # - Allows independent sizing based on throughput and expected outage duration
+    #
+    # Configuration:
+    # - Configure disk buffering in your OPW pipeline via DD_OP_* environment variables
+    # - Set buffer size limits to prevent unbounded growth
+    #
+    # Documentation:
+    # - Disk buffering: https://docs.datadoghq.com/observability_pipelines/scaling_and_performance/handling_load_and_backpressure/#destination-buffer-behavior
+    #
+    # To remove this section: Also remove block_device_mappings from launch template
+    # ==================================================================================
 
-    sudo systemctl daemon-reload
-    sudo systemctl enable --now observability-pipelines-worker
+    echo "Setting up data disk for buffering..."
+    device="/dev/nvme1n1"
+
+    if [ -b "$device" ]; then
+      # Only format if the device is not already formatted (preserves data on instance refresh)
+      if ! blkid "$device" >/dev/null 2>&1; then
+        echo "Formatting $device with XFS..."
+        mkfs.xfs "$device"
+      else
+        echo "Device $device already formatted, skipping mkfs"
+      fi
+
+      mkdir -p /var/lib/observability-pipelines-worker
+      mount -o rw "$device" /var/lib/observability-pipelines-worker
+
+      # Add to fstab for automatic mounting after reboots
+      if ! grep -q "$device" /etc/fstab; then
+        echo "$device /var/lib/observability-pipelines-worker xfs defaults 0 0" >> /etc/fstab
+      fi
+
+      chown -R observability-pipelines-worker:observability-pipelines-worker /var/lib/observability-pipelines-worker
+      echo "Data disk mounted successfully at /var/lib/observability-pipelines-worker"
+    else
+      echo "WARNING: Device $device not found - OPW will use root volume for buffering" >&2
+      echo "This may cause root volume to fill up if buffering is enabled" >&2
+    fi
+
+    # Start and verify OPW service
+    echo "Starting Observability Pipelines Worker service..."
+    systemctl daemon-reload
+    systemctl enable observability-pipelines-worker
+    systemctl start observability-pipelines-worker
+
+    # Wait for service to start and verify
+    sleep 5
+    if systemctl is-active --quiet observability-pipelines-worker; then
+      echo "SUCCESS: OPW service is running"
+      journalctl -u observability-pipelines-worker -n 50 --no-pager
+    else
+      echo "ERROR: OPW service failed to start" >&2
+      systemctl status observability-pipelines-worker --no-pager || true
+      journalctl -u observability-pipelines-worker -n 200 --no-pager || true
+      exit 1
+    fi
+
+    echo "=========================================="
+    echo "User-data script completed successfully"
+    echo "Timestamp: $(date -u +"%Y-%m-%d %H:%M:%S UTC")"
+    echo "=========================================="
   EOF
 }
 
@@ -380,6 +527,19 @@ resource "aws_launch_template" "opw" {
     security_groups             = [aws_security_group.instance_sg.id]
   }
 
+  # Attach a dedicated EBS volume for disk buffering.
+  #
+  # Disk buffering is a key resiliency feature that allows OPW to buffer data to disk
+  # when downstream destinations are slow or unavailable, preventing data loss.
+  #
+  # This dedicated volume:
+  # - Gets mounted at /var/lib/observability-pipelines-worker by user_data
+  # - Isolates buffer I/O from the root volume
+  # - Prevents root volume from filling up during buffer growth
+  # - Can be sized independently based on your buffering needs
+  #
+  # To disable: Set ebs_size_gb = 0 and remove the disk setup section from user_data
+  # Documentation: https://docs.datadoghq.com/observability_pipelines/setup/
   block_device_mappings {
     device_name = "/dev/sdf"
     ebs {
