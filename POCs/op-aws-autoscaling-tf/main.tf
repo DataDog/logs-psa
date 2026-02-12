@@ -336,7 +336,7 @@ EOT
     # downstream destinations (Splunk, S3, etc.) are unavailable or experiencing issues.
     #
     # How it works:
-    # - OPW buffers incoming data to /var/lib/observability-pipelines-worker
+    # - OPW buffers incoming data to DD_OP_DATA_DIR (default: /var/lib/observability-pipelines-worker)
     # - If destinations are down, data accumulates on disk instead of being dropped
     # - When destinations recover, buffered data is automatically sent
     #
@@ -348,15 +348,28 @@ EOT
     # Configuration:
     # - Configure disk buffering in your OPW pipeline via DD_OP_* environment variables
     # - Set buffer size limits to prevent unbounded growth
+    # - Optionally set DD_OP_DATA_DIR in opw_env to customize the data directory
     #
     # Documentation:
     # - Disk buffering: https://docs.datadoghq.com/observability_pipelines/scaling_and_performance/handling_load_and_backpressure/#destination-buffer-behavior
+    # - Bootstrap options: https://docs.datadoghq.com/observability_pipelines/configuration/install_the_worker/advanced_worker_configurations/#bootstrap-options
     #
     # To remove this section: Also remove block_device_mappings from launch template
     # ==================================================================================
 
     echo "Setting up data disk for buffering..."
     device="/dev/nvme1n1"
+
+    # Detect DD_OP_DATA_DIR from opw_env if set, otherwise use default
+    # This ensures we mount the disk at the correct location
+    data_dir="/var/lib/observability-pipelines-worker"
+    if [ -n "$OPW_ENV_DECODED" ]; then
+      custom_data_dir=$(echo "$OPW_ENV_DECODED" | grep -E '^DD_OP_DATA_DIR=' | cut -d'=' -f2- | tr -d '[:space:]')
+      if [ -n "$custom_data_dir" ]; then
+        data_dir="$custom_data_dir"
+        echo "Detected custom DD_OP_DATA_DIR: $data_dir"
+      fi
+    fi
 
     if [ -b "$device" ]; then
       # Only format if the device is not already formatted (preserves data on instance refresh)
@@ -367,16 +380,17 @@ EOT
         echo "Device $device already formatted, skipping mkfs"
       fi
 
-      mkdir -p /var/lib/observability-pipelines-worker
-      mount -o rw "$device" /var/lib/observability-pipelines-worker
+      # Mount at the detected data directory
+      mkdir -p "$data_dir"
+      mount -o rw "$device" "$data_dir"
 
       # Add to fstab for automatic mounting after reboots
       if ! grep -q "$device" /etc/fstab; then
-        echo "$device /var/lib/observability-pipelines-worker xfs defaults 0 0" >> /etc/fstab
+        echo "$device $data_dir xfs defaults 0 0" >> /etc/fstab
       fi
 
-      chown -R observability-pipelines-worker:observability-pipelines-worker /var/lib/observability-pipelines-worker
-      echo "Data disk mounted successfully at /var/lib/observability-pipelines-worker"
+      chown -R observability-pipelines-worker:observability-pipelines-worker "$data_dir"
+      echo "Data disk mounted successfully at $data_dir"
     else
       echo "WARNING: Device $device not found - OPW will use root volume for buffering" >&2
       echo "This may cause root volume to fill up if buffering is enabled" >&2
