@@ -365,7 +365,7 @@ device="/dev/nvme1n1"
 # This ensures we mount the disk at the correct location
 data_dir="/var/lib/observability-pipelines-worker"
 if [ -n "$OPW_ENV_DECODED" ]; then
-  custom_data_dir=$(echo "$OPW_ENV_DECODED" | grep -E '^DD_OP_DATA_DIR=' | cut -d'=' -f2- | tr -d '[:space:]')
+  custom_data_dir=$(echo "$OPW_ENV_DECODED" | grep -E '^DD_OP_DATA_DIR=' | cut -d'=' -f2- | tr -d '[:space:]' || true)
   if [ -n "$custom_data_dir" ]; then
     data_dir="$custom_data_dir"
     echo "Detected custom DD_OP_DATA_DIR: $data_dir"
