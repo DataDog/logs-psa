@@ -118,6 +118,17 @@ variable "instance_type" {
   default = "c6g.large"
 }
 
+variable "architecture" {
+  description = "CPU architecture for instances. Use 'arm64' for Graviton instances (c6g, c7g, m6g, etc.) or 'amd64' for x86_64 instances (c5, c6i, m5, etc.)"
+  type        = string
+  default     = "arm64"
+
+  validation {
+    condition     = contains(["arm64", "amd64"], var.architecture)
+    error_message = "Architecture must be either 'arm64' or 'amd64'."
+  }
+}
+
 # Increase this size to fit your disk buffering needs (if configured)
 variable "ebs_size_gb" {
   description = "Size of the gp3 EBS volume attached to each instance (GB)."
@@ -162,51 +173,26 @@ data "aws_region" "current" {}
 # observability-pipelines-worker package and its dependencies installed.
 # This allows for a faster and more reliable boot time, which is important for autoscaling.
 #
-# These AMIs are for Ubuntu 22.04 LTS in each region and were valid as of June 2024.
-# They are UEFI-compatible, which is required for Nitro-based instances. If you
-# change regions or need to refresh them, you can find the right AMI IDs using the AWS CLI:
-# aws ssm get-parameters-by-path --path "/aws/service/canonical/ubuntu/server/22_04/stable/current/arm64/hvm/ebs-gp3/ami-id" --region us-west-2
-# Or you may not want to use x86 instances you can search for x86_64 AMIs instead:
-# aws ssm get-parameters-by-path --path "/aws/service/canonical/ubuntu/server/22_04/stable/current/x86_64/hvm/ebs-gp3/ami-id" --region us-west-2
+# Dynamic AMI lookup for Ubuntu 24.04 LTS (Noble Numbat) using AWS SSM Parameter Store.
+# This automatically retrieves the latest Ubuntu 24.04 AMI ID for the current region
+# based on the architecture variable (arm64 for Graviton, amd64 for x86_64).
+
+data "aws_ssm_parameter" "ubuntu_24_04_ami" {
+  name = "/aws/service/canonical/ubuntu/server/24.04/stable/current/${var.architecture}/hvm/ebs-gp3/ami-id"
+}
 
 locals {
-  aws_region_to_ami = {
-    "af-south-1"     = "ami-0d39ef5932bf23109"
-    "ap-east-1"      = "ami-021c24082c69e2867"
-    "ap-northeast-1" = "ami-02b8b87a5bfed4c7a"
-    "ap-northeast-2" = "ami-0ee413af3d419b913"
-    "ap-northeast-3" = "ami-0707b5724f3d370a1"
-    "ap-south-1"     = "ami-0041facac80f93bbe"
-    "ap-south-2"     = "ami-0544ba2d7ff852b4c"
-    "ap-southeast-1" = "ami-084594bed915f5e8f"
-    "ap-southeast-2" = "ami-07bf7b6acb5db5e13"
-    "ap-southeast-3" = "ami-07f185c39796fd830"
-    "ap-southeast-4" = "ami-0ce7ff6086582795a"
-    "ap-southeast-5" = "ami-0768220bae79b4901"
-    "ap-southeast-7" = "ami-0e4a91f0466e0c675"
-    "ca-central-1"   = "ami-0d1bde699564f5a7a"
-    "ca-west-1"      = "ami-0c62ba0d6cc805ca7"
-    "eu-central-1"   = "ami-0bc586dd8476ba5b1"
-    "eu-central-2"   = "ami-00f504206d607395a"
-    "eu-north-1"     = "ami-008e58f8f6505bf76"
-    "eu-south-1"     = "ami-0be337e76511c7b7b"
-    "eu-south-2"     = "ami-0d777f40ee93f0622"
-    "eu-west-1"      = "ami-04434961757c31b63"
-    "eu-west-2"      = "ami-02c510094a29f0052"
-    "eu-west-3"      = "ami-0bbeecfe5196eab29"
-    "il-central-1"   = "ami-0a91f8186ca9ab853"
-    "me-central-1"   = "ami-079335fbdd6702aa0"
-    "me-south-1"     = "ami-0bb7bf7951ae5ff2c"
-    "mx-central-1"   = "ami-09a423ffd5b0cbaaa"
-    "sa-east-1"      = "ami-080924daa71cbdad8"
-    "us-east-1"      = "ami-06daf9c2d2cf1cb37"
-    "us-east-2"      = "ami-0edd45507c30e47d4"
-    "us-west-1"      = "ami-01557579a54cccc40"
-    "us-west-2"      = "ami-057a2512faa740640"
-  }
+  # Use the dynamically fetched Ubuntu 24.04 LTS AMI
+  selected_ami = data.aws_ssm_parameter.ubuntu_24_04_ami.value
 
-  # Avoid deprecated data.aws_region.* attributes by using var.aws_region directly.
-  selected_ami = lookup(local.aws_region_to_ami, var.aws_region, null)
+  # Graviton (ARM64) instance type prefixes
+  graviton_prefixes = ["a1.", "c6g.", "c6gd.", "c6gn.", "c7g.", "c7gd.", "c7gn.", "m6g.", "m6gd.", "m7g.", "m7gd.", "r6g.", "r6gd.", "r7g.", "r7gd.", "t4g.", "x2gd."]
+
+  # Check if instance type is Graviton-based
+  is_graviton_instance = anytrue([for prefix in local.graviton_prefixes : startswith(var.instance_type, prefix)])
+
+  # Validate architecture matches instance type
+  architecture_matches = (var.architecture == "arm64" && local.is_graviton_instance) || (var.architecture == "amd64" && !local.is_graviton_instance)
 
   # Rather than using a base OS AMI and needing to run a user-data script at boot
   # to install OPW, we recommend a custom AMI that already has the
@@ -262,20 +248,6 @@ locals {
     sudo systemctl daemon-reload
     sudo systemctl enable --now observability-pipelines-worker
   EOF
-}
-
-resource "null_resource" "validate_region" {
-  triggers = {
-    region = var.aws_region
-    ami    = local.selected_ami == null ? "UNSUPPORTED" : local.selected_ami
-  }
-
-  lifecycle {
-    precondition {
-      condition     = local.selected_ami != null
-      error_message = "Region ${var.aws_region} is not present in the AMI mapping. Add it to local.aws_region_to_ami."
-    }
-  }
 }
 
 ########################
@@ -383,6 +355,13 @@ resource "aws_launch_template" "opw" {
 
   iam_instance_profile {
     name = aws_iam_instance_profile.opw_profile.name
+  }
+
+  lifecycle {
+    precondition {
+      condition     = local.architecture_matches
+      error_message = "Instance type '${var.instance_type}' does not match architecture '${var.architecture}'. Use arm64 for Graviton instances (c6g, c7g, m6g, etc.) or amd64 for x86_64 instances (c5, c6i, m5, etc.)."
+    }
   }
 
   network_interfaces {
