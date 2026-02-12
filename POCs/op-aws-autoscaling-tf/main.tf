@@ -690,8 +690,3 @@ output "load_balancer_dns" {
   description = "DNS name for the internal NLB."
   value       = aws_lb.nlb.dns_name
 }
-
-output "instance_profile" {
-  description = "Instance profile name."
-  value       = aws_iam_instance_profile.opw_profile.name
-}
