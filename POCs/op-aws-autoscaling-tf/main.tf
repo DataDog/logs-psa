@@ -220,103 +220,104 @@ locals {
   # observability-pipelines-worker package and its dependencies installed.
   # This allows for a faster and more reliable boot time, which is important for autoscaling.
   user_data = <<-EOF
-    #!/bin/bash
-    set -euxo pipefail
+#!/bin/bash
+# Exit on error, but log everything first
+set -euxo pipefail
 
-    # Log everything to file and console for debugging
-    exec > >(tee /var/log/user-data.log | logger -t user-data -s 2>/dev/console) 2>&1
+# Log everything to file and console for debugging
+exec > >(tee /var/log/user-data.log | logger -t user-data -s 2>/dev/console) 2>&1 || true
 
-    echo "=========================================="
-    echo "Starting OPW user-data script"
-    echo "Timestamp: $(date -u +"%Y-%m-%d %H:%M:%S UTC")"
-    echo "=========================================="
+echo "=========================================="
+echo "Starting OPW user-data script"
+echo "Timestamp: $(date -u +"%Y-%m-%d %H:%M:%S UTC")"
+echo "=========================================="
 
-    # Wait for network connectivity before continuing
-    wait_for_network() {
-      local tries=0
-      while [ $tries -lt 12 ]; do
-        # Test basic IP connectivity
-        if ping -c1 -W1 8.8.8.8 >/dev/null 2>&1; then
-          # Test HTTPS connectivity to Datadog
-          if curl -sS --connect-timeout 5 --max-time 10 https://keys.datadoghq.com/ -I >/dev/null 2>&1; then
-            echo "Network connectivity confirmed"
-            return 0
-          fi
-        fi
-        tries=$((tries + 1))
-        echo "Network not ready, attempt $tries/12 - waiting 5s..."
-        sleep 5
-      done
-      return 1
-    }
-
-    if ! wait_for_network; then
-      echo "ERROR: Network unreachable after retries. Dumping diagnostics:" >&2
-      ip -4 addr show || true
-      ip route show || true
-      echo "iptables rules:" >&2
-      iptables -L -n || true
-      echo "WARNING: Continuing anyway, but installation may fail" >&2
+# Wait for network connectivity before continuing
+wait_for_network() {
+  local tries=0
+  while [ $tries -lt 12 ]; do
+    # Test basic IP connectivity
+    if ping -c1 -W1 8.8.8.8 >/dev/null 2>&1; then
+      # Test HTTPS connectivity to Datadog
+      if curl -sS --connect-timeout 5 --max-time 10 https://keys.datadoghq.com/ -I >/dev/null 2>&1; then
+        echo "Network connectivity confirmed"
+        return 0
+      fi
     fi
+    tries=$((tries + 1))
+    echo "Network not ready, attempt $tries/12 - waiting 5s..."
+    sleep 5
+  done
+  return 1
+}
 
-    # Install minimal required tools
-    echo "Installing base dependencies..."
-    apt-get update
-    apt-get install -y apt-transport-https curl gnupg xfsprogs
+if ! wait_for_network; then
+  echo "ERROR: Network unreachable after retries. Dumping diagnostics:" >&2
+  ip -4 addr show || true
+  ip route show || true
+  echo "iptables rules:" >&2
+  iptables -L -n || true
+  echo "WARNING: Continuing anyway, but installation may fail" >&2
+fi
 
-    # Add Datadog apt key with retries
-    add_datadog_key() {
-      local tries=0
-      while [ $tries -lt 5 ]; do
-        if curl -fsSL https://keys.datadoghq.com/DATADOG_APT_KEY_CURRENT.public -o /tmp/datadog-key.asc; then
-          if gpg --dearmor < /tmp/datadog-key.asc > /usr/share/keyrings/datadog-archive-keyring.gpg; then
-            chmod 644 /usr/share/keyrings/datadog-archive-keyring.gpg
-            rm -f /tmp/datadog-key.asc
-            echo "Datadog GPG key added successfully"
-            return 0
-          fi
-        fi
-        tries=$((tries + 1))
-        echo "Failed to fetch/install Datadog key, attempt $tries/5 - waiting 5s..."
-        sleep 5
-      done
-      return 1
-    }
+# Install minimal required tools
+echo "Installing base dependencies..."
+apt-get update
+apt-get install -y apt-transport-https curl gnupg xfsprogs
 
-    if ! add_datadog_key; then
-      echo "FATAL: Failed to install Datadog GPG key after retries" >&2
-      exit 1
+# Add Datadog apt key with retries
+add_datadog_key() {
+  local tries=0
+  while [ $tries -lt 5 ]; do
+    if curl -fsSL https://keys.datadoghq.com/DATADOG_APT_KEY_CURRENT.public -o /tmp/datadog-key.asc; then
+      if gpg --dearmor < /tmp/datadog-key.asc > /usr/share/keyrings/datadog-archive-keyring.gpg; then
+        chmod 644 /usr/share/keyrings/datadog-archive-keyring.gpg
+        rm -f /tmp/datadog-key.asc
+        echo "Datadog GPG key added successfully"
+        return 0
+      fi
     fi
+    tries=$((tries + 1))
+    echo "Failed to fetch/install Datadog key, attempt $tries/5 - waiting 5s..."
+    sleep 5
+  done
+  return 1
+}
 
-    # Add Datadog repository
-    cat > /etc/apt/sources.list.d/datadog-observability-pipelines-worker.list <<'EOX'
+if ! add_datadog_key; then
+  echo "FATAL: Failed to install Datadog GPG key after retries" >&2
+  exit 1
+fi
+
+# Add Datadog repository
+cat > /etc/apt/sources.list.d/datadog-observability-pipelines-worker.list <<'EOX'
 deb [signed-by=/usr/share/keyrings/datadog-archive-keyring.gpg] https://apt.datadoghq.com/ stable observability-pipelines-worker-2
 EOX
 
-    # Install OPW with retries
-    echo "Installing Observability Pipelines Worker..."
-    install_success=false
-    for attempt in 1 2 3; do
-      if apt-get update && apt-get install -y observability-pipelines-worker datadog-signing-keys; then
-        install_success=true
-        echo "OPW installed successfully"
-        break
-      fi
-      echo "apt-get install failed, attempt $attempt/3 - waiting 5s..."
-      sleep 5
-    done
+# Install OPW with retries
+echo "Installing Observability Pipelines Worker..."
+install_success=false
+for attempt in 1 2 3; do
+  if apt-get update && apt-get install -y observability-pipelines-worker datadog-signing-keys; then
+    install_success=true
+    echo "OPW installed successfully"
+    break
+  fi
+  echo "apt-get install failed, attempt $attempt/3 - waiting 5s..."
+  sleep 5
+done
 
-    if [ "$install_success" = false ]; then
-      echo "FATAL: Failed to install OPW after 3 attempts" >&2
-      exit 1
-    fi
+if [ "$install_success" = false ]; then
+  echo "FATAL: Failed to install OPW after 3 attempts" >&2
+  exit 1
+fi
 
-    # Configure OPW
-    echo "Writing OPW configuration..."
-    OPW_ENV_ENCODED='${replace(var.opw_env, "'", "'\"'\"'")}'
-    OPW_ENV_DECODED="$(printf '%s' "$OPW_ENV_ENCODED" | tr ';' '\n')"
+# Configure OPW
+echo "Writing OPW configuration..."
+OPW_ENV_ENCODED='${replace(var.opw_env, "'", "'\"'\"'")}'
+OPW_ENV_DECODED="$(printf '%s' "$OPW_ENV_ENCODED" | tr ';' '\n')"
 
-    cat > /etc/default/observability-pipelines-worker <<'EOT'
+cat > /etc/default/observability-pipelines-worker <<'EOT'
 DD_OP_API_ENABLED=true
 DD_SITE=${var.datadog_site}
 DD_API_KEY=${var.api_key}
@@ -324,101 +325,101 @@ DD_OP_PIPELINE_ID=${var.pipeline_id}
 DD_OP_API_ADDRESS=0.0.0.0:${var.op_api_port}
 EOT
 
-    if [ -n "$OPW_ENV_DECODED" ]; then
-      printf '%s\n' "$OPW_ENV_DECODED" >> /etc/default/observability-pipelines-worker
-    fi
+if [ -n "$OPW_ENV_DECODED" ]; then
+  printf '%s\n' "$OPW_ENV_DECODED" >> /etc/default/observability-pipelines-worker
+fi
 
-    # ==================================================================================
-    # Setup dedicated data disk for disk buffering
-    # ==================================================================================
-    #
-    # Disk buffering is a critical resiliency feature that prevents data loss when
-    # downstream destinations (Splunk, S3, etc.) are unavailable or experiencing issues.
-    #
-    # How it works:
-    # - OPW buffers incoming data to DD_OP_DATA_DIR (default: /var/lib/observability-pipelines-worker)
-    # - If destinations are down, data accumulates on disk instead of being dropped
-    # - When destinations recover, buffered data is automatically sent
-    #
-    # Why a dedicated volume:
-    # - Isolates buffer I/O from root volume (better performance)
-    # - Prevents root volume from filling up during long outages
-    # - Allows independent sizing based on throughput and expected outage duration
-    #
-    # Configuration:
-    # - Configure disk buffering in your OPW pipeline via DD_OP_* environment variables
-    # - Set buffer size limits to prevent unbounded growth
-    # - Optionally set DD_OP_DATA_DIR in opw_env to customize the data directory
-    #
-    # Documentation:
-    # - Disk buffering: https://docs.datadoghq.com/observability_pipelines/scaling_and_performance/handling_load_and_backpressure/#destination-buffer-behavior
-    # - Bootstrap options: https://docs.datadoghq.com/observability_pipelines/configuration/install_the_worker/advanced_worker_configurations/#bootstrap-options
-    #
-    # To remove this section: Also remove block_device_mappings from launch template
-    # ==================================================================================
+# ==================================================================================
+# Setup dedicated data disk for disk buffering
+# ==================================================================================
+#
+# Disk buffering is a critical resiliency feature that prevents data loss when
+# downstream destinations (Splunk, S3, etc.) are unavailable or experiencing issues.
+#
+# How it works:
+# - OPW buffers incoming data to DD_OP_DATA_DIR (default: /var/lib/observability-pipelines-worker)
+# - If destinations are down, data accumulates on disk instead of being dropped
+# - When destinations recover, buffered data is automatically sent
+#
+# Why a dedicated volume:
+# - Isolates buffer I/O from root volume (better performance)
+# - Prevents root volume from filling up during long outages
+# - Allows independent sizing based on throughput and expected outage duration
+#
+# Configuration:
+# - Configure disk buffering in your OPW pipeline via DD_OP_* environment variables
+# - Set buffer size limits to prevent unbounded growth
+# - Optionally set DD_OP_DATA_DIR in opw_env to customize the data directory
+#
+# Documentation:
+# - Disk buffering: https://docs.datadoghq.com/observability_pipelines/scaling_and_performance/handling_load_and_backpressure/#destination-buffer-behavior
+# - Bootstrap options: https://docs.datadoghq.com/observability_pipelines/configuration/install_the_worker/advanced_worker_configurations/#bootstrap-options
+#
+# To remove this section: Also remove block_device_mappings from launch template
+# ==================================================================================
 
-    echo "Setting up data disk for buffering..."
-    device="/dev/nvme1n1"
+echo "Setting up data disk for buffering..."
+device="/dev/nvme1n1"
 
-    # Detect DD_OP_DATA_DIR from opw_env if set, otherwise use default
-    # This ensures we mount the disk at the correct location
-    data_dir="/var/lib/observability-pipelines-worker"
-    if [ -n "$OPW_ENV_DECODED" ]; then
-      custom_data_dir=$(echo "$OPW_ENV_DECODED" | grep -E '^DD_OP_DATA_DIR=' | cut -d'=' -f2- | tr -d '[:space:]')
-      if [ -n "$custom_data_dir" ]; then
-        data_dir="$custom_data_dir"
-        echo "Detected custom DD_OP_DATA_DIR: $data_dir"
-      fi
-    fi
+# Detect DD_OP_DATA_DIR from opw_env if set, otherwise use default
+# This ensures we mount the disk at the correct location
+data_dir="/var/lib/observability-pipelines-worker"
+if [ -n "$OPW_ENV_DECODED" ]; then
+  custom_data_dir=$(echo "$OPW_ENV_DECODED" | grep -E '^DD_OP_DATA_DIR=' | cut -d'=' -f2- | tr -d '[:space:]')
+  if [ -n "$custom_data_dir" ]; then
+    data_dir="$custom_data_dir"
+    echo "Detected custom DD_OP_DATA_DIR: $data_dir"
+  fi
+fi
 
-    if [ -b "$device" ]; then
-      # Only format if the device is not already formatted (preserves data on instance refresh)
-      if ! blkid "$device" >/dev/null 2>&1; then
-        echo "Formatting $device with XFS..."
-        mkfs.xfs "$device"
-      else
-        echo "Device $device already formatted, skipping mkfs"
-      fi
+if [ -b "$device" ]; then
+  # Only format if the device is not already formatted (preserves data on instance refresh)
+  if ! blkid "$device" >/dev/null 2>&1; then
+    echo "Formatting $device with XFS..."
+    mkfs.xfs "$device"
+  else
+    echo "Device $device already formatted, skipping mkfs"
+  fi
 
-      # Mount at the detected data directory
-      mkdir -p "$data_dir"
-      mount -o rw "$device" "$data_dir"
+  # Mount at the detected data directory
+  mkdir -p "$data_dir"
+  mount -o rw "$device" "$data_dir"
 
-      # Add to fstab for automatic mounting after reboots
-      if ! grep -q "$device" /etc/fstab; then
-        echo "$device $data_dir xfs defaults 0 0" >> /etc/fstab
-      fi
+  # Add to fstab for automatic mounting after reboots
+  if ! grep -q "$device" /etc/fstab; then
+    echo "$device $data_dir xfs defaults 0 0" >> /etc/fstab
+  fi
 
-      chown -R observability-pipelines-worker:observability-pipelines-worker "$data_dir"
-      echo "Data disk mounted successfully at $data_dir"
-    else
-      echo "WARNING: Device $device not found - OPW will use root volume for buffering" >&2
-      echo "This may cause root volume to fill up if buffering is enabled" >&2
-    fi
+  chown -R observability-pipelines-worker:observability-pipelines-worker "$data_dir"
+  echo "Data disk mounted successfully at $data_dir"
+else
+  echo "WARNING: Device $device not found - OPW will use root volume for buffering" >&2
+  echo "This may cause root volume to fill up if buffering is enabled" >&2
+fi
 
-    # Start and verify OPW service
-    echo "Starting Observability Pipelines Worker service..."
-    systemctl daemon-reload
-    systemctl enable observability-pipelines-worker
-    systemctl start observability-pipelines-worker
+# Start and verify OPW service
+echo "Starting Observability Pipelines Worker service..."
+systemctl daemon-reload
+systemctl enable observability-pipelines-worker
+systemctl start observability-pipelines-worker
 
-    # Wait for service to start and verify
-    sleep 5
-    if systemctl is-active --quiet observability-pipelines-worker; then
-      echo "SUCCESS: OPW service is running"
-      journalctl -u observability-pipelines-worker -n 50 --no-pager
-    else
-      echo "ERROR: OPW service failed to start" >&2
-      systemctl status observability-pipelines-worker --no-pager || true
-      journalctl -u observability-pipelines-worker -n 200 --no-pager || true
-      exit 1
-    fi
+# Wait for service to start and verify
+sleep 5
+if systemctl is-active --quiet observability-pipelines-worker; then
+  echo "SUCCESS: OPW service is running"
+  journalctl -u observability-pipelines-worker -n 50 --no-pager
+else
+  echo "ERROR: OPW service failed to start" >&2
+  systemctl status observability-pipelines-worker --no-pager || true
+  journalctl -u observability-pipelines-worker -n 200 --no-pager || true
+  exit 1
+fi
 
-    echo "=========================================="
-    echo "User-data script completed successfully"
-    echo "Timestamp: $(date -u +"%Y-%m-%d %H:%M:%S UTC")"
-    echo "=========================================="
-  EOF
+echo "=========================================="
+echo "User-data script completed successfully"
+echo "Timestamp: $(date -u +"%Y-%m-%d %H:%M:%S UTC")"
+echo "=========================================="
+EOF
 }
 
 ########################
