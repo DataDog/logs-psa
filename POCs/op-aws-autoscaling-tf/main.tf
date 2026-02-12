@@ -383,12 +383,21 @@ if [ -b "$device" ]; then
   # Mount at the detected data directory
   mkdir -p "$data_dir"
 
-  # Only mount if not already mounted
-  if ! mountpoint -q "$data_dir"; then
+  # Check if device is already mounted at the target location
+  if mount | grep -q "^$device on $data_dir"; then
+    echo "Device $device is already mounted at $data_dir"
+  elif mount | grep -q "^$device "; then
+    # Device is mounted but not at our target location
+    current_mount=$(mount | grep "^$device " | awk '{print $3}')
+    echo "WARNING: Device $device is already mounted at $current_mount, not $data_dir" >&2
+    echo "This might cause issues. Consider unmounting or adjusting configuration." >&2
+  elif mountpoint -q "$data_dir"; then
+    # Directory is a mount point but not our device
+    echo "WARNING: Mount point $data_dir is busy with a different device" >&2
+  else
+    # Safe to mount
     mount -o rw "$device" "$data_dir"
     echo "Mounted $device at $data_dir"
-  else
-    echo "Mount point $data_dir is already mounted, skipping mount"
   fi
 
   # Add to fstab for automatic mounting after reboots
