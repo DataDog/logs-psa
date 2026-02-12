@@ -351,7 +351,7 @@ resource "aws_launch_template" "opw" {
   name_prefix   = "${var.name_prefix}-lt-"
   image_id      = local.selected_ami
   instance_type = var.instance_type
-  key_name = var.ssh_key_pair_name
+  key_name      = var.ssh_key_pair_name
 
   iam_instance_profile {
     name = aws_iam_instance_profile.opw_profile.name
