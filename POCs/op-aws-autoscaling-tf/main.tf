@@ -473,9 +473,21 @@ resource "aws_autoscaling_group" "asg" {
     create_before_destroy = true
   }
 
+  # When the launch template changes, trigger a rolling instance refresh
+  # to gradually replace existing instances with new ones using the updated template
   instance_refresh {
     strategy = "Rolling"
-    triggers = ["launch_template"]
+    preferences {
+      min_healthy_percentage = 50
+      instance_warmup        = 60
+    }
+  }
+
+  # Force instance refresh when launch template version changes
+  tag {
+    key                 = "LaunchTemplateVersion"
+    value               = aws_launch_template.opw.latest_version
+    propagate_at_launch = false
   }
 }
 
