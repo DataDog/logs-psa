@@ -2,6 +2,8 @@ module github.com/GoogleCloudPlatform/microservices-demo/src/productcatalogservi
 
 go 1.24.0
 
+toolchain go1.26.0
+
 require (
 	cloud.google.com/go/alloydbconn v1.9.0
 	cloud.google.com/go/profiler v0.4.0
