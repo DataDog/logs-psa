@@ -17,7 +17,7 @@ version = "0.1.0-SNAPSHOT"
 def grpcVersion = "1.63.0"
 def jacksonCoreVersion = "2.17.1"
 def jacksonDatabindVersion = "2.17.1"
-def protocVersion = "3.25.3"
+def protocVersion = "3.25.5"
 
 tasks.withType(JavaCompile) {
     sourceCompatibility = JavaVersion.VERSION_19
