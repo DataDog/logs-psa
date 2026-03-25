@@ -21,4 +21,6 @@
       "kustomize/base/**"
     ]
   },
+
+  "minimumReleaseAge": "14 days"
 }
