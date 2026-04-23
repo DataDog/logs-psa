@@ -2,6 +2,8 @@ module github.com/GoogleCloudPlatform/microservices-demo/src/shippingservice
 
 go 1.24.0
 
+toolchain go1.26.2
+
 require (
 	cloud.google.com/go/profiler v0.4.0
 	github.com/golang/protobuf v1.5.4
