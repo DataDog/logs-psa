@@ -11,17 +11,98 @@
   "license": "ISC",
   "dependencies": {
     "@google-cloud/profiler": "6.0.1",
-    "@grpc/grpc-js": "1.10.7",
-    "@grpc/proto-loader": "0.7.13",
-    "@opentelemetry/api": "1.8.0",
+    "@grpc/grpc-js": "1.10.12",
+    "@grpc/proto-loader": "0.8.1",
+    "@opentelemetry/api": "1.9.1",
     "@opentelemetry/exporter-otlp-grpc": "0.26.0",
     "@opentelemetry/instrumentation-grpc": "0.51.1",
-    "@opentelemetry/sdk-trace-base": "1.24.1",
-    "@opentelemetry/sdk-node": "0.51.1",
-    "@opentelemetry/resources": "1.24.1",
-    "@opentelemetry/semantic-conventions": "1.24.1",
+    "@opentelemetry/sdk-trace-base": "2.8.0",
+    "@opentelemetry/sdk-node": "0.219.0",
+    "@opentelemetry/resources": "2.8.0",
+    "@opentelemetry/semantic-conventions": "1.41.1",
     "pino": "9.0.0",
     "simple-card-validator": "^1.1.0",
     "uuid": "^9.0.0"
+  },
+  "overrides": {
+    "@google-cloud/profiler": {
+      "long": "^5.3.2",
+      "protobufjs": "^7.6.4"
+    },
+    "@grpc/proto-loader": {
+      "long": "^5.3.2",
+      "protobufjs": "^7.6.4"
+    },
+    "@opentelemetry/otlp-grpc-exporter-base": {
+      "long": "^5.3.2",
+      "protobufjs": "^7.6.4",
+      "@opentelemetry/core": "^1.30.1"
+    },
+    "pprof": {
+      "long": "^5.3.2",
+      "protobufjs": "^7.6.4"
+    },
+    "protobufjs": {
+      "long": "^5.3.2"
+    },
+    "@opentelemetry/sdk-node": {
+      "@opentelemetry/sdk-metrics": "^1.30.1",
+      "@opentelemetry/propagator-jaeger": "^1.30.1",
+      "import-in-the-middle": "^1.15.0",
+      "@opentelemetry/propagator-b3": "^1.30.1",
+      "require-in-the-middle": "^7.5.2",
+      "@opentelemetry/exporter-zipkin": "^1.30.1",
+      "@opentelemetry/sdk-trace-node": "^1.30.1",
+      "@opentelemetry/core": "^1.30.1",
+      "cjs-module-lexer": "^1.4.3",
+      "@opentelemetry/context-async-hooks": "^1.30.1"
+    },
+    "@opentelemetry/instrumentation-grpc": {
+      "import-in-the-middle": "^1.15.0",
+      "require-in-the-middle": "^7.5.2",
+      "cjs-module-lexer": "^1.4.3"
+    },
+    "@opentelemetry/exporter-otlp-grpc": {
+      "@opentelemetry/core": "^1.30.1"
+    },
+    "@opentelemetry/exporter-trace-otlp-grpc": {
+      "@opentelemetry/core": "^1.30.1"
+    },
+    "@opentelemetry/exporter-trace-otlp-http": {
+      "@opentelemetry/core": "^1.30.1"
+    },
+    "@opentelemetry/exporter-trace-otlp-proto": {
+      "@opentelemetry/core": "^1.30.1"
+    },
+    "@opentelemetry/exporter-zipkin": {
+      "@opentelemetry/core": "^1.30.1"
+    },
+    "@opentelemetry/otlp-exporter-base": {
+      "@opentelemetry/core": "^1.30.1"
+    },
+    "@opentelemetry/otlp-transformer": {
+      "@opentelemetry/core": "^1.30.1"
+    },
+    "@opentelemetry/propagator-b3": {
+      "@opentelemetry/core": "^1.30.1"
+    },
+    "@opentelemetry/propagator-jaeger": {
+      "@opentelemetry/core": "^1.30.1"
+    },
+    "@opentelemetry/resources": {
+      "@opentelemetry/core": "^1.30.1"
+    },
+    "@opentelemetry/sdk-logs": {
+      "@opentelemetry/core": "^1.30.1"
+    },
+    "@opentelemetry/sdk-metrics": {
+      "@opentelemetry/core": "^1.30.1"
+    },
+    "@opentelemetry/sdk-trace-base": {
+      "@opentelemetry/core": "^1.30.1"
+    },
+    "@opentelemetry/sdk-trace-node": {
+      "@opentelemetry/core": "^1.30.1"
+    }
   }
 }
