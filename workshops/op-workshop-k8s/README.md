@@ -1,3 +1,6 @@
+> [!WARNING]
+> This repo is deprecated and out of date. Please use the official Observability Pipelines lab on the Datadog Learning center: https://learn.datadoghq.com/courses/course-getting-started-observability-pipelines. This is maintain for posterity.
+
 # Observability Pipelines K8s Lab
 
 This doc will guide you through a local (your labtop) Kubernetes (minikube) based Observability Pipelines lab.
