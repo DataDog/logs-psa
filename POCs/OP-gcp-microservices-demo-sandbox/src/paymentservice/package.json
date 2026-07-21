@@ -27,7 +27,8 @@
   "overrides": {
     "@google-cloud/profiler": {
       "long": "^5.3.2",
-      "protobufjs": "^7.6.4"
+      "protobufjs": "^7.6.4",
+      "protobufjs-cli": "^1.3.3"
     },
     "@grpc/proto-loader": {
       "long": "^5.3.2",
