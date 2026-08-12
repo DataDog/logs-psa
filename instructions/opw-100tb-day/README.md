@@ -18,9 +18,7 @@
 8. [SDS Performance Optimization](#sds-performance-optimization)
 9. [Monitoring and Alerting](#monitoring-and-alerting)
 10. [Operational Best Practices](#operational-best-practices)
-11. [Known Issues and Gotchas](#known-issues-and-gotchas)
-12. [Metric Reference](#metric-reference)
-13. [Sources](#sources)
+11. [Sources](#sources)
 
 ---
 
