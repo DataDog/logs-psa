@@ -556,7 +556,7 @@ Splitting into 2x20 SDS processors allows both to process concurrently, using ~3
 
 ### OOTB Dashboard
 
-Datadog provides an OOTB dashboard: **"Observability Pipelines Overview"** (Dashboard ID: 32326). It covers throughput, component health, buffers, errors, CPU/memory, and SDS matches.
+Datadog provides an OOTB dashboard: [**"Observability Pipelines Overview"**](https://app.datadoghq.com/dash/integration/32326/observability-pipelines-overview). It covers throughput, component health, buffers, errors, CPU/memory, and SDS matches.
 
 ### Recommended Monitors
 
