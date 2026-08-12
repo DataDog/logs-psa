@@ -38,8 +38,8 @@ Datadog recommends a **decentralized** deployment model: OPW instances operate i
                                       |
 +------------------+          +-------+--------+          +------------------+
 |  Sources         |   L4     |  OPW Fleet     |          |  Other Dest.     |
-|  (DD Agent,      +--------->|  (StatefulSet) |+-------->|  (S3, Splunk,    |
-|   OTel, Splunk)  |   NLB    |  50-100 pods   |          |   Elasticsearch) |
+|  (DD Agent,      +--------->|  (StatefulSet)  +-------->|  (S3, Splunk,    |
+|   OTel, Splunk)  |   NLB    |  50-100 pods    |          |   Elasticsearch) |
 +------------------+          +----------------+          +------------------+
                               4 vCPU / 8 GiB each
                               55 GiB disk buffer
