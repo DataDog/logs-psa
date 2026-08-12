@@ -29,17 +29,17 @@
 Datadog recommends a **decentralized** deployment model: OPW instances operate in the same region/cluster/datacenter as the data sources. This minimizes cross-region transit, reduces latency, and eliminates single points of failure.
 
 ```
-                           +---------------------+
+                           +----------------------+
                            |   Datadog Backend    |
                            | (Logs, Metrics, etc) |
-                           +----------^----------+
+                           +----------^-----------+
                                       |
                                     HTTPS
                                       |
 +------------------+          +-------+--------+          +------------------+
 |  Sources         |   L4     |  OPW Fleet     |          |  Other Dest.     |
 |  (DD Agent,      +--------->|  (StatefulSet)  +-------->|  (S3, Splunk,    |
-|   OTel, Splunk)  |   NLB    |  50-100 pods    |         |   Elasticsearch) |
+|   OTel, Splunk)  |   NLB    |  50-100 pods    |          |   Elasticsearch) |
 +------------------+          +----------------+          +------------------+
                               4 vCPU / 8 GiB each
                               55 GiB disk buffer
