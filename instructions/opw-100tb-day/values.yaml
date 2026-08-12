@@ -1,0 +1,581 @@
+# =============================================================================
+# Observability Pipelines Worker (OPW) Helm Values
+# Target: 100 TB/day sustained, 200 TB/day burst (2x spike in 15 minutes)
+# Chart: datadog/observability-pipelines-worker (v2.20.5+)
+# =============================================================================
+#
+# SIZING METHODOLOGY
+# ------------------
+# Conservative baseline: 1 TB/day per vCPU
+#   - Based on a 12-processor pipeline with typical log transforms
+#   - Equivalent to ~10 MiB/s per vCPU for ~512-byte unstructured log events
+#   - Source: https://docs.datadoghq.com/observability_pipelines/scaling_and_performance/best_practices_for_scaling_observability_pipelines/
+#
+# Actual throughput varies significantly by pipeline complexity:
+#   - SDS (Sensitive Data Scanner) is the heaviest processor. 40+ rules
+#     scanning all fields can reduce per-vCPU throughput by up to 6x.
+#   - SDS RULE SPLITTING delivers +45% throughput for high rule-count
+#     pipelines: split >20 SDS rules into multiple processors
+#     (e.g., 40 rules -> 2x20). This breaks Tokio FIFO head-of-line
+#     blocking where a single large SDS processor starves other tasks.
+#   - SDS FIELD SCOPING is the single highest-leverage optimization:
+#     targeting SDS to only PII-containing services (~14% of events)
+#     can more than double throughput vs scanning all fields (+149%).
+#   - Combined effect: splitting + scoping can recover most of the
+#     SDS throughput penalty, bringing High-tier pipelines close to
+#     Medium-tier performance.
+#   Source: OPW performance benchmarks, production customer investigations
+#
+#
+# CAPACITY CALCULATIONS (using conservative 1 TB/day per vCPU)
+# ------------------------------------------------------------
+# Steady state: 100 TB/day
+#   = 100 TB/day / (86,400 s/day) = 1,157 MB/s ingest rate
+#   = 100 vCPU at 100% utilization
+#   = 167 vCPU at 60% target utilization
+#   = 42 pods at 4 vCPU/pod -> rounded to 50 with burst headroom
+#
+# 2x spike (worst case): 200 TB/day sustained for 15 min
+#   = 2,315 MB/s ingest rate
+#   = 200 vCPU at 100% utilization
+#   = 333 vCPU at 60% target utilization
+#   = 84 pods at 4 vCPU/pod -> rounded to 100 with headroom
+#
+#
+# SPIKE HANDLING STRATEGY
+# -----------------------
+# A 2x spike arriving in 15 minutes is handled by three layers:
+#
+#   1. HIGH minReplicas (50 pods = 200 vCPU)
+#      - At steady state, 50 pods run at ~58% utilization
+#      - Each pod has ~67% burst headroom above the 60% target
+#      - 50 pods at 100% utilization can nearly absorb the full 2x spike
+#        inline (200 vCPU capacity vs 200 vCPU demand)
+#
+#   2. AGGRESSIVE HPA scaleUp (+50% per minute)
+#      - From 50 -> 75 -> 100 pods in ~2 minutes
+#      - At T+1 min (75 pods), capacity exceeds 2x demand at 60% target
+#      - At T+2 min (100 pods), full headroom restored
+#
+#   3. UPSTREAM SENDER BUFFERING
+#      - Senders (DD Agent, OTel Collector) MUST have retry and persistent
+#        queues enabled. If OPW returns HTTP 503 during the brief initial
+#        saturation window, senders hold data locally and retry.
+#      - OPW disk buffers protect against DESTINATION unavailability,
+#        not source-side overload. During a spike, the bottleneck is
+#        processing capacity, not destination throughput.
+#
+# See README.md for detailed timeline analysis and KEDA alternative.
+# =============================================================================
+
+
+# -----------------------------------------------------------------------------
+# Image
+# -----------------------------------------------------------------------------
+image:
+  repository: gcr.io/datadoghq
+  name: observability-pipelines-worker
+  # Pin to a specific version. Check `helm search repo datadog/observability-pipelines-worker`
+  # before deploying to ensure you're on the latest chart version.
+  tag: "2.20.4"
+  pullPolicy: IfNotPresent
+
+
+# -----------------------------------------------------------------------------
+# Datadog Configuration
+# -----------------------------------------------------------------------------
+datadog:
+  # API key for telemetry reporting and remote pipeline configuration.
+  # NEVER hardcode keys. Use an existing k8s Secret.
+  apiKeyExistingSecret: "opw-api-key"
+  # Pipeline ID from Datadog UI: Observability Pipelines > Pipelines > your pipeline.
+  pipelineId: "<YOUR_PIPELINE_ID>"
+  # Datadog site. Common values:
+  #   datadoghq.com (US1), us3.datadoghq.com (US3), us5.datadoghq.com (US5),
+  #   datadoghq.eu (EU1), ap1.datadoghq.com (AP1)
+  site: "datadoghq.com"
+  # Worker API provides /health endpoint, tap/top debugging, and admin gRPC.
+  # Required for HTTP-based health probes defined below.
+  workerAPI:
+    enabled: true
+
+
+# -----------------------------------------------------------------------------
+# Resource Requests and Limits
+# -----------------------------------------------------------------------------
+#
+# WHY 4 vCPU PER POD (not 8):
+#   - Docs recommend 4 vCPU minimum, 8 recommended for general workloads
+#   - Smaller pods = finer-grained HPA scaling (each pod is a smaller unit)
+#   - Better fault tolerance (losing 1 pod = less capacity loss)
+#   - SDS-heavy pipelines show diminishing returns above 4 vCPU due to
+#     Tokio FIFO task queue causing head-of-line (HOL) blocking
+#   - Customers have reported improved performance with SDS by downscaling
+#     from 8 vCPU to 4 vCPU pods (more horizontal scale, less HOL blocking)
+#
+# WHY NO CPU LIMIT:
+#   - CPU limits cause CFS (Completely Fair Scheduler) throttling in Linux
+#   - OPW is CPU-bound; CFS throttling creates artificial backpressure
+#   - The official Helm chart intentionally omits CPU limits
+#   - Without a CPU limit, pods can burst above requests when node has spare CPU
+#   Source: OPW Helm chart values.yaml design notes
+#
+# WHY MEMORY LIMIT = REQUEST:
+#   - Prevents OOMKill during burst buffering and backpressure events
+#   - Memory usage spikes when in-memory buffers fill during backpressure
+#   - Setting limit = request avoids overcommit and kubelet eviction
+#   - Creates Guaranteed QoS class for the memory dimension
+#   - Memory increases with the number of destinations (more batching/buffering)
+#
+resources:
+  requests:
+    cpu: "4"
+    memory: "8Gi"    # 2 GiB per vCPU = 8 GiB for 4 vCPU (docs minimum ratio)
+  limits:
+    # No cpu limit - intentional. See WHY NO CPU LIMIT above.
+    memory: "8Gi"    # Match request for Guaranteed QoS on memory dimension
+
+
+# -----------------------------------------------------------------------------
+# Autoscaling (HPA)
+# -----------------------------------------------------------------------------
+#
+# CPU-based HPA is the Datadog-documented default autoscaling approach.
+# For pipelines with heavy SDS (Sensitive Data Scanner) usage, consider
+# KEDA with pipelines.source_buffer_utilization_mean instead.
+# See README.md "KEDA Alternative" section.
+#
+# KNOWN ISSUE: CPU-BASED HPA FAILURE MODE WITH SDS
+#   When SDS saturates, CPU DROPS because workers idle-block waiting for
+#   SDS to drain the processing queue. HPA interprets falling CPU as
+#   surplus capacity and SCALES DOWN - exactly when it should scale up.
+#   Observed in production: HPA scaled DOWN during a volume spike because
+#   CPU dropped from SDS saturation - the opposite of desired behavior.
+#
+# ALSO: pipelines.utilization is NOT a reliable backpressure signal.
+#   OPW engineering has confirmed: "not a good indicator of backpressure,
+#   because if a buffer fills up and the pipeline stalls, every component
+#   will have a utilization of 0."
+#
+autoscaling:
+  enabled: true
+
+  # MIN REPLICAS:
+  #   100 TB/day / 1 TB/vCPU = 100 vCPU at 100% utilization
+  #   At 60% target: 167 vCPU -> 42 pods at 4 vCPU
+  #   Rounded to 50 for burst absorption headroom (+20%)
+  #   50 pods * 4 vCPU = 200 vCPU -> ~58% utilization at steady state
+  #   This headroom means the fleet can nearly absorb a full 2x spike
+  #   inline (200 vCPU capacity vs 200 vCPU demand at 100% utilization)
+  #   before HPA adds new pods.
+  minReplicas: 50
+
+  # MAX REPLICAS:
+  #   2x spike: 200 TB/day / 1 TB/vCPU = 200 vCPU at 100%
+  #   At 60% target: 333 vCPU -> 84 pods at 4 vCPU
+  #   Rounded to 100 for safety (+20%)
+  #   100 pods * 4 vCPU = 400 vCPU capacity
+  #   IMPORTANT: Your node pool / ASG MUST have capacity for 400 vCPU.
+  #   At 4 vCPU per pod on c7i.xlarge (4 vCPU, ~1 pod/node): 100 nodes.
+  #   On c7i.2xlarge (8 vCPU, ~2 pods/node): 50 nodes.
+  #   Pre-warm or use Karpenter/Cluster Autoscaler with sufficient limits.
+  maxReplicas: 100
+
+  # TARGET CPU UTILIZATION:
+  #   60% is more aggressive than the 85% docs default.
+  #   WHY 60% NOT 85%:
+  #     - 85% leaves only 15% headroom per pod before saturation
+  #     - At 60%, each pod can absorb ~67% more load before hitting 100%
+  #     - Provides meaningful burst absorption before HPA adds capacity
+  #     - Large-scale production OPW deployments (1,000+ pods) use 60%
+  #     - For cost optimization: slowly increase toward 70-80% after
+  #       observing stable behavior. Do not exceed 80%.
+  #   Source: https://docs.datadoghq.com/observability_pipelines/scaling_and_performance/best_practices_for_scaling_observability_pipelines/
+  targetCPUUtilizationPercentage: 60
+
+  # HPA BEHAVIOR:
+  #   Asymmetric: scale UP aggressively, scale DOWN conservatively.
+  #   Prevents thrashing during bursty traffic patterns.
+  behavior:
+    scaleUp:
+      # STABILIZATION WINDOW:
+      #   HPA waits this long after detecting high CPU before adding pods.
+      #   60s: short enough to catch real spikes within 1-2 minutes,
+      #   long enough to filter sub-minute noise from transient load.
+      #   Default when undefined: 0 (immediate, too reactive for production).
+      stabilizationWindowSeconds: 60
+      policies:
+        # PERCENT-BASED GROWTH: scale by 50% of current count each period.
+        #   At 50 pods: +25/min.  At 75 pods: +38/min.
+        #   Scales proportionally: fast at any replica count.
+        #   Timeline from 50 to 100 pods:
+        #     T+0: 50 -> T+1: 75 -> T+2: 100 (capped at max)
+        #     Reaches 2x capacity in ~2 minutes.
+        #   If this doesn't scale fast enough, increase to 100%.
+        #   If this scales too fast (e.g., overshoot), reduce to 25%.
+        #   If spikes rarely exceed 2x, consider 33% for a more gradual scale-up.
+        #   Observe stability over time and adjust as needed for optimal cost/performance tradeoff.
+        - type: Percent
+          value: 50
+          periodSeconds: 60
+        # ABSOLUTE FLOOR: always add at least 25 pods per period.
+        #   Prevents slow scaling if percent calculates fewer than 25.
+        #   At minReplicas (50), 50% = 25, so this is a safety net.
+        - type: Pods
+          value: 25
+          periodSeconds: 60
+      # MAX: use whichever policy adds MORE pods.
+      # During a 2x spike we want the fastest possible scale-up.
+      selectPolicy: Max
+
+    scaleDown:
+      # STABILIZATION WINDOW:
+      #   15-minute (900s) window before removing pods.
+      #   Prevents "ramp down then ramp up" oscillation common with
+      #   bursty log traffic (e.g., hourly cron jobs, deploy spikes).
+      stabilizationWindowSeconds: 900
+      policies:
+        # SLOW SCALE-DOWN: remove at most 10% of pods per period.
+        #   From 100: 100 -> 90 -> 81 -> 73 -> ... (~20 min to halve)
+        #   Intentionally conservative: excess capacity is cheap, data loss is not.
+        - type: Percent
+          value: 10
+          periodSeconds: 60
+      # MIN: use whichever policy removes FEWER pods.
+      selectPolicy: Min
+
+
+# -----------------------------------------------------------------------------
+# Persistence (Disk Buffers)
+# -----------------------------------------------------------------------------
+#
+# Disk buffers are ESSENTIAL at this scale for destination failure resilience.
+# Without them, any destination outage could cause data loss.
+#
+# IMPORTANT DISTINCTION:
+#   Disk buffers sit at the DESTINATION (sink), not the source.
+#   They protect against DESTINATION unavailability (API outage, rate limiting).
+#   They do NOT protect against SOURCE-SIDE overload during traffic spikes.
+#   During a 2x spike, the bottleneck is CPU/processing capacity, not
+#   destination throughput. Source-side protection comes from:
+#     1. High minReplicas (burst headroom)
+#     2. Aggressive HPA scaling
+#     3. Upstream sender retry/persistent queues (DD Agent, OTel Collector)
+#
+# The disk buffer max_size is configured separately in the pipeline config
+# (Terraform: datadog_observability_pipeline resource, or DD UI).
+# The PVC size here MUST be larger than the pipeline's max_size.
+#
+persistence:
+  enabled: true
+  # Match your cloud provider's performant block storage:
+  #   AWS:   gp3        (3,000 baseline IOPS, 125 MB/s throughput)
+  #   GCP:   premium-rwo or hyperdisk-balanced
+  #   Azure: managed-csi-premium
+  # Avoid gp2 (burstable IOPS, lower baseline). Avoid HDD classes.
+  # If you need higher throughput, use io2 (AWS) or provisioned IOPS.
+  storageClassName: "gp3"
+  accessModes:
+    - ReadWriteOnce
+
+  # PVC SIZE:
+  #   Must be larger than the pipeline disk buffer max_size.
+  #   55 GiB = 50 GiB max_size + 10% filesystem overhead.
+  #
+  #   50 GiB buffer provides ~9 min of runway at full pod throughput:
+  #     50 GiB / (40 MB/s per pod) = ~1,310s = ~22 min
+  #   For longer destination outages, increase proportionally.
+  #
+  #   FORMULA: total_buffer = throughput_per_worker * seconds_of_runway
+  #     At 10 MiB/s/vCPU, 4 vCPU, 10 min runway: 40 * 600 = 24 GB
+  #     At 10 MiB/s/vCPU, 4 vCPU, 20 min runway: 40 * 1200 = 48 GB
+  #
+  size: 55Gi
+
+  # RETENTION POLICY:
+  #   Retain PVCs on scale-down and delete to prevent data loss.
+  #   Without Retain, HPA scale-down orphans PVCs with undrained buffer data = data loss.
+  #   TRADE-OFF: Orphaned PVCs accumulate and consume storage cost.
+  #   Manual cleanup required: identify PVCs with no bound pod, verify drained, delete.
+  #   Trade-off: orphaned PVCs accumulate on scale-down, requiring periodic cleanup.
+  retentionPolicy:
+    whenScaled: Retain
+    whenDeleted: Retain
+
+
+# -----------------------------------------------------------------------------
+# Termination Grace Period
+# -----------------------------------------------------------------------------
+#
+# OPW needs time to drain disk buffers during graceful shutdown.
+# The Helm chart derives DD_OP_GRACEFUL_SHUTDOWN_LIMIT_SECS = this value - 10.
+# So 1200 - 10 = 1190s for OPW to drain, then SIGKILL at 1200s.
+# Supported since OPW 2.19.0.
+#
+# FORMULA: tGPS = (buffer_max_size / drain_rate) + margin
+#   50 GiB at ~50 MB/s drain = ~1,024s (~17 min)
+#   + 176s margin = 1,200s (20 min)
+#
+# For larger disk buffers (100 GiB), consider 3600s (1 hr).
+#
+# If tGPS is too short, OPW logs:
+#   "Failed to gracefully shut down in time. Killing components."
+# and undrained buffer data is stranded (but persisted on PVC via retentionPolicy).
+#
+terminationGracePeriodSeconds: 1200
+
+
+# -----------------------------------------------------------------------------
+# Pod Management Policy
+# -----------------------------------------------------------------------------
+#
+# Parallel (chart default): All pods start/stop simultaneously.
+#   PRO:  Fast HPA scale-up - critical for handling 2x spikes
+#   CON:  Multi-Attach errors during rolling updates with ReadWriteOnce PVCs
+#         (new pod scheduled before old terminates; different node = volume conflict)
+#   Source: Helm chart PR DataDog/helm-charts#2311, confirmed by OPW eng
+#
+# OrderedReady: Pods created/deleted sequentially (0, 1, 2, ...).
+#   PRO:  Safe rolling updates with RWO volumes
+#   CON:  Catastrophically slow for HPA scale-up (200 new pods * ~30s each = 100 min)
+#
+# DECISION: Use Parallel for spike handling. Mitigate rolling update issue by:
+#   1. Scale down to minReplicas before helm upgrade
+#   2. Use updateStrategy.rollingUpdate.maxUnavailable to limit churn
+#   3. Or: delete StatefulSet with --cascade=orphan, then helm upgrade
+#
+podManagementPolicy: Parallel
+
+
+# -----------------------------------------------------------------------------
+# Pod Disruption Budget
+# -----------------------------------------------------------------------------
+#
+# At 100 TB/day, losing too many pods simultaneously risks data loss.
+# maxUnavailable 10%: at 50 pods = 5 pods can be disrupted at once.
+# At 100 pods (during spike) = 10 pods can be disrupted.
+# Protects against aggressive node drains and cluster upgrades.
+#
+podDisruptionBudget:
+  enabled: true
+  maxUnavailable: "10%"
+
+
+# -----------------------------------------------------------------------------
+# Update Strategy
+# -----------------------------------------------------------------------------
+#
+# Rolling update with limited maxUnavailable to match PDB.
+# Prevents too many pods going down at once during helm upgrades.
+# At 50 pods, 10% = 5 pods updated at a time.
+#
+updateStrategy:
+  type: RollingUpdate
+  rollingUpdate:
+    maxUnavailable: "10%"
+
+
+# -----------------------------------------------------------------------------
+# Service Configuration
+# -----------------------------------------------------------------------------
+#
+# Use L4 (Network Load Balancer), NOT L7 (ALB/Ingress).
+# Datadog docs explicitly recommend L4 for OPW for performance and simplicity.
+# Client-side load balancing is NOT recommended (complexity, data loss risk).
+# Source: https://docs.datadoghq.com/observability_pipelines/scaling_and_performance/best_practices_for_scaling_observability_pipelines/
+#
+service:
+  enabled: true
+  # LoadBalancer for sources outside the cluster (Splunk UF, external OTel, etc.)
+  # Use ClusterIP if all sources are cluster-internal (DD Agent, in-cluster apps).
+  type: LoadBalancer
+  annotations:
+    # AWS NLB annotations. Adjust for your cloud provider:
+    #   GCP: cloud.google.com/l4-rbs: "enabled"
+    #   Azure: service.beta.kubernetes.io/azure-load-balancer-internal: "true"
+    # "external" here means "use the AWS Load Balancer Controller" (not the
+    # legacy in-tree provider). It does NOT mean internet-facing.
+    # The "scheme: internal" below is what keeps the NLB private.
+    service.beta.kubernetes.io/aws-load-balancer-type: "external"
+    service.beta.kubernetes.io/aws-load-balancer-nlb-target-type: "ip"
+    # "internal" = NLB is NOT internet-facing. Change to "internet-facing"
+    # only if sources are outside your VPC (not recommended for OPW).
+    service.beta.kubernetes.io/aws-load-balancer-scheme: "internal"
+    # Cross-zone LB: enable ONLY if traffic is imbalanced across AZs.
+    # Disabled by default per docs (adds latency and cost).
+    service.beta.kubernetes.io/aws-load-balancer-cross-zone-load-balancing-enabled: "false"
+  # Example port config for http_server source. Ports are fully configurable
+  # per your source type (e.g., 9997 for splunk_tcp, 8126 for datadog_agent,
+  # 514 for syslog, 4317 for OTel gRPC, 4318 for OTel HTTP).
+  ports:
+    - name: http-input
+      port: 8282
+      targetPort: 8282
+      protocol: TCP
+
+
+# -----------------------------------------------------------------------------
+# Environment Variables
+# -----------------------------------------------------------------------------
+env:
+  # HTTP_SERVER SOURCE ADDRESS (example - replace with your source type):
+  #   Required when using http_server source type in the pipeline.
+  #   Other source types use different env vars (e.g., DD_OP_SOURCE_DATADOG_AGENT_ADDRESS,
+  #   DD_OP_SOURCE_SPLUNK_TCP_ADDRESS, DD_OP_SOURCE_SYSLOG_ADDRESS).
+  #   Bind to 0.0.0.0 to accept connections from the load balancer/service.
+  #   Port 8282 is the conventional OPW ingest port.
+  - name: DD_OP_SOURCE_HTTP_SERVER_ADDRESS
+    value: "0.0.0.0:8282"
+
+  # JEMALLOC MEMORY ALLOCATOR TUNING:
+  #   OPW (built on Vector/Rust) uses jemalloc which retains high RSS after
+  #   traffic bursts. This is OS allocator behavior, not an OPW memory leak.
+  #   These settings force jemalloc to return pages to the OS more aggressively:
+  #     thp:never          - Disable transparent huge pages (reduces fragmentation)
+  #     dirty_decay_ms=1000 - Return dirty pages after 1s (default: 10s)
+  #     muzzy_decay_ms=1000 - Return muzzy pages after 1s (default: 10s)
+  #   Source: OPW Operations runbook, Datadog Core Observability team
+  - name: MALLOC_CONF
+    value: "thp:never,dirty_decay_ms:1000,muzzy_decay_ms:1000"
+
+  # LOG LEVEL:
+  #   info is the safe production default. Use debug only for troubleshooting.
+  #   warn/error miss important messages like "Source send cancelled" backpressure warnings.
+  #   Source: https://docs.datadoghq.com/observability_pipelines/monitoring_and_troubleshooting/troubleshooting/#enable-debug-logs
+  - name: VECTOR_LOG
+    value: "info"
+
+
+# -----------------------------------------------------------------------------
+# Container Ports
+# -----------------------------------------------------------------------------
+# Adjust to match your source type and chosen port. Must align with the
+# DD_OP_SOURCE_*_ADDRESS env var and the service.ports config above.
+containerPorts:
+  - name: http-input
+    containerPort: 8282
+    protocol: TCP
+  - name: worker-api
+    containerPort: 8686
+    protocol: TCP
+
+
+# Health probes: chart defaults (tcpSocket on 8686) are sufficient.
+# Override with httpGet /health if you need pipeline-level health checking
+# (requires datadog.workerAPI.enabled: true).
+
+
+# -----------------------------------------------------------------------------
+# Pod Scheduling
+# -----------------------------------------------------------------------------
+#
+# Spread pods across AZs and nodes for fault tolerance.
+# At 100 TB/day, losing an entire AZ must not cause data loss.
+# The docs mandate: no single instance should process more than 33% of total
+# volume for HA during node failure.
+# Source: https://docs.datadoghq.com/observability_pipelines/scaling_and_performance/best_practices_for_scaling_observability_pipelines/
+#
+topologySpreadConstraints:
+  # Even spread across availability zones
+  - maxSkew: 2
+    topologyKey: topology.kubernetes.io/zone
+    # ScheduleAnyway: don't block scheduling if perfect spread is impossible
+    # (e.g., during rapid HPA scale-up when one AZ is at capacity)
+    whenUnsatisfiable: ScheduleAnyway
+    labelSelector:
+      matchLabels:
+        app.kubernetes.io/name: observability-pipelines-worker
+  # Even spread across nodes within each zone
+  - maxSkew: 2
+    topologyKey: kubernetes.io/hostname
+    whenUnsatisfiable: ScheduleAnyway
+    labelSelector:
+      matchLabels:
+        app.kubernetes.io/name: observability-pipelines-worker
+
+# Soft anti-affinity: prefer not co-locating OPW pods on the same node.
+# "preferred" (not "required") allows scheduling on the same node during
+# burst scaling when no other nodes are immediately available.
+affinity:
+  podAntiAffinity:
+    preferredDuringSchedulingIgnoredDuringExecution:
+      - weight: 100
+        podAffinityTerm:
+          labelSelector:
+            matchLabels:
+              app.kubernetes.io/name: observability-pipelines-worker
+          topologyKey: kubernetes.io/hostname
+
+# DEDICATED NODE POOL (recommended):
+#   Use a dedicated node pool for OPW to prevent resource contention with
+#   application workloads. Uncomment and adjust to match your node pool labels.
+#   Instance recommendations (4 vCPU OPW pods):
+#     AWS:   c7i.xlarge (4 vCPU, 8 GiB) = 1 pod/node
+#            c7i.2xlarge (8 vCPU, 16 GiB) = 2 pods/node (better density)
+#     GCP:   c2-standard-8 (8 vCPU, 32 GiB) = 2 pods/node
+#     Azure: F8s_v2 (8 vCPU, 16 GiB) = 2 pods/node
+#   Use non-burstable instances. OPW is CPU-bound and burstable instances
+#   (AWS t-family) throttle CPU under sustained load.
+#   Source: Datadog Troubleshooting - OP: Infrastructure and Sizing
+#
+# nodeSelector:
+#   nodepool: opw
+#
+# tolerations:
+#   - key: "dedicated"
+#     operator: "Equal"
+#     value: "opw"
+#     effect: "NoSchedule"
+
+
+# -----------------------------------------------------------------------------
+# Pod Labels and Annotations
+# -----------------------------------------------------------------------------
+podLabels:
+  app.kubernetes.io/part-of: observability-pipelines
+
+# podAnnotations: {}
+
+
+# -----------------------------------------------------------------------------
+# Service Account
+# -----------------------------------------------------------------------------
+serviceAccount:
+  create: true
+  name: opw-worker
+  annotations: {}
+  # For AWS IRSA (required if sinking to S3, Kinesis, etc.):
+  #   eks.amazonaws.com/role-arn: arn:aws:iam::ACCOUNT:role/opw-role
+  # For GCP Workload Identity:
+  #   iam.gke.io/gcp-service-account: opw@PROJECT.iam.gserviceaccount.com
+
+
+# -----------------------------------------------------------------------------
+# Common Labels (applied to all Helm-managed resources)
+# -----------------------------------------------------------------------------
+commonLabels:
+  team: "platform"
+  environment: "production"
+
+
+# =============================================================================
+# KEDA ALTERNATIVE (not a Helm chart value - deploy separately)
+# =============================================================================
+#
+# If using KEDA instead of or alongside the built-in HPA, set:
+#   autoscaling.enabled: false
+# and deploy a KEDA ScaledObject targeting the OPW StatefulSet.
+#
+# See README.md for the full KEDA ScaledObject manifest and metric guidance.
+#
+# The recommended KEDA scaling metric is:
+#   pipelines.source_buffer_utilization_mean (gauge, 0.0-1.0)
+# This metric RISES during backpressure (unlike CPU which can DROP
+# during SDS saturation). Scale trigger at avg > 0.5 over 2 min.
+#
+# For multi-signal scaling, combine:
+#   1. pipelines.source_buffer_utilization_mean > 0.5 (backpressure)
+#   2. kubernetes.cpu.usage (container CPU) > 60% (compute saturation)
+#   3. pipelines.component_discarded_events_total{intentional:false} (any non-zero
+#      = emergency scale). Use this trigger if data loss prevention is paramount.
+# =============================================================================
