@@ -1,6 +1,6 @@
 module github.com/GoogleCloudPlatform/microservices-demo/src/shippingservice
 
-go 1.25.0
+go 1.26.0
 
 toolchain go1.26.2
 
@@ -8,8 +8,8 @@ require (
 	cloud.google.com/go/profiler v0.4.0
 	github.com/golang/protobuf v1.5.4
 	github.com/sirupsen/logrus v1.9.3
-	golang.org/x/net v0.57.0
-	google.golang.org/grpc v1.83.0
+	golang.org/x/net v0.58.0
+	google.golang.org/grpc v1.83.2
 )
 
 require (
@@ -31,7 +31,7 @@ require (
 	go.opentelemetry.io/otel v1.44.0 // indirect
 	go.opentelemetry.io/otel/metric v1.44.0 // indirect
 	go.opentelemetry.io/otel/trace v1.44.0 // indirect
-	golang.org/x/crypto v0.55.0 // indirect
+	golang.org/x/crypto v0.56.0 // indirect
 	golang.org/x/oauth2 v0.36.0 // indirect
 	golang.org/x/sync v0.22.0 // indirect
 	golang.org/x/sys v0.47.0 // indirect
