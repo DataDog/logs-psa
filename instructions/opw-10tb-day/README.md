@@ -561,7 +561,7 @@ Daily traffic follows a diurnal pattern: ~57% of the day at steady state (7 TB/d
 ```
 Layer 1: MINIMUM REPLICAS (HA baseline)
   3 pods at ~67% steady-state utilization
-  Each pod has ~43% burst headroom (67% -> 100%)
+  Each pod has ~33% burst headroom (67% -> 100%)
   3 pods at 100% = 10.5 vCPU, covers 10.5 TB/day
   Brief sender buffering may occur if peak exceeds 10.5 TB/day rate
 
@@ -964,7 +964,7 @@ env:
 
 **Sizing:**
 - Start with the conservative 1 TB/vCPU/day estimate, observe, then size for your actual pipeline tier
-- Add 25% headroom above calculated vCPU requirements
+- Add 50% headroom above calculated vCPU requirements
 - Cap pods at 4 vCPU; scale horizontally when more capacity is needed
 - Budget 2 GiB memory per vCPU
 
@@ -1027,84 +1027,3 @@ env:
 
 - [Datadog Pod Autoscaler](https://www.datadoghq.com/architecture/kubernetes-workload-autoscaling-with-datadog/)
 - [KEDA Datadog Scaler](https://keda.sh/docs/2.16/scalers/datadog/)
-
-### Benchmark Methodology
-
-- **Platform:** AWS EKS (us-west-2), Kubernetes
-- **Instance type:** c7a.2xlarge (AMD EPYC Genoa, 8 vCPU, 16 GB)
-- **Pod configuration:** StatefulSet, `requests: {cpu: 1, memory: 2Gi}`, no CPU limit
-- **Test duration:** 30-minute steady-state windows per configuration
-- **Workload:** seven event types, weighted average ~2,127 bytes/event
-- **Validation:** zero errors, zero unintentional discards, zero CPU throttling confirmed for all configurations
-
----
-
-## Suggested Edits: Cross-Comparison of 100TB/300TB READMEs vs Google Doc
-
-The following discrepancies were identified between the existing 100TB/300TB reference READMEs and the Google Doc (sizing guide). These should be reconciled across all references.
-
-### 1. HA minimum: 2 vs 3 replicas
-
-- **100TB/300TB READMEs:** State "Always deploy at least three OPW pods" and use minReplicas of 40/100 (well above 3). The HA test description mentions "three-replica deployment."
-- **Google Doc:** Updated to "Always deploy at least three OPW pods or VMs." The sizing table uses 3 as the minimum. Draft guide originally said "at least two."
-- **Recommendation:** All sources now agree on 3. Correct.
-
-### 2. Test duration: 15-minute vs 30-minute windows
-
-- **100TB/300TB READMEs:** State "15-minute steady-state windows."
-- **Google Doc:** Updated to "30-minute steady-state windows."
-- **Recommendation:** Update the 100TB/300TB READMEs to say "30-minute" to match the Google Doc. The Google Doc is the authoritative published version.
-
-### 3. Event type count: "eight" vs "seven"
-
-- **100TB/300TB READMEs:** State "eight event types."
-- **Google Doc:** States "seven event types" and the workload table lists 7 types (loadgenerator was removed).
-- **Recommendation:** Update the 100TB/300TB READMEs to say "seven" and remove `loadgenerator` from workload descriptions.
-
-### 4. Primary ingest metric name
-
-- **100TB/300TB READMEs:** Use `pipelines.component_received_event_bytes_total{component_kind:source}` as the primary ingest metric.
-- **Google Doc:** Uses `pipelines.component_received_bytes_total{component_kind:source}` (no "event_" in the name).
-- **Recommendation:** Verify which is the current metric name in the latest OPW version and align all references.
-
-### 5. Memory limits guidance
-
-- **100TB/300TB READMEs:** Set `limits.memory = requests.memory` (Guaranteed QoS on memory dimension).
-- **Google Doc:** Shows `limits.memory = 2x requests.memory` in the generic K8s section, but the 10TB reference config sets `limits.memory = requests.memory`.
-- **Recommendation:** The reference configs should all use limits = requests (Guaranteed QoS). The Google Doc's generic section should note this as the recommended pattern, with 2x as an alternative for environments that want burst headroom.
-
-### 6. Disk buffer maximum size
-
-- **100TB/300TB READMEs:** State "maximum 500 GB."
-- **Google Doc:** States "maximum 5 TB (Worker 2.20.0 and later; 500 GB on earlier versions)."
-- **Recommendation:** Update the 100TB/300TB READMEs to include the 5 TB limit for Worker 2.20.0+.
-
-### 7. Drain rate observations
-
-- **100TB/300TB READMEs:** Do not cite specific drain rate numbers.
-- **Google Doc:** Cites "approximately 54 MB/s" at 2 vCPU. The draft guide cites "8-10 MiB/s" at 1 vCPU.
-- **Recommendation:** Both numbers may be correct at their respective vCPU allocations. Include the 54 MB/s figure in the 100TB/300TB READMEs since they use 3.5 vCPU pods.
-
-### 8. SIGTERM/drain behavior detail
-
-- **100TB/300TB READMEs:** Minimal description of shutdown behavior.
-- **Google Doc:** Detailed 6-step SIGTERM shutdown sequence, clarifying that drain only accounts for events already in the pipeline (not continuous ingest).
-- **Recommendation:** Add the detailed shutdown sequence to the 100TB/300TB READMEs.
-
-### 9. Load balancer section
-
-- **100TB READMEs:** Original LB section has errors (round-robin, 60s keepalive, cross-zone disabled by default).
-- **Google Doc:** Updated with corrected LB guidance (flow hash, CSP-specific idle timeouts, cross-zone enabled).
-- **Recommendation:** Update the 100TB/300TB README "Load Balancing" sections and values.yaml service annotations to match the corrected guidance. The 100TB values.yaml still has `cross-zone-load-balancing-enabled: "false"` which contradicts the corrected recommendation.
-
-### 10. ENOSPC disk buffer corruption caveat
-
-- **100TB/300TB READMEs:** Not mentioned.
-- **Google Doc:** Includes the ENOSPC corruption warning: "If a disk buffer volume reaches 100% capacity (ENOSPC), partial writes can corrupt the buffer."
-- **Recommendation:** Add this caveat to the 100TB/300TB READMEs in the Disk Buffer Configuration section.
-
-### 11. Target CPU: 60% vs 70%
-
-- **100TB/300TB READMEs + values.yaml:** Use 60% target CPU.
-- **Google Doc:** Recommends 70% as the default, with 60% for large production fleets (100+ TB/day).
-- **Recommendation:** This is intentional differentiation. The 100TB/300TB configs are large-fleet configs where 60% is appropriate. The 10TB config uses 70% for cost efficiency at small scale. Both are consistent with the Google Doc's guidance. No change needed.
