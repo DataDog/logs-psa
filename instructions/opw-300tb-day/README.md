@@ -499,7 +499,7 @@ Daily traffic follows a diurnal pattern: ~57% of the day at steady state (210 TB
 ```
 Layer 1: HIGH minReplicas
   100 pods at 60% steady-state utilization
-  Each pod has ~67% burst headroom (60% -> 100%)
+  Each pod has ~40% burst headroom (60% -> 100%)
   100 pods at 100% = 350 vCPU; HPA adds 50 pods within 1 min to cover peak (420 TB/day)
 
 Layer 2: AGGRESSIVE HPA/KEDA scaleUp
@@ -907,13 +907,3 @@ Datadog provides a built-in dashboard: **Observability Pipelines Overview**. It 
 
 - [Datadog Pod Autoscaler](https://www.datadoghq.com/architecture/kubernetes-workload-autoscaling-with-datadog/)
 - [KEDA Datadog Scaler](https://keda.sh/docs/2.16/scalers/datadog/)
-
-### Benchmark Methodology
-
-- **OPW version:** 2.20.4
-- **Platform:** AWS EKS (us-west-2), Kubernetes
-- **Instance type:** c7a.2xlarge (AMD EPYC Genoa, 8 vCPU, 16 GB)
-- **Pod configuration:** StatefulSet, `requests: {cpu: 1, memory: 2Gi}`, no CPU limit
-- **Test duration:** 15-minute steady-state windows per configuration
-- **Workload:** eight event types, weighted average ~2,127 bytes/event
-- **Validation:** zero errors, zero unintentional discards, zero CPU throttling confirmed for all configurations
