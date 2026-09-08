@@ -147,7 +147,7 @@ Extends Medium Processing with a larger SDS rule set (40 rules), CPU-intensive V
 
 ### Throughput Per vCPU
 
-All results measured at ~1 vCPU on AWS EKS with c7a.2xlarge instances (AMD EPYC Genoa). Test workload: eight event types, weighted average ~2,127 bytes per event, sustained over 15-minute steady-state windows.
+All results measured at ~1 vCPU on AWS EKS with c7a.2xlarge instances (AMD EPYC Genoa). Test workload: seven event types, weighted average ~2,127 bytes per event, sustained over 30-minute steady-state windows.
 
 | Pipeline Tier | TB/day per vCPU | Events/s | MB/s | CPU (1 Pod) | Memory (RSS) |
 |---|---|---|---|---|---|
@@ -511,8 +511,19 @@ terminationGracePeriodSeconds = (buffer_max_size / drain_rate) + margin
 ```
 
 - Default tGPS: 70s (chart default) - almost always too low for large disk buffers
-- Drain rate: network I/O bound (~50-80 MB/s for gzip-compressed sinks)
+- Observed drain rate: ~54 MB/s at 2 vCPU draining to Datadog intake. At 3.5 vCPU expect similar or higher rates.
 - Production reference: 3600s (1 hr) for 100 GiB buffers at ~50 TB/day
+
+**What happens on SIGTERM (pod termination):**
+
+1. The health/readiness API is marked not-serving. Kubernetes stops routing new traffic to the pod.
+2. All HTTP sources stop accepting new TCP connections immediately (hyper graceful shutdown). In-flight requests on existing connections are completed.
+3. No new events enter the pipeline after in-flight requests finish.
+4. Transforms drain naturally as their input channels close.
+5. Sinks flush remaining events from their buffers to the destination.
+6. Once all components finish, OPW exits. If the `DD_OP_GRACEFUL_SHUTDOWN_LIMIT_SECS` deadline is reached first, remaining components are force-killed.
+
+The drain time formula only needs to account for events already in the pipeline at the moment of SIGTERM, not continuous live ingest. OPW closes the listener before draining begins. If tGPS expires before OPW finishes, kubelet sends SIGKILL. A second SIGTERM during graceful shutdown triggers immediate exit with no further draining.
 
 If tGPS expires, OPW logs: `"Failed to gracefully shut down in time. Killing components."` Undrained data is preserved on the PVC (via `retentionPolicy: Retain`) and resumes draining when the pod restarts.
 
@@ -835,7 +846,7 @@ Datadog provides an OOTB dashboard: **Observability Pipelines Overview**. It cov
 ### Key Metrics Quick Reference
 
 **Throughput:**
-- `pipelines.component_received_event_bytes_total{component_kind:source}.as_rate()` - ingest bytes/s (primary sizing validation)
+- `pipelines.component_received_bytes_total{component_kind:source}.as_rate()` - ingest bytes/s (primary sizing validation)
 - `pipelines.component_sent_event_bytes_total{component_kind:sink}.as_rate()` - egress bytes/s
 - `pipelines.component_received_events_total{component_kind:source}.as_rate()` - ingest events/s
 
@@ -948,7 +959,7 @@ env:
 - Alert on `component_discarded_events_total{intentional:false}` (critical: any non-zero)
 - Alert on `source_buffer_utilization_mean` (warning at 70% of capacity, critical at 90%); this metric reports raw event counts (max = vCPU x 1,000), not 0-1
 - Monitor SDS utilization; sustained > 0.9 indicates SDS is the bottleneck
-- Validate throughput against sizing calculations using `component_received_event_bytes_total{component_kind:source}`
+- Validate throughput against sizing calculations using `component_received_bytes_total{component_kind:source}`
 
 ---
 
