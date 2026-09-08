@@ -427,7 +427,7 @@ Transform Buffer (non-configurable)
   v
 Destination Buffer (user-configurable)
   |  Memory: 500 events default (min 1 MB, max 128 GB)
-  |  Disk:   min ~256 MB, max 500 GB, 128 MB files, fsync every 500ms
+  |  Disk:   min ~256 MB, max 5 TB (Worker 2.20.0+; 500 GB earlier), 128 MB files, fsync every 500ms
   |  Fills -> depends on when_full policy (block or drop_newest)
   v
 [Destination]
@@ -463,7 +463,9 @@ At 3.5 vCPU, 10 MiB/s/vCPU, 20 min runway:
   PVC = 41 * 1.10 = ~45 GiB -> round to 55 GiB (extra runway)
 ```
 
-**Disk buffer limits:** Minimum 256 MB, maximum 500 GB. On-disk format uses 128 MB data files with fsync every 500 ms. Data written within the last 500 ms is at risk on an unexpected crash.
+**Disk buffer limits:** Minimum 256 MB, maximum 5 TB (Worker 2.20.0 and later; 500 GB on earlier versions). On-disk format uses 128 MB data files with fsync every 500 ms. Data written within the last 500 ms is at risk on an unexpected crash.
+
+**Disk buffer corruption from partial writes:** If a disk buffer volume reaches 100% capacity (ENOSPC), partial writes can corrupt the buffer. OPW will loop attempting to drain, emitting `Events dropped` with `unprocessable_events` errors. Always provision the PVC at least 10% larger than the pipeline's configured `max_size`. Monitor `pipelines.data_dir_available_bytes` and alert when free space drops below 15% of capacity.
 
 **`when_full` policies:**
 
@@ -720,7 +722,7 @@ Avoid burstable instances (AWS t-family, Azure B-series, GCP e2). OPW under sust
 - **Pin to a specific image tag.** Pin to a version (e.g., `2.20.4`) and upgrade deliberately. Review the [changelog](https://docs.datadoghq.com/observability_pipelines/guide/upgrade_worker/).
 - **Dedicated node pool.** Isolate OPW from application workloads.
 - **jemalloc tuning:** `MALLOC_CONF="thp:never,dirty_decay_ms:1000,muzzy_decay_ms:1000"`
-- **Load balancing:** L4 NLB only, round-robin, keep-alive 60s. Do NOT use L7 (ALB/Ingress) or client-side load balancing.
+- **Load balancing:** L4 NLB only. Cloud NLBs use flow hash (5-tuple), not round-robin. OPW recycles connections every ~5 min. Enable cross-zone for even distribution. TCP idle timeout must exceed 330s (AWS NLB 350s default is appropriate; Azure increase to 6+ min with TCP Reset enabled). Do NOT use L7 (ALB/Ingress) or client-side load balancing.
 - **High availability:** Always deploy at least 3 OPW pods. In HA testing, killing one pod in a three-replica deployment resulted in zero events dropped, with surviving pods absorbing full load within 36 seconds.
 
 ### Karpenter and Node Provisioning
@@ -770,10 +772,10 @@ Deploy OPW in a managed instance group (AWS ASG, GCP MIG, Azure VMSS) behind a n
 ### Load Balancer Configuration
 
 - Protocol: TCP (L4)
-- Strategy: Round-robin
+- Distribution: Cloud NLBs use flow hash (5-tuple). Not configurable to round-robin. OPW recycles connections every ~5 min (built-in, 300s with 10% jitter). For on-prem L4 LBs (HAProxy, NGINX), use round-robin or least-connections.
 - Health check: HTTP GET on port 8686
-- Keep-alive timeout: 60 seconds maximum
-- Disable cross-zone balancing unless traffic is severely imbalanced
+- TCP idle timeout: Must exceed OPW's connection recycling maximum (330s). AWS NLB 350s default is appropriate. GCP Internal NLB 600s default is appropriate. Azure Standard LB 4 min default is too short - increase to at least 6 min and enable TCP Reset.
+- Cross-zone: Enable. Even target distribution is critical. AWS charges ~$0.01/GB for cross-zone traffic. If cost is prohibitive, enforce strict even pod distribution with hard topology spread constraints before disabling. GCP and Azure cross-zone is free within a region.
 
 ### Network Requirements
 

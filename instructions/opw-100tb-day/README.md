@@ -451,7 +451,7 @@ Transform Buffer (non-configurable)
   v
 Destination Buffer (user-configurable)
   |  Memory: 500 events default (min 1 MB, max 128 GB)
-  |  Disk:   min ~256 MB, max 500 GB, 128 MB files, fsync every 500ms
+  |  Disk:   min ~256 MB, max 5 TB (Worker 2.20.0+; 500 GB earlier), 128 MB files, fsync every 500ms
   |  Fills -> depends on when_full policy (block or drop_newest)
   v
 [Destination]
@@ -491,7 +491,9 @@ At 3.5 vCPU, 10 MiB/s/vCPU, 20 min runway:
   PVC = 41 * 1.10 = ~45 GiB -> round to 55 GiB (extra runway)
 ```
 
-**Disk buffer limits:** Minimum 256 MB, maximum 500 GB. On-disk format uses 128 MB data files with fsync every 500 ms. Data written within the last 500 ms is at risk on an unexpected crash.
+**Disk buffer limits:** Minimum 256 MB, maximum 5 TB (Worker 2.20.0 and later; 500 GB on earlier versions). On-disk format uses 128 MB data files with fsync every 500 ms. Data written within the last 500 ms is at risk on an unexpected crash.
+
+**Disk buffer corruption from partial writes:** If a disk buffer volume reaches 100% capacity (ENOSPC), partial writes can corrupt the buffer. OPW will loop attempting to drain, emitting `Events dropped` with `unprocessable_events` errors. Always provision the PVC at least 10% larger than the pipeline's configured `max_size`. Monitor `pipelines.data_dir_available_bytes` and alert when free space drops below 15% of capacity.
 
 **`when_full` policies:**
 
@@ -882,10 +884,11 @@ Datadog provides an OOTB dashboard: **Observability Pipelines Overview**. It cov
 
 - **L4 NLB only.** Do not use L7 (ALB/Ingress). OPW docs explicitly recommend L4 for performance.
 - **Do NOT use client-side load balancing.** Complexity is high, and failures cause data loss.
-- **Round-robin strategy.** Simple is best. OPW workers are stateless.
-- **Cross-zone LB: off by default.** Enable only if traffic is measurably imbalanced across AZs.
-- **Keep-alive:** 1 minute idle timeout on both clients and NLB.
+- **Distribution:** Cloud NLBs use a flow hash algorithm (5-tuple) to pin each TCP connection to a target. This is not configurable to round-robin on any major cloud provider. OPW automatically recycles connections every ~5 minutes (built-in, 300s with 10% jitter), forcing reconnection with a new flow hash. For on-prem L4 LBs (HAProxy, NGINX), use round-robin or least-connections.
+- **Cross-zone LB: enable.** Without cross-zone, uneven pod-per-AZ distribution (common during scaling, node failures, PVC zone affinity) causes severe per-pod overload. AWS charges ~$0.01/GB for cross-zone traffic. If cost is prohibitive at scale, enforce strict even pod distribution with `topologySpreadConstraints` `whenUnsatisfiable: DoNotSchedule` before disabling. GCP and Azure cross-zone is free within a region.
+- **TCP idle timeout:** Must exceed OPW's connection recycling maximum (330s). AWS NLB defaults to 350s (appropriate). GCP Internal NLB defaults to 600s (appropriate). Azure Standard LB defaults to 4 min - increase to at least 6 min and enable TCP Reset (`--enable-tcp-reset true`).
 - **Connection pooling:** Enable on agents/collectors if supported (reduces per-request TCP overhead).
+- **Low client count:** If fewer than ~10 log sources (e.g., syslog aggregators, Splunk Heavy Forwarders) or traffic passes through a NAT gateway, the flow hash may produce uneven distribution. Configure sources to use multiple concurrent connections and right-size OPW pods so each can absorb the largest single-client connection.
 
 ### Memory Allocator
 

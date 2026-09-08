@@ -406,9 +406,15 @@ service:
     # "internal" = NLB is NOT internet-facing. Change to "internet-facing"
     # only if sources are outside your VPC (not recommended for OPW).
     service.beta.kubernetes.io/aws-load-balancer-scheme: "internal"
-    # Cross-zone LB: enable ONLY if traffic is imbalanced across AZs.
-    # Disabled by default per docs (adds latency and cost).
-    service.beta.kubernetes.io/aws-load-balancer-cross-zone-load-balancing-enabled: "false"
+    # Cross-zone LB: enabled for even distribution across OPW pods.
+    # Without cross-zone, NLB distributes evenly across AZ nodes, not targets.
+    # Uneven pod-per-AZ distribution (common during scaling, node failures, PVC
+    # zone affinity) causes severe per-pod overload.
+    # AWS charges ~$0.01/GB for cross-zone traffic. At 100 TB/day this is
+    # ~$1,000/day. If cost is prohibitive, enforce strict even pod distribution
+    # with topologySpreadConstraints whenUnsatisfiable: DoNotSchedule before
+    # disabling. GCP and Azure cross-zone is free within a region.
+    service.beta.kubernetes.io/aws-load-balancer-cross-zone-load-balancing-enabled: "true"
   # Example port config for http_server source. Ports are fully configurable
   # per your source type (e.g., 9997 for splunk_tcp, 8126 for datadog_agent,
   # 514 for syslog, 4317 for OTel gRPC, 4318 for OTel HTTP).

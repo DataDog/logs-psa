@@ -371,7 +371,13 @@ service:
     service.beta.kubernetes.io/aws-load-balancer-type: "external"
     service.beta.kubernetes.io/aws-load-balancer-nlb-target-type: "ip"
     service.beta.kubernetes.io/aws-load-balancer-scheme: "internal"
-    service.beta.kubernetes.io/aws-load-balancer-cross-zone-load-balancing-enabled: "false"
+    # Cross-zone LB: enabled for even distribution across OPW pods.
+    # Without cross-zone, uneven pod-per-AZ distribution causes per-pod overload.
+    # AWS charges ~$0.01/GB for cross-zone traffic. At 300 TB/day this is
+    # ~$3,000/day. If cost is prohibitive, enforce strict even pod distribution
+    # with topologySpreadConstraints whenUnsatisfiable: DoNotSchedule before
+    # disabling. GCP and Azure cross-zone is free within a region.
+    service.beta.kubernetes.io/aws-load-balancer-cross-zone-load-balancing-enabled: "true"
   # Adjust port to match your source type:
   #   8282 for http_server/datadog_agent, 9997 for splunk_tcp,
   #   4317 for OTel gRPC, 4318 for OTel HTTP, 514 for syslog
