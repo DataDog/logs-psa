@@ -31,7 +31,7 @@ resource "datadog_observability_pipeline" "syslog_demo" {
   config {
     destination {
       id     = "destination-splunk-hec-01"
-      inputs = ["processor-group-0e32bd6e-3312-4020-873f-b761534280d0"]
+      inputs = ["processor-group-pii-redaction"]
       splunk_hec {
         auto_extract_timestamp = false
         encoding               = "json"
@@ -80,6 +80,10 @@ resource "datadog_observability_pipeline" "syslog_demo" {
               if v != null { .status = v }
               v = del(."enrichment@49312".event_id)
               if v != null { .event_id = v }
+              v = del(."enrichment@49312".severity)
+              if v != null { .severity = v }
+              .processed_by = "observability-pipelines"
+              .processed_at = now()
 
             EOF
           }
@@ -510,19 +514,48 @@ resource "datadog_observability_pipeline" "syslog_demo" {
       }
     }
     processor_group {
-      display_name = "Sampling"
+      display_name = "PII Redaction"
       enabled      = true
-      id           = "processor-group-0e32bd6e-3312-4020-873f-b761534280d0"
+      id           = "processor-group-pii-redaction"
       include      = "*"
       inputs       = ["processor-group-6564fc49-5261-4fd5-8941-f4fed5d8380c"]
       processor {
-        display_name = "Sample 10%"
-        enabled      = true
-        id           = "processor-1aba4d67-3282-40d4-a775-6ec63184d045"
-        include      = "*"
-        sample {
-          percentage = 10
+        custom_processor {
+          remap {
+            drop_on_error = false
+            enabled       = true
+            include       = "*"
+            name          = "Redact email addresses"
+            source        = <<-EOF
+            if exists(.message) && is_string(.message) {
+              .message = replace(.message, r'[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}', "[REDACTED_EMAIL]")
+            }
+            EOF
+          }
         }
+        display_name = "Redact Email Addresses"
+        enabled      = true
+        id           = "processor-redact-email"
+        include      = "*"
+      }
+      processor {
+        custom_processor {
+          remap {
+            drop_on_error = false
+            enabled       = true
+            include       = "*"
+            name          = "Redact IP addresses in message body"
+            source        = <<-EOF
+            if exists(.message) && is_string(.message) {
+              .message = replace(.message, r'\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b', "[REDACTED_IP]")
+            }
+            EOF
+          }
+        }
+        display_name = "Redact IP Addresses in Message"
+        enabled      = true
+        id           = "processor-redact-ip"
+        include      = "*"
       }
     }
     source {
