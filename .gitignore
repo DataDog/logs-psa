@@ -35,3 +35,4 @@ POCs/op-pipeline-tf-example/terraform.tfstate
 terraform-demo/.terraform.lock.hcl
 terraform-demo/.terraform/providers/registry.terraform.io/datadog/datadog/4.21.0/darwin_arm64
 terraform-demo/terraform.tfstate
+terraform-demo/terraform.tfstate.backup
