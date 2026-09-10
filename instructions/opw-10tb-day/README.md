@@ -964,7 +964,7 @@ env:
 
 **Sizing:**
 - Start with the conservative 1 TB/vCPU/day estimate, observe, then size for your actual pipeline tier
-- Add 50% headroom above calculated vCPU requirements
+- Add 25% headroom above calculated vCPU requirements
 - Cap pods at 4 vCPU; scale horizontally when more capacity is needed
 - Budget 2 GiB memory per vCPU
 

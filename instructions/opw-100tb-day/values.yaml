@@ -21,7 +21,7 @@
 #   | Heavy + SDS, blanket (40 rules)       | 0.79        | -83%     |
 #
 #   - SDS FIELD SCOPING is the single highest-leverage optimization:
-#     targeting SDS to only PII-containing services (~14% of events)
+#     targeting SDS to only PII-containing services (~20% of events)
 #     can more than double throughput vs scanning all fields (+149%).
 #   - SDS RULE SPLITTING delivers +45% throughput for high rule-count
 #     pipelines: split >20 SDS rules into multiple processors

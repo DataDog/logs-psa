@@ -164,9 +164,9 @@ Blanket scanning with 40 rules consumes 83% of the throughput available to a no-
 | Pipeline Configuration | TB/day per vCPU | vs Basic |
 |---|---|---|
 | Basic Processing (no SDS) | 4.70 | baseline |
-| Medium + SDS, targeted (10 rules, 14% of events) | 3.61 | -23% |
+| Medium + SDS, targeted (10 rules, 20% of events) | 3.61 | -23% |
 | Medium + SDS, blanket (10 rules, all events) | 2.95 | -37% |
-| Heavy + SDS, targeted (40 rules, 14% of events) | 1.97 | -58% |
+| Heavy + SDS, targeted (40 rules, 20% of events) | 1.97 | -58% |
 | Heavy + SDS, blanket (40 rules, all events) | 0.79 | -83% |
 
 ---
@@ -649,7 +649,7 @@ The following have **no measurable effect** on scan time: redaction method, matc
 
 | Rank | Optimization | Impact | Description |
 |---|---|---|---|
-| 1 | **Field/service scoping** | +149% throughput | Target SDS to only PII-containing fields/services. If only 14% of events contain PII, scope SDS to those services. |
+| 1 | **Field/service scoping** | +149% throughput | Target SDS to only PII-containing fields/services. If only 20% of events contain PII, scope SDS to those services. |
 | 2 | **Disable unused rules** | Varies | Most deployments use 10-30 of 270+ available rules. Each rule has CPU cost even if it never matches. Use `pipelines.sds_rule_matched_total` to identify zero-match rules. |
 | 3 | **Rule splitting** | +45% throughput | Split >20 SDS rules across multiple SDS processors (e.g., 40 rules -> 2x20). Breaks HOL blocking in Tokio's FIFO task queue. Most impactful at 40+ rules. |
 | 4 | **Horizontal scaling** | Linear | Add pods rather than vCPUs. HOL blocking cannot occur across pod boundaries. Each pod has an independent Tokio runtime. |
