@@ -32,3 +32,4 @@ POCs/op-pipeline-tf-example/.terraform/providers/registry.terraform.io/datadog/d
 POCs/op-pipeline-tf-example/.terraform/providers/registry.terraform.io/datadog/datadog/3.88.0/darwin_arm64/README.md
 POCs/op-pipeline-tf-example/.terraform/providers/registry.terraform.io/datadog/datadog/3.88.0/darwin_arm64/terraform-provider-datadog_v3.88.0
 POCs/op-pipeline-tf-example/terraform.tfstate
+terraform-demo/.terraform.lock.hcl
