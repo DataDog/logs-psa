@@ -1,4 +1,4 @@
-# Datadog Log Archive: file format and bucket consolidation
+# Datadog Log Archive: bucket consolidation
 
 Datadog Log Archive copies your log data out of Datadog and writes it to a bucket you own. It runs automatically. Datadog packages up the logs and writes them as compressed files to your bucket.
 
