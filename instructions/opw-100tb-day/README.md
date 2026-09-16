@@ -1,5 +1,12 @@
 # Observability Pipelines Worker (OPW) - Sizing, Scaling, and Performance Guide
 
+Please see these resources which will be kept up to date on performance and scaling:
+
+- [Best Practices for Scaling Observability Pipelines](https://docs.datadoghq.com/observability_pipelines/scaling_and_performance/best_practices_for_scaling_observability_pipelines/)
+- [Buffering and Backpressure](https://docs.datadoghq.com/observability_pipelines/scaling_and_performance/buffering_and_backpressure/?tab=sources)
+- [Observability Pipelines: a guide to sizing, scaling, and performance](https://www.datadoghq.com/architecture/observability-pipelines-a-guide-to-sizing-scaling-and-performance/)
+- [Observability Pipelines Sensitive Data Scanner optimization](https://www.datadoghq.com/architecture/observability-pipelines-sensitive-data-scanner-optimization/)
+
 **Deployment target:** 100 TB/day total volume (steady state ~70 TB/day, peak ~140 TB/day, 2x peak-to-trough)
 
 **Companion file:** [`values.yaml`](./values.yaml) - production Helm values with inline sizing commentary
