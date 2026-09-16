@@ -1,6 +1,6 @@
 # Observability Pipelines Worker (OPW) - Sizing, Scaling, and Performance Guide
 
-Please see these two resources which will be kept up to date on performance and scaling:
+Please see these resources which will be kept up to date on performance and scaling:
 
 - [Best Practices for Scaling Observability Pipelines](https://docs.datadoghq.com/observability_pipelines/scaling_and_performance/best_practices_for_scaling_observability_pipelines/)
 - [Buffering and Backpressure](https://docs.datadoghq.com/observability_pipelines/scaling_and_performance/buffering_and_backpressure/?tab=sources)
