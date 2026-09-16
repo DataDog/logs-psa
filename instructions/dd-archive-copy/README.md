@@ -98,20 +98,6 @@ To consolidate going forward, update your Datadog Archive configuration to point
 
 If one archive/bucket uses a different [Partitioning Attribute](https://docs.datadoghq.com/logs/log_configuration/archives/?tab=awss3#archive-partition-attribute) or [Lookup Attribute](https://docs.datadoghq.com/logs/log_configuration/archives/?tab=awss3#archive-lookup-attribute) then this may not work. This was not tested. The aforementioned `.json` files may take care of this and handle it invisibly.
 
----
-
-## File name reference
-
-| Component | What it represents |
-|-----------|-------------------|
-| `dt=YYYYMMDD` | UTC date of the logs |
-| `hour=HH` | UTC hour (0–23) of the logs |
-| `archive_HHMMSS` | Start of the hour window |
-| `.0000` | Segment index (usually 0) |
-| `{uuid}` | Unique ID for this archive segment |
-| `.json.zst` | Log data, Zstandard-compressed |
-| `.idx.{base64}.partitionMetadata.zst` | Rehydration index for this segment |
-
 ## Confirmation that it works
 
 Directory structure observed in the bucket:
