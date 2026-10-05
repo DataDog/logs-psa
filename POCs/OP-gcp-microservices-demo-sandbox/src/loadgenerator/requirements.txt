@@ -4,7 +4,7 @@ bidict==0.23.1
     # via python-socketio
 blinker==1.8.2
     # via flask
-brotli==1.1.0
+brotli==1.2.0
     # via geventhttpclient
 certifi==2024.2.2
     # via
@@ -23,7 +23,7 @@ flask==3.0.3
     #   flask-cors
     #   flask-login
     #   locust
-flask-cors==4.0.1
+flask-cors==4.0.2
     # via locust
 flask-login==0.6.3
     # via locust
@@ -43,7 +43,7 @@ iniconfig==2.3.0
     # via pytest
 itsdangerous==2.2.0
     # via flask
-jinja2==3.1.4
+jinja2==3.1.6
     # via flask
 locust==2.43.2
     # via -r requirements.in
@@ -51,7 +51,7 @@ markupsafe==2.1.5
     # via
     #   jinja2
     #   werkzeug
-msgpack==1.0.8
+msgpack==1.2.3
     # via locust
 packaging==26.0
     # via pytest
@@ -65,11 +65,11 @@ pytest==9.0.2
     # via locust
 python-dateutil==2.9.0.post0
     # via faker
-python-engineio==4.13.1
+python-engineio==4.13.5
     # via
     #   locust
     #   python-socketio
-python-socketio==5.16.1
+python-socketio==5.16.4
     # via locust
 pyzmq==26.0.3
     # via locust
@@ -85,13 +85,13 @@ simple-websocket==1.1.0
     # via python-engineio
 six==1.16.0
     # via python-dateutil
-urllib3==2.2.1
+urllib3==2.8.0
     # via
     #   geventhttpclient
     #   requests
 websocket-client==1.9.0
     # via python-socketio
-werkzeug==3.0.3
+werkzeug==3.1.9
     # via
     #   flask
     #   flask-login
