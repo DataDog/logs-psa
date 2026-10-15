@@ -139,9 +139,21 @@ datadog:
 #   - Without a CPU limit, pods can burst above requests when node has spare CPU
 #
 # WHY MEMORY LIMIT = REQUEST:
-#   - Creates Guaranteed QoS class for the memory dimension
-#   - Prevents OOMKill during burst buffering and backpressure events
-#   - Memory increases with the number of destinations (more batching/buffering)
+#   - Bounds the blast radius. Memory is incompressible, so a worker with no
+#     limit grows until the node hits memory pressure and the kubelet starts
+#     evicting, which can take co-tenant pods with it. A limit kills the pod
+#     that caused the problem instead.
+#   - The 2 GiB per vCPU sizing, not the limit, is what keeps burst buffering
+#     and backpressure from OOMKilling the worker. Memory need grows with the
+#     number of destinations (more batching/buffering).
+#   - NOT for QoS. With no cpu limit the pod is Burstable either way.
+#     Guaranteed additionally requires cpu limit == cpu request on every
+#     container. Kubernetes has no per-resource QoS class.
+#   - NOT for eviction protection. Eviction candidacy keys off usage vs the
+#     REQUEST, not the limit.
+#   - Counterpoint: the upstream chart omits limits.memory deliberately, since
+#     OPW absorbs backpressure in memory and a hard cap can OOMKill it exactly
+#     when buffering matters most. This is a judgement call, not a rule.
 #
 resources:
   requests:
@@ -149,7 +161,7 @@ resources:
     memory: "7Gi"    # 2 GiB per vCPU = 7 GiB for 3.5 vCPU (docs minimum ratio)
   limits:
     # No cpu limit - intentional. See WHY NO CPU LIMIT above.
-    memory: "7Gi"    # Match request for Guaranteed QoS on memory dimension
+    memory: "7Gi"    # Match request to bound blast radius, not for QoS (see above)
 
 
 # -----------------------------------------------------------------------------

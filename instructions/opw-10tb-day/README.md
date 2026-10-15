@@ -240,7 +240,7 @@ Node pool requirements (2 pods per 8-vCPU node, 2 x 3.5 = 7.0 vCPU + 1.0 for OS/
 ### Memory
 
 - **2 GiB per vCPU** minimum (docs baseline)
-- **Set limits.memory equal to requests.memory** - This creates Guaranteed QoS class for the memory dimension, prevents OOMKill during burst buffering and backpressure events, avoids memory overcommit, and protects against kubelet eviction under node memory pressure.
+- **Set limits.memory equal to requests.memory** - This bounds the blast radius of runaway memory use. Memory is incompressible, so a worker with no limit grows until the node hits memory pressure and the kubelet starts evicting, which can take co-tenant pods with it. A limit kills the pod that caused the problem instead. Note what it does *not* do: it does not create a Guaranteed QoS class (Guaranteed additionally requires `limits.cpu` equal to `requests.cpu` on every container, so with no CPU limit the pod is Burstable regardless, and Kubernetes has no per-resource QoS class), and it does not protect against eviction (candidacy keys off usage versus the *request*, not the limit). Sizing at 2 GiB per vCPU, not the limit itself, is what prevents OOMKills. The upstream chart omits this limit deliberately, so treat it as a judgement call rather than a rule.
 - Memory increases with number of destinations (each destination has in-memory batching/buffering)
 - **Avoid unbounded cardinality in Sample/Quota processors** (grouping on `message` or other high-cardinality fields causes monotonic memory growth)
 - `MALLOC_CONF="thp:never,dirty_decay_ms:1000,muzzy_decay_ms:1000"` - forces jemalloc to return pages faster after bursts (not a leak; allocator behavior)
