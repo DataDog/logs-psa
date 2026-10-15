@@ -11,7 +11,7 @@
   "license": "ISC",
   "dependencies": {
     "@google-cloud/profiler": "6.0.1",
-    "@grpc/grpc-js": "1.10.12",
+    "@grpc/grpc-js": "1.14.5",
     "@grpc/proto-loader": "0.8.1",
     "@opentelemetry/api": "1.9.1",
     "@opentelemetry/exporter-otlp-grpc": "0.26.0",
@@ -100,7 +100,8 @@
       "@opentelemetry/core": "^1.30.1"
     },
     "rimraf": {
-      "brace-expansion": "^2.1.4"
-    }
+      "brace-expansion": "^2.1.7"
+    },
+    "markdown-it": "^14.3.2"
   }
 }
