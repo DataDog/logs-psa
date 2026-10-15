@@ -216,7 +216,7 @@ Node pool requirements (2 pods per 8-vCPU node, 2 x 3.5 = 7.0 vCPU + 1.0 for OS/
 
 - **2 GiB per vCPU** minimum (docs baseline)
 - Memory increases with number of destinations (each destination has in-memory batching/buffering)
-- For environments requiring Guaranteed QoS on memory, set `limits.memory` equal to `requests.memory`
+- Setting `limits.memory` equal to `requests.memory` bounds the blast radius of runaway memory use, since an unlimited worker can drive node memory pressure and get co-tenant pods evicted. It does not produce Guaranteed QoS: that additionally requires `limits.cpu` equal to `requests.cpu` on every container, and Kubernetes has no per-resource QoS class
 - **Avoid unbounded cardinality in Sample/Quota processors** (grouping on `message` or other high-cardinality fields causes monotonic memory growth)
 - `MALLOC_CONF="thp:never,dirty_decay_ms:1000,muzzy_decay_ms:1000"` - forces jemalloc to return pages faster after bursts (not a leak; allocator behavior)
 
