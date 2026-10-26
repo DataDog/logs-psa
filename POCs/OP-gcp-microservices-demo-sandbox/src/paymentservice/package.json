@@ -102,6 +102,6 @@
     "rimraf": {
       "brace-expansion": "^2.1.7"
     },
-    "markdown-it": "^14.3.2"
+    "markdown-it": "^14.3.3"
   }
 }
